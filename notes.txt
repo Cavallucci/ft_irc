@@ -1,0 +1,19 @@
+IRC est un protocole de communication textuelle instantanée sur Internet. Il
+peut aussi être utilisé pour faire du transfert de fichier. Conçu en 1988, son
+utilisation diminue avec l'arrivée des messageries instantanées propriétaires
+grands publics comme ICQ (freeware originelllement développé par des israéliens)
+puis MSN Messenger. L'IRC est un protocole utilisant TCP et de façon optionnelle
+TLS. La plupart des serveurs IRC ne nécessitent pas l'enregistrement par
+l'intermédiaire d'un compte, l'utilisateur pouvant choisir son surnom librement
+tant qu'il est disponible. Le protocole m'a défini que des caractères de taille
+défini sur 8 bits, limitant les différents encodages possibles ainsi que le
+nombre de caractères. L'élément de base pour communiquer sur un réseau est le
+canal. Un canal est défini par une liste d'utilisateur connectés sur celui-ci.
+Pour entrer dans un canal ou pour créer un canal (s'il n'existe pas),
+l'utilisateur utilise la commande join. Les canaux peuvent être vus de tout le
+réseau, leur nom est alors préfixé par le caractère #. Ils peuvent aussi être
+des canaux locaux, portés par un serveur uniquement, leur nom est dans ce cas
+préfixé par le caractère &.
+
+WeeChat (https://weechat.org/) est un exemple de client IRC. Il est disponible
+sur Linux, Windows, mac os.
