@@ -8,7 +8,7 @@ La plupart des serveurs IRC **ne n√©cessitent pas l'enregistrement par l'interm√
 
 [WeeChat](https://weechat.org/) est un exemple de client IRC. Il est disponible sur Linux, Windows, mac os. [irssi](https://irssi.org/) est un aussi client IRC, de type CLI. [Kiwiirc](https://kiwiirc.com/) en est encore un autre.
 
-## Commands
+## Commands to be implemented
 
 | Commands	| Effect |
 |:----------|:-------|
@@ -27,7 +27,7 @@ The full list of commands is available [here](https://en.wikipedia.org/wiki/List
 
 ## Official documentation
 
-- Protocol : [RFC1459](https://tools.ietf.org/html/rfc1459)
+- Original protocol : [RFC1459](https://tools.ietf.org/html/rfc1459)
 - Architecture : [RFC2810](https://tools.ietf.org/html/rfc2810)
 - Channel Management : [RFC2811](https://tools.ietf.org/html/rfc2811)
 - Client : [RFC2812](https://tools.ietf.org/html/rfc2812)
@@ -44,3 +44,35 @@ The full list of commands is available [here](https://en.wikipedia.org/wiki/List
 
 - [What is a socket?](https://beej.us/guide/bgnet/html/)
 - [chirc, a tutorial of the University of Chicago](http://chi.cs.uchicago.edu/chirc/intro.html)
+
+## Useful functions (from man)
+
+- **`int socket(int domain, int type, int protocol);`** returns a file descriptor that refers to that endpoint (or -1 on error). The `domain` argument specifies the protocol family which will be used for communication. The `type` argument specifies the communication semantics. The `protocol` specifies a particular protocol to be used with the socket.
+- **`ssize_t send(int sockfd, const void *buf, size_t len, int flags);`** is useful to transmit a message to another socket. The only difference between `send` and `write` is the presence of flags.
+- **`ssize_t recv(int sockfd, void *buf, size_t len, int flags);`** useful to receive messages from a connected socket. The only difference between `recv` and `read` is the presence of flags. Returns the number of bytes received or -1 on error.
+- **`getsockopt`** and **`setsockopt`** manipulate options for a socket.
+- **`struct protoent *getprotobyname(const char *name);`** returns a `protoent` structure for the entry from the DB that matches the protocol `name`.
+- **`getaddrinfo`** returns one or more `addrinfo` structures, each of which contains an Internet address that can be specified in a call to `bind` or `connect`.
+- **`freeaddrinfo`**
+- **`bind`**
+- **`connect`**
+- **`listen`**
+- **`accept`**
+- **`htons`**
+- **`htonl`**
+- **`ntohs`**
+- **`ntohl`**
+- **`inet_addr`**
+- **`inet_ntoa`**
+- **`send`**
+- **`lseek`**
+- **`fstat`**
+- **`fcntl`**
+- **`poll`**
+- **`select`** (poll equivalent)
+- **`kqueue`** (poll equivalent)
+- **`epoll`** (poll equivalent)
+
+
+http://chi.cs.uchicago.edu/chirc/irc_examples.html
+https://beej.us/guide/bgnet/html/#what-is-a-socket#what-is-a-socket
