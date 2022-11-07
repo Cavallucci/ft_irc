@@ -69,6 +69,19 @@ The full list of commands is available [here](https://en.wikipedia.org/wiki/List
 - **`kqueue`** (poll equivalent)
 - **`epoll`** (poll equivalent)
 
+## Stream sockets vs. datagram sockets
+
+There are mainly 2 types of Internet sockets: "*stream sockets*"  (`SOCK_STREAM`) and "*datagram sockets*" aka "*connectionless sockets*" (`SOCK_DGRAM`).
+**Stream sockets** are reliable two-way connected communication streams. If you output 2 items into the socket in the order "*1, 2*" they will arrive in the order "*1, 2*". The telnet and the Hypertext Transfer Protocol use stream sockets. Stream sockets rely on the "*Transmission Control Protocol*", otherwise known as TCP. TCP makes sure your data arrives sequentially and error-free, it is responsible for data integrity.
+**Datagram sockets** use the *User Datagram Protocol* (UDP) which is much faster. Sample applications: multiplayer games, streaming audio, video conferencing, etc. `tftp` and `dhcpcd` use UDP but with their own protocol on top of UDP. For each packet that gets sent, the recipient has to send back an *ACK packet*.
+
+## Byte order
+
+Endianness is the order or sequence of bytes of a word of digital data in computer memory. It is primarily expressed as **big-endian** or **little-endian**. A big-endian system stores the most significant byte of a word at the smallest memory address (left to right).
+
+
+
+
 
 http://chi.cs.uchicago.edu/chirc/irc_examples.html
 
