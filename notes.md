@@ -58,7 +58,7 @@ The full list of commands is available [here](https://en.wikipedia.org/wiki/List
 - **`int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);`** system call which initiates a connection on a socket referred to by `sockfd`. Returns 0 on success, -1 on error.
 - **`int listen(int sockfd, int backlog);`** marks the socket as a passive socket, that is, as a socket that will be used to accept incoming connection requests using `accept`.
 - **`int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);`** extracts the first connection request on the queue of pending connections for the listening socket, creates a new connected socket and returns a new `fd` referring to that socket (not in the listening state). The original socket is unaffected by this call.
-- **`htons`**, **`htonl`**, **`ntohs`**, **`ntohl`** convert integers from network byte order (most significant byte first, as used on the Internet) to host byte order (least significant byte first) or vice versa.
+- **`htons`**, **`htonl`**, **`ntohs`**, **`ntohl`** convert integers from network byte order (most significant byte first, as used on the Internet) to host byte order or vice versa.
 - **`in_addr_t inet_addr(const char *cp);`** converts the Internet host address `cp` from IPv4 numbers-and-dots notation into binary data in network byte order.
 - **`char *inet_ntoa(struct in_addr in);`** conversely, converts the Internet host address `in`, given in network byte order, to a string in IPv4 dotted-decimal notation.
 - **`off_t lseek(int fd, off_t offset, int whence);`** repositions the file offset of the open fd associated with `fd` to the argument `offset`.
@@ -77,12 +77,10 @@ There are mainly 2 types of Internet sockets: "*stream sockets*"  (`SOCK_STREAM`
 
 ## Byte order
 
-Endianness is the order or sequence of bytes of a word of digital data in computer memory. It is primarily expressed as **big-endian** or **little-endian**. A big-endian system stores the most significant byte of a word at the smallest memory address (left to right).
-
-
+Endianness is the order or sequence of bytes of a word of digital data in computer memory. It is primarily expressed as **big-endian** or **little-endian**. A big-endian system stores the most significant byte of a word at the smallest memory address (left to right). Intel-compatible processor store the bytes reversed. The more-sane Big-Endian is also called **Network Byte Order**. Our computers store numbers in **Host Byte Order**. Depending on the machine, host byte order can be either big-endian or little-endian.
 
 
 
 http://chi.cs.uchicago.edu/chirc/irc_examples.html
 
-https://beej.us/guide/bgnet/html/#what-is-a-socket#what-is-a-socket
+https://beej.us/guide/bgnet/html/#client-server-background
