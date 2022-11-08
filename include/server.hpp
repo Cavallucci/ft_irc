@@ -3,9 +3,19 @@
 
 class server
 {
-    //p.26
-    //file:///mnt/nfs/homes/lcavallu/Downloads/Beejs_Guide_to_Network_Programming.pdf
-  int   getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+  public:
+    server();
+    server(std::string port, std::string pwd);
+    ~server();
+
+  private:
+
+    std::string   _port;
+    std::string   _pwd;
+    std::string   _host;
+
+    int   _setUp(void);
+
 
 };
 
