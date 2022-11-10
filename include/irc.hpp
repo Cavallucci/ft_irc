@@ -6,13 +6,14 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 10:51:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/10 14:02:15 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_HPP
 # define IRC_HPP
 
+# include <cstdlib>
 # include <iostream>
 # include <string>
 # include <sys/types.h>
@@ -35,6 +36,7 @@
 # define ERR_NB_ARG		"❌ Invalid command, usage: ./ircserv <port> <password>"
 # define ERR_PORT_NB	"❌ Invalid port number, an integer is expected"
 # define ERR_PORT_RANGE	"❌ Invalid port, it should be in the range of 0 to 65535"
+# define ERR_EMPTY_PWD	"❌ Error: an empty password has been provided"
 # define RUNNING		"✅ The server is up and running"
 
 #endif

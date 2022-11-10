@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 11:00:04 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/10 14:03:47 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ class Server
 {
 	public:
 		Server();
-		Server(std::string port, std::string pwd);
+		Server(int port, std::string pwd);
 		Server(const Server & src);
 		~Server();
 		Server &	operator=(Server const & rhs);
 	private:
-		std::string		_port;
+		int				_port;
 		std::string		_pwd;
 		std::string		_host;
 		void			_setUp(void);

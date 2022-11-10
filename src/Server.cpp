@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 11:02:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/10 14:04:15 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 //-------------------------------- CONSTRUCTORS -------------------------------
 
-Server::Server() : _port(""), _host(""), _pwd("")
+Server::Server() : _port(1234), _pwd(""), _host("")
 {
 
 }
 
-Server::Server(std::string port, std::string pwd) : _port(port), _pwd(pwd), _host("localhost")
+Server::Server(int port, std::string pwd) : _port(port), _pwd(pwd), _host("localhost")
 {
 	_setUp();
 	_printIP(_host);
