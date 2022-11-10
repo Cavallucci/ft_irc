@@ -19,13 +19,13 @@ class Server
 {
 	public:
 		Server();
-		Server(int port, std::string pwd);
+		Server(std::string port, std::string pwd);
 		Server(const Server & src);
 		~Server();
 		Server &	operator=(Server const & rhs);
+	
 	private:
-		int		_port;
-		std::string		_pwd;
+		std::string		_port;
 		std::string		_host;
 		std::string		_pwd;
 		int				_listener;
