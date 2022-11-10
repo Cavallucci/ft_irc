@@ -19,7 +19,7 @@ Server::Server() : _port(""), _host(""), _pwd("")
 
 }
 
-Server::Server(std::string port, std::string pwd) : _port(port), _pwd(pwd), _host("localhost")
+Server::Server(std::string port, std::string pwd) : _port(port), _host("localhost"), _pwd(pwd)
 {
 	_setUp();
 	_printIP(_host);
@@ -60,7 +60,7 @@ std::ostream &			operator<<(std::ostream & o, Server const & e)
 
 void	Server::_setUp(void)
 {
-	int					status;
+	int					fd;
 	struct addrinfo		hints;
 	struct addrinfo		*servinfo; // will point to the results
 
@@ -70,16 +70,25 @@ void	Server::_setUp(void)
 	hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
 	hints.ai_flags = AI_PASSIVE; // fill in my IP for me
 
-	if ((status = getaddrinfo(NULL, "3490", &hints, &servinfo)) !=0)
+	if (getaddrinfo(NULL, _port.c_str(), &hints, &servinfo))
+		throw std::runtime_error(ERR_GETADDR_INFO);
+
+	fd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
+	if (fd < 0)
+		throw std::runtime_error(ERR_OPEN_SOCKET);
+
+	if (bind(fd, servinfo->ai_addr, servinfo->ai_addrlen) < 0)
 	{
-		fprintf(stderr, "getaddrinfo error: %s\n",
-		gai_strerror(status));
-		exit(1);
+		close(fd);
+		throw std::runtime_error(ERR_BIND_SOCKET);	
 	}
-	// servinfo now points to a linked list of 1 or more struct
-	// addrinfos
-	// ... do everything until you don't need servinfo anymore
 	freeaddrinfo(servinfo); // free the linked-list
+	if (listen(fd, 1000) < 0)
+	{
+		close(fd);
+		throw std::runtime_error(ERR_LIST_SOCKET);
+	}
+	_listener = fd;
 }
 
 
@@ -88,12 +97,6 @@ int		Server::_printIP(std::string host)
 	struct addrinfo		hints, *res, *p;
 	int					status;
 	char				ipstr[INET6_ADDRSTRLEN];
-
-	if (!host)
-	{
-		fprintf(stderr,"usage: showip hostname\n");
-		return 1;
-	}
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
@@ -130,7 +133,7 @@ int		Server::_printIP(std::string host)
 	}
 
 	freeaddrinfo(res); // free the linked list
-
+	
 	return (0);
 }
 

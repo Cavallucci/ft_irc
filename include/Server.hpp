@@ -13,21 +13,7 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <netdb.h>
-# include <iostream>
-# include <string>
-# include <cstring>
-# define RED									"\033[1;31m"
-# define GRN									"\033[1;32m"
-# define YEL									"\033[1;33m"
-# define BLU									"\033[1;34m"
-# define MAG									"\033[1;35m"
-# define CYN									"\033[1;36m"
-# define WHT									"\033[1;37m"
-# define END									"\033[0m"
-# define CALL_MEMBER_FN(object,ptrToMember)		((object).*(ptrToMember))
+#include "irc.hpp"
 
 class Server
 {
@@ -39,8 +25,10 @@ class Server
 		Server &	operator=(Server const & rhs);
 	private:
 		std::string		_port;
-		std::string		_pwd;
 		std::string		_host;
+		std::string		_pwd;
+		int				_listener;
+
 		void			_setUp(void);
 		int				_printIP(std::string host);
 };

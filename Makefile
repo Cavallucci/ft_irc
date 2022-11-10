@@ -20,7 +20,9 @@ OBJ_DIR			= obj
 
 INC_DIR			= include
 
-SRC				= main.cpp
+SRC				= main.cpp \
+				  Server.cpp \
+				  Channel.cpp \
 
 OBJ				= $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
