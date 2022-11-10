@@ -6,13 +6,14 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 10:51:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/10 14:02:15 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_HPP
 # define IRC_HPP
 
+# include <cstdlib>
 # include <iostream>
 # include <string>
 # include <sys/types.h>
@@ -48,6 +49,7 @@ class Server;
 # define ERR_OPEN_SOCKET    "❌ Error while opening socket"
 # define ERR_BIND_SOCKET    "❌ Error while binding socket"
 # define ERR_LIST_SOCKET    "❌ Error while listening socket"
+# define ERR_EMPTY_PWD	    "❌ Error: an empty password has been provided"
 # define RUNNING            "✅ The server is up and running"
 
 #endif

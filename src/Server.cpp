@@ -19,7 +19,7 @@ Server::Server() : _port(""), _host(""), _pwd("")
 
 }
 
-Server::Server(std::string port, std::string pwd) : _port(port), _host("localhost"), _pwd(pwd)
+Server::Server(int port, std::string pwd) : _port(port), _pwd(pwd), _host("localhost")
 {
 	_setUp();
 	_printIP(_host);
