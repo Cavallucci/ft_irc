@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:20:15 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/04 17:57:01 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/10 10:46:14 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,14 @@
 
 int main(int argc, char **argv)
 {
+
+	// si 3 arg
+    // parsing arg 1
+    // parsing mdp
+    // verifier bool avec un "signal"
+    // faire tourner le server
+
+
 	try
 	{
 		if (argc != 3) {

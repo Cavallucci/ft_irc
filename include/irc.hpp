@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/04 17:57:22 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/10 10:51:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,13 @@
 
 # include <iostream>
 # include <string>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netdb.h>
+
 # include "Server.hpp"
+# include "Channel.hpp"
+# include "User.hpp"
 
 # define RED			"\033[1;31m"
 # define GRN			"\033[1;32m"

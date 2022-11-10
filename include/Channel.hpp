@@ -1,24 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
+/*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 11:00:04 by llalba           ###   ########.fr       */
+/*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
+/*   Updated: 2022/11/10 10:54:59 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef CHANNEL_HPP
+# define CHANNEL_HPP
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <netdb.h>
 # include <iostream>
 # include <string>
-# include <cstring>
 # define RED									"\033[1;31m"
 # define GRN									"\033[1;32m"
 # define YEL									"\033[1;33m"
@@ -29,26 +25,21 @@
 # define END									"\033[0m"
 # define CALL_MEMBER_FN(object,ptrToMember)		((object).*(ptrToMember))
 
-class Server
+class Channel
 {
 	public:
-		Server();
-		Server(std::string port, std::string pwd);
-		Server(const Server & src);
-		~Server();
-		Server &	operator=(Server const & rhs);
+		Channel();
+		Channel(const Channel & src);
+		~Channel();
+		Channel &	operator=(Channel const & rhs);
 	private:
-		std::string		_port;
-		std::string		_pwd;
-		std::string		_host;
-		void			_setUp(void);
-		int				_printIP(std::string host);
+
 };
 
-std::ostream &	operator<<(std::ostream & o, Server const & e);
+std::ostream &	operator<<(std::ostream & o, Channel const & e);
 
-typedef int		(Server::*ServerFnPtr)( void );
+typedef int		(Channel::*ChannelFnPtr)( void );
 
-typedef int		(Server::*ServerCstFnPtr)( void ) const;
+typedef int		(Channel::*ChannelCstFnPtr)( void ) const;
 
 #endif
