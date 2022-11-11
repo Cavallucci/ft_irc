@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 12:44:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 13:25:59 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,10 @@ Server::Server() : _port(""), _host(""), _pwd("")
 {
 }
 
-Server::Server(std::string port, std::string pwd) : _port(port),
-_host("localhost"), _pwd(pwd)
+Server::Server(std::string port, std::string pwd) :
+_port(port), _host("localhost"), _pwd(pwd)
 {
+	_initCommands();
 	_setUp();
 	_printIP(_host);
 }
@@ -34,7 +35,6 @@ Server::Server(Server const & src)
 
 Server::~Server()
 {
-
 }
 
 //--------------------------------- OVERLOAD ----------------------------------
@@ -56,7 +56,7 @@ std::ostream &			operator<<(std::ostream & o, Server const & e)
 	return o;
 }
 
-//---------------------------------- METHODS ----------------------------------
+//--------------------------- SERVER SET UP METHODS ---------------------------
 
 void	Server::_setUp(void)
 {

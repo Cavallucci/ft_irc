@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 12:40:41 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 13:19:26 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@
 # include <unistd.h>
 # include <map>
 
+class User;
+class Server;
+class Channel;
+
 # include "Server.hpp"
 # include "Channel.hpp"
 # include "User.hpp"
-
-class Server;
-class User;
-class Channel;
 
 # define RED			"\033[1;31m"
 # define GRN			"\033[1;32m"
