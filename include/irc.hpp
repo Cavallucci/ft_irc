@@ -6,19 +6,20 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 14:02:15 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 12:27:56 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_HPP
 # define IRC_HPP
 
-# include <cstdlib>
-# include <iostream>
+# include <cstdlib>			// EXIT_SUCCESS & EXIT_FAILURE
+# include <iostream>		// std::cout
 # include <string>
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netdb.h>
+# include <map>
 
 # include "Server.hpp"
 # include "Channel.hpp"

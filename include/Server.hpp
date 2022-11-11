@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 14:03:47 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 12:26:12 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <iostream>
 # include <string>
 # include <cstring>
+# include "User.hpp"
 # define RED									"\033[1;31m"
 # define GRN									"\033[1;32m"
 # define YEL									"\033[1;33m"
@@ -38,17 +39,14 @@ class Server
 		~Server();
 		Server &	operator=(Server const & rhs);
 	private:
-		int				_port;
-		std::string		_pwd;
-		std::string		_host;
-		void			_setUp(void);
-		int				_printIP(std::string host);
+		int									_port;
+		std::string							_pwd;
+		std::string							_host;
+		std::map<std::string, UserFnPtr>	_commands;
+		void								_setUp(void);
+		int									_printIP(std::string host);
 };
 
 std::ostream &	operator<<(std::ostream & o, Server const & e);
-
-typedef int		(Server::*ServerFnPtr)( void );
-
-typedef int		(Server::*ServerCstFnPtr)( void ) const;
 
 #endif

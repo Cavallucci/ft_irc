@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 10:54:59 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 12:23:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,5 @@ class Channel
 };
 
 std::ostream &	operator<<(std::ostream & o, Channel const & e);
-
-typedef int		(Channel::*ChannelFnPtr)( void );
-
-typedef int		(Channel::*ChannelCstFnPtr)( void ) const;
 
 #endif
