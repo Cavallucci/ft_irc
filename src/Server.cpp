@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 13:25:59 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 16:34:35 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,13 @@ void	Server::_serverConnect(void)
 			//
 }
 
+bool	Server::_parseInput(User *user)
+{
+	if (!user->setInput()) // the user has disconnected or an error occurred
+		return false;
+	return true;
+	// _handleCmd
+
+}
 
 //---------------------------- ACCESSORS & MUTATORS ---------------------------
