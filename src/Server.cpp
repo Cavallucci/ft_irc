@@ -21,9 +21,9 @@ Server::Server() : _port(""), _host(""), _pwd("")
 Server::Server(std::string port, std::string pwd) :
 _port(port), _host("localhost"), _pwd(pwd)
 {
+	_serverSetUp();
 	_initCommands();
-	_setUp();
-	_printIP(_host);
+	_serverConnect();
 }
 
 Server::Server(Server const & src)
@@ -58,7 +58,7 @@ std::ostream &			operator<<(std::ostream & o, Server const & e)
 
 //--------------------------- SERVER SET UP METHODS ---------------------------
 
-void	Server::_setUp(void)
+void	Server::_serverSetUp(void)
 {
 	int					fd;
 	struct addrinfo		hints;
@@ -91,50 +91,29 @@ void	Server::_setUp(void)
 	_listener = fd;
 }
 
-
-int		Server::_printIP(std::string host)
+void	Server::_serverConnect(void)
 {
-	struct addrinfo		hints, *res;
-	int					status;
-//	char				ipstr[INET6_ADDRSTRLEN];
-
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
-	hints.ai_socktype = SOCK_STREAM;
-
-	if ((status = getaddrinfo(host.c_str(), NULL, &hints, &res)) != 0)
-	{
-		throw std::runtime_error(ERR_GETADDR_INFO);
-		return 2;
-	}
-
-	printf("IP addresses for %s:\n\n", host.c_str());
-
-	// for(p = res;p != NULL; p = p->ai_next)
-	// {
-	// 	void *addr;
-	// 	char *ipver;
-
-	// 	// get the pointer to the address itself,
-	// 	// different fields in IPv4 and IPv6:
-	// 	if (p->ai_family == AF_INET) { // IPv4
-	// 		struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
-	// 		addr = &(ipv4->sin_addr);
-	// 		ipver = "IPv4";
-	// 	} else { // IPv6
-	// 		struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
-	// 		addr = &(ipv6->sin6_addr);
-	// 		ipver = "IPv6";
-	// 	}
-
-	// 	// convert the IP to a string and print it:
-	// 	// inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr); // forbidden function!
-	// 	printf("  %s: %s\n", ipver, ipstr);
-	// }
-
-	freeaddrinfo(res); // free the linked list
-
-	return (0);
+	//poll
+	//client connect :
+		//accepted()
+		//adduser :
+			//push_back()
+			//insert
+		//getnameinfo
+	//client msg :
+		//getmessage :
+			//clearmsg
+			//rfind
+			//recv
+			//append
+			//setmessage
+		//deleteuser :
+			//erase
+			//partcmd : ?
+				//
+		//handlecmd : ?
+			//
 }
+
 
 //---------------------------- ACCESSORS & MUTATORS ---------------------------

@@ -33,8 +33,8 @@ class Server
 		int									_listener;
 		std::map<std::string, ServerFnPtr>	_commands;
 		// Server set up methods
-		void								_setUp(void);
-		int									_printIP(std::string host);
+		void								_serverSetUp(void);
+		void								_serverConnect(void);
 		// Methods related to commands management
 		void								_initCommands(void);
 		void								msgCmd(User* user);
