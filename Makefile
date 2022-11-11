@@ -6,7 +6,7 @@
 #    By: llalba <llalba@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/19 13:33:48 by llalba            #+#    #+#              #
-#    Updated: 2022/11/11 13:07:37 by llalba           ###   ########.fr        #
+#    Updated: 2022/11/11 16:45:57 by llalba           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRC				= main.cpp \
 				Server.cpp \
 				Channel.cpp \
 				commands.cpp \
+				User.cpp
 
 OBJ				= $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 

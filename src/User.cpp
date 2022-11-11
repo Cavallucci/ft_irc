@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 16:28:55 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 17:07:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ bool				User::setInput(void)
 		if (bytes <= 0)
 		{
 			if (!bytes)
-				std::cout << EOS << getFd() << std::endl;
+				std::cout << RECV_ZERO << getFd() << std::endl;
 			else
 				std::cerr << RED ERR_RECV << getFd() << END << std::endl;
 			return (false);
