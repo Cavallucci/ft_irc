@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 13:24:13 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 14:22:28 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ class Server
 		// Server set up methods
 		void								_setUp(void);
 		int									_printIP(std::string host);
+		bool								_parseInput(User *user);
 		// Methods related to commands management
 		void								_initCommands(void);
-		void								msgCmd(User* user);
+		void								msgCmd(User *user);
 };
 
 std::ostream &	operator<<(std::ostream & o, Server const & e);

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 13:25:59 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 16:22:10 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,15 @@ int		Server::_printIP(std::string host)
 	freeaddrinfo(res); // free the linked list
 
 	return (0);
+}
+
+bool	Server::_parseInput(User *user)
+{
+	if (!user->setInput()) // the user has disconnected or an error occurred
+		return false;
+	return true;
+	// _handleCmd
+
 }
 
 //---------------------------- ACCESSORS & MUTATORS ---------------------------
