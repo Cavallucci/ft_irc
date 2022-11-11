@@ -24,6 +24,7 @@ SRC				= main.cpp \
 				Server.cpp \
 				Channel.cpp \
 				commands.cpp \
+				User.cpp
 
 OBJ				= $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 

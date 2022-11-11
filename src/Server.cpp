@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 
+bool running;
 //-------------------------------- CONSTRUCTORS -------------------------------
 
 Server::Server() : _port(""), _host(""), _pwd("")
@@ -93,32 +94,50 @@ void	Server::_serverSetUp(void)
 
 void	Server::_serverConnect(void)
 {
-	//poll
-	//client connect :
-		//accepted()
-		//adduser :
-			//push_back()
-			//insert
-		//getnameinfo
-	//client msg :
-		//getmessage :
-			//clearmsg
-			//rfind
-			//recv
-			//append
-			//setmessage
-		//deleteuser :
-			//erase
-			//partcmd : ?
+	struct pollfd fd_server = 
+	{
+		//the socket descriptor :
+		_listener,
+		//events we're interest in :
+		POLLIN,
+		//poll returns :
+		0
+	};
+	_pfds.push_back(fd_server);
+
+	std::cout << "Waiting for clients..." << std::endl;
+
+	while (running)
+	{
+		//poll
+		//client connect :
+			//accepted()
+			//adduser :
+				//push_back()
+				//insert
+			//getnameinfo
+		//client msg :
+			//getmessage :
+				//clearmsg
+				//rfind
+				//recv
+				//append
+				//setmessage
+			//deleteuser :
+				//erase
+				//partcmd : ?
+					//
+			//handlecmd : ?
 				//
-		//handlecmd : ?
-			//
+	}
+	std::cout << "OK" << std::endl;
 }
 
 bool	Server::_parseInput(User *user)
 {
-	if (!user->setInput()) // the user has disconnected or an error occurred
-		return false;
+	(void) user;
+	// if (!user->setInput()) // the user has disconnected or an error occurred
+	// 	return false;
 	return true;
 	// _handleCmd
 

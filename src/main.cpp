@@ -12,6 +12,8 @@
 
 #include "irc.hpp"
 
+extern bool running;
+
 int main(int argc, char **argv)
 {
 	// verifier bool avec un "signal"
@@ -36,6 +38,7 @@ int main(int argc, char **argv)
 		{
 			throw std::runtime_error(ERR_EMPTY_PWD);
 		}
+		running = true;
 		std::string		password = argv[2];
 		Server	server(argv[1], password);
 		// server.start();

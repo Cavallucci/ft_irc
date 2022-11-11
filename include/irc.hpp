@@ -25,6 +25,7 @@
 # include <cstring>
 # include <unistd.h>
 # include <map>
+# include <vector>
 
 class User;
 class Server;

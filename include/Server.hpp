@@ -18,6 +18,7 @@
 class Server
 {
 	public:
+		typedef 							std::vector<pollfd>::iterator pfds_it;
 		typedef void						(Server::*ServerFnPtr)( User * );
 		Server();
 		Server(std::string port, std::string pwd);
@@ -32,6 +33,7 @@ class Server
 		std::string							_pwd;
 		int									_listener;
 		std::map<std::string, ServerFnPtr>	_commands;
+		std::vector<struct pollfd>			_pfds;
 		// Server set up methods
 		void								_serverSetUp(void);
 		void								_serverConnect(void);
