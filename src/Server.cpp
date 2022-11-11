@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 17:56:15 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 18:10:59 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ bool	Server::_parseInput(User *user)
 	try {
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
-		// user->reply(ERR_CMD_NOT_FOUND(user->getNickname(), cmd_str));
+		user->reply(ERR_CMD_NOT_FOUND(user->getNickname(), cmd_str));
 	}
 	return true;
 }

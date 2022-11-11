@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 16:28:56 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 18:10:33 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ class User
 		User &	operator=(User const & rhs);
 		std::string			getInput(void);
 		int					getFd(void);
+		std::string			getNickname(void);
 		bool				setInput(void);
 		void				resetInput(void);
+		void				reply(std::string msg);
 	private:
 		std::string			_nickname;
 		std::string			_input;

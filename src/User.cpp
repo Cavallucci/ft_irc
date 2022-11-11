@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 17:07:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 18:10:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,10 @@ std::ostream &			operator<<(std::ostream & o, User const & e)
 
 //---------------------------------- METHODS ----------------------------------
 
-
-
-
+void	User::reply(std::string msg)
+{
+	msg.append("\r\n");
+}
 
 //---------------------------- ACCESSORS & MUTATORS ---------------------------
 
@@ -66,6 +67,11 @@ std::string			User::getInput(void)
 int					User::getFd(void)
 {
 	return _fd;
+}
+
+std::string			User::getNickname(void)
+{
+	return _nickname;
 }
 
 bool				User::setInput(void)

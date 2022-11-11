@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 17:52:52 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 18:26:09 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class Channel;
 
 // list of numeric replies sent by the server
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
-# define ERR_CMD_NOT_FOUND(nick, cmd)			":IRC 421 :" nick " " cmd " :Unknown command"
+# define IRC(code)								":IRC " code ":"
+# define ERR_CMD_NOT_FOUND(nick, cmd)			IRC("421") + nick + " " + cmd + " :Unknown command"
 
 #endif
