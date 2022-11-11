@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 10:55:02 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 12:23:13 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@ class User
 
 std::ostream &	operator<<(std::ostream & o, User const & e);
 
-typedef int		(User::*UserFnPtr)( void );
-
-typedef int		(User::*UserCstFnPtr)( void ) const;
+typedef int		(User::*UserFnPtr)( User * );
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/10 11:02:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/11 12:44:29 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ Server::Server() : _port(""), _host(""), _pwd("")
 {
 }
 
-Server::Server(std::string port, std::string pwd) : _port(port), _host("localhost"), _pwd(pwd)
+Server::Server(std::string port, std::string pwd) : _port(port),
+_host("localhost"), _pwd(pwd)
 {
 	_setUp();
 	_printIP(_host);
@@ -79,7 +80,7 @@ void	Server::_setUp(void)
 	if (bind(fd, servinfo->ai_addr, servinfo->ai_addrlen) < 0)
 	{
 		close(fd);
-		throw std::runtime_error(ERR_BIND_SOCKET);	
+		throw std::runtime_error(ERR_BIND_SOCKET);
 	}
 	freeaddrinfo(servinfo); // free the linked-list
 	if (listen(fd, 1000) < 0)
@@ -132,7 +133,7 @@ int		Server::_printIP(std::string host)
 	// }
 
 	freeaddrinfo(res); // free the linked list
-	
+
 	return (0);
 }
 
