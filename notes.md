@@ -79,7 +79,21 @@ There are mainly 2 types of Internet sockets: "*stream sockets*"  (`SOCK_STREAM`
 
 Endianness is the order or sequence of bytes of a word of digital data in computer memory. It is primarily expressed as **big-endian** or **little-endian**. A big-endian system stores the most significant byte of a word at the smallest memory address (left to right). Intel-compatible processor store the bytes reversed. The more-sane Big-Endian is also called **Network Byte Order**. Our computers store numbers in **Host Byte Order**. Depending on the machine, host byte order can be either big-endian or little-endian.
 
+## Testing
 
+Install `irssi` and `miniircd` (for instance) with the following commands:
+```bash
+sudo apt-get install irssi
+git clone https://github.com/jrosdahl/miniircd.git
+cd miniircd
+```
+Split your terminal and start the executables with the command `iirc` on one hand and `./miniircd --ports PORT_NUMBER` on the other hand.
+On the IRSSI side, enter:
+```
+/network add NET_NAME
+/server add -network NET_NAME localhost PORT_NUMBER
+/connect NET_NAME
+```
 
 http://chi.cs.uchicago.edu/chirc/irc_examples.html
 
