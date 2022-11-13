@@ -40,6 +40,7 @@ int main(int argc, char **argv)
 		}
 		running = true;
 		std::string		password = argv[2];
+		
 		Server	server(argv[1], password);
 		// server.start();
 		return (EXIT_SUCCESS);
