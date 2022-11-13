@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 16:35:34 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 21:52:54 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,12 @@ void	Server::_serverConnect(void)
 	std::cout << "OK" << std::endl;
 }
 
+char	Server::_ascii_to_lower(char in) {
+	if (in <= 'Z' && in >= 'A')
+		return in - ('Z' - 'z');
+	return in;
+}
+
 bool	Server::_parseInput(User *user)
 {
 	if (!user->setInput()) // the user has disconnected or an error occurred
@@ -155,6 +161,8 @@ bool	Server::_parseInput(User *user)
 		}
 	}
 	try {
+		for (size_t i = 0; i < cmd_str.size(); i++) // to lower case
+			cmd_str[i] = _ascii_to_lower(cmd_str[i]);
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
 		user->reply(IRC_CMD_NOT_FOUND(user->getNickname(), cmd_str));

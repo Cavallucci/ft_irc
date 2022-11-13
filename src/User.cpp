@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 16:21:26 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 23:01:45 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,11 @@ bool				User::setInput(void)
 	while (_input.rfind("  ") != std::string::npos) // removes duplicate spaces
 		_input.replace(_input.find("  "), 2, " ");
 	return (true);
+}
+
+void				User::setNickname(std::string nick)
+{
+	_nickname = nick;
 }
 
 bool				User::setArgs(str_vec args)

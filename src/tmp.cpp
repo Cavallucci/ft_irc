@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 		for (std::vector<std::string>::const_iterator i = args.begin(); i != args.end(); ++i)
 			std::cout << *i << std::endl;
 		std::cout << "]" << std::endl;
+		std::cout << "mon test: [" << args[0] << "]" << std::endl;
 	}
 	else
 		std::cout << "Wrong number of arguments" << std::endl;

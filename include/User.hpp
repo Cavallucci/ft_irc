@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 15:45:10 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 23:01:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class User
 		str_vec const &		getArgs(void) const;
 		bool				setInput(void);
 		bool				setArgs(str_vec);
+		void				setNickname(std::string nick);
 		void				resetInput(void);
 		void				reply(std::string msg);
 	private:

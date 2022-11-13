@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 16:17:36 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 22:58:15 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,10 @@ typedef std::vector<std::string>	str_vec;
 
 // list of numeric replies sent by the server
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
-# define IRC(code)								":IRC " code ":"
+# define IRC(code)								":IRC " code " :"
 # define IRC_CMD_NOT_FOUND(nick, cmd)			IRC("421") + nick + " " + cmd + " :Unknown command"
 # define IRC_TOO_MANY_PARAM						"There cannot be more than 15 parameters in your command"
+# define IRC_NO_NICK							IRC(431) + "No nickname given"
+# define IRC_NICK_USED							IRC(433) + nick + ":Nickname is already in use"
 
 #endif

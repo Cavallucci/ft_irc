@@ -82,19 +82,36 @@ Endianness is the order or sequence of bytes of a word of digital data in comput
 ## Testing
 
 Install `irssi` and `miniircd` (for instance) with the following commands:
+
 ```bash
 sudo apt-get install irssi
 git clone https://github.com/jrosdahl/miniircd.git
 cd miniircd
 ```
-Split your terminal and start the executables with the command `iirc` on one hand and `./miniircd --ports PORT_NUMBER` on the other hand.
+
+Split your terminal and start the executables with the command `iirc` on one hand and `./miniircd --verbose --ports PORT_NUMBER` on the other hand.
 On the IRSSI side, enter:
-```
+
+```irc
 /network add NET_NAME
 /server add -network NET_NAME localhost PORT_NUMBER
 /connect NET_NAME
 ```
 
-http://chi.cs.uchicago.edu/chirc/irc_examples.html
+https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands#PING
+
+http://chi.cs.uchicago.edu/chirc/irc.html
 
 https://beej.us/guide/bgnet/html/#client-server-background
+
+https://github.com/jmartini89/42_irc
+
+https://github.com/barimehdi77/ft_irc
+
+https://ircgod.com
+
+https://wiki.ircnow.org/index.php?n=Netcat.Irc
+
+https://phil.lavin.me.uk/2012/02/how-to-use-netcat-a-netcat-tutorial/
+
+https://gist.github.com/vivien/3b1c2efb80f3f3dde001

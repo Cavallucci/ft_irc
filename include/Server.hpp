@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 15:14:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 23:02:28 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,13 @@ class Server
 		int									_listener;
 		std::map<std::string, ServerFnPtr>	_commands;
 		std::vector<struct pollfd>			_pfds;
+		std::vector<>						_users;
 		// Server set up methods
 		void								_serverSetUp(void);
 		void								_serverConnect(void);
 		bool								_parseInput(User *user);
 		// Methods related to commands management
+		char								_ascii_to_lower(char in);
 		void								_initCommands(void);
 		void								msgCmd(User *user);
 };
