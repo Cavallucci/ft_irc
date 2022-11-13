@@ -88,6 +88,12 @@ git clone https://github.com/jrosdahl/miniircd.git
 cd miniircd
 ```
 Split your terminal and start the executables with the command `iirc` on one hand and `./miniircd --ports PORT_NUMBER` on the other hand.
+On the IRSSI side, enter:
+```
+/network add NET_NAME
+/server add -network NET_NAME localhost PORT_NUMBER
+/connect NET_NAME
+```
 
 http://chi.cs.uchicago.edu/chirc/irc_examples.html
 

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 15:51:24 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 16:35:34 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ void	Server::_serverConnect(void)
 bool	Server::_parseInput(User *user)
 {
 	if (!user->setInput()) // the user has disconnected or an error occurred
-		return false; // we'll remove the user iterator
+		return false; // we're going to remove the user iterator
 	std::string::size_type	pos = user->getInput().find(' '); // might be string::npos
 	std::string				cmd_str = user->getInput().substr(0, pos);
 	if (user->getInput().length() != cmd_str.length())
