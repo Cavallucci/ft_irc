@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 13:31:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 15:51:50 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,5 @@ void	Server::_initCommands(void)
 
 void	Server::msgCmd(User* user)
 {
-	(void) user;
+	user->getArgs();
 }

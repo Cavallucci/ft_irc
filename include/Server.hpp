@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 18:25:15 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 15:14:46 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 class Server
 {
 	public:
-		typedef 							std::vector<pollfd>::iterator pfds_it;
-		typedef void						(Server::*ServerFnPtr)( User * );
+		typedef std::vector<pollfd>::iterator	pfds_it;
+		typedef void							(Server::*ServerFnPtr)( User * );
 		Server();
 		Server(std::string port, std::string pwd);
 		Server(const Server & src);

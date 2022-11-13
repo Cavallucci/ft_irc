@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 18:10:59 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/13 15:51:24 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,13 +136,28 @@ void	Server::_serverConnect(void)
 bool	Server::_parseInput(User *user)
 {
 	if (!user->setInput()) // the user has disconnected or an error occurred
-		return false; // remove user with iterator
-	std::string::size_type	pos = user->getInput().find(' ');
+		return false; // we'll remove the user iterator
+	std::string::size_type	pos = user->getInput().find(' '); // might be string::npos
 	std::string				cmd_str = user->getInput().substr(0, pos);
+	if (user->getInput().length() != cmd_str.length())
+	{
+		std::string			arg_str = user->getInput().substr(pos + 1);
+		std::stringstream	arg_stream(arg_str);
+		str_vec				args;
+		std::string			tmp;
+		while (getline(arg_stream, tmp, ' '))
+			args.push_back(tmp);
+		if (!user->setArgs(args))
+		{
+			std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
+			user->reply(IRC_TOO_MANY_PARAM);
+			return true;
+		}
+	}
 	try {
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
-		user->reply(ERR_CMD_NOT_FOUND(user->getNickname(), cmd_str));
+		user->reply(IRC_CMD_NOT_FOUND(user->getNickname(), cmd_str));
 	}
 	return true;
 }

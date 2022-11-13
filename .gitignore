@@ -1,5 +1,6 @@
 # executables
 ircserv
+*.out
 
 # valgrind outputs
 valgrind*.txt
