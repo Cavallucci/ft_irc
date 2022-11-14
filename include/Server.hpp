@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 23:02:28 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 12:16:14 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,18 @@ class Server
 		Server(const Server & src);
 		~Server();
 		Server &	operator=(Server const & rhs);
+		std::string							getName(void);
 
 	private:
 		// Class variables
 		std::string							_port;
 		std::string							_host;
 		std::string							_pwd;
+		std::string							_name;
 		int									_listener;
 		std::map<std::string, ServerFnPtr>	_commands;
 		std::vector<struct pollfd>			_pfds;
-		std::vector<>						_users;
+		usr_map								_users;
 		// Server set up methods
 		void								_serverSetUp(void);
 		void								_serverConnect(void);
@@ -42,7 +44,22 @@ class Server
 		// Methods related to commands management
 		char								_ascii_to_lower(char in);
 		void								_initCommands(void);
-		void								msgCmd(User *user);
+		void								_inviteCmd(User* user);
+		void								_joinCmd(User* user);
+		void								_kickCmd(User* user);
+		void								_listCmd(User* user);
+		void								_modeCmd(User* user);
+		void								_msgCmd(User* user);
+		void								_namesCmd(User* user);
+		void								_nickCmd(User* user);
+		void								_noticeCmd(User* user);
+		void								_partCmd(User* user);
+		void								_passCmd(User* user);
+		void								_pingCmd(User* user);
+		void								_quitCmd(User* user);
+		void								_topicCmd(User* user);
+		void								_userCmd(User* user);
+		void								_whoCmd(User* user);
 };
 
 std::ostream &	operator<<(std::ostream & o, Server const & e);

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 22:59:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 13:52:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,111 +15,111 @@
 void	Server::_initCommands(void)
 {
 	// by alphabetical order
-	_commands["invite"] = &Server::inviteCmd;
-	_commands["join"] = &Server::joinCmd;
-	_commands["kick"] = &Server::kickCmd;
-	_commands["list"] = &Server::listCmd;
-	_commands["mode"] = &Server::modeCmd;
-	_commands["msg"] = &Server::msgCmd;
-	_commands["names"] = &Server::namesCmd;
-	_commands["nick"] = &Server::nickCmd;
-	_commands["notice"] = &Server::noticeCmd;
-	_commands["part"] = &Server::partCmd;
-	_commands["pass"] = &Server::passCmd;
-	_commands["ping"] = &Server::pingCmd;
-	_commands["quit"] = &Server::quitCmd;
-	_commands["topic"] = &Server::topicCmd;
-	_commands["user"] = &Server::userCmd;
-	_commands["who"] = &Server::whoCmd;
+	_commands["invite"] = &Server::_inviteCmd;
+	_commands["join"] = &Server::_joinCmd;
+	_commands["kick"] = &Server::_kickCmd;
+	_commands["list"] = &Server::_listCmd;
+	_commands["mode"] = &Server::_modeCmd;
+	_commands["msg"] = &Server::_msgCmd;
+	_commands["names"] = &Server::_namesCmd;
+	_commands["nick"] = &Server::_nickCmd;
+	_commands["notice"] = &Server::_noticeCmd;
+	_commands["part"] = &Server::_partCmd;
+	_commands["pass"] = &Server::_passCmd;
+	_commands["ping"] = &Server::_pingCmd;
+	_commands["quit"] = &Server::_quitCmd;
+	_commands["topic"] = &Server::_topicCmd;
+	_commands["user"] = &Server::_userCmd;
+	_commands["who"] = &Server::_whoCmd;
 }
 
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
 
-void	Server::inviteCmd(User* user)
+void	Server::_inviteCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::joinCmd(User* user)
+void	Server::_joinCmd(User* user)
 {
 	// https://irssi.org/documentation/help/join/
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::kickCmd(User* user)
+void	Server::_kickCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::listCmd(User* user)
+void	Server::_listCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::modeCmd(User* user)
+void	Server::_modeCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::msgCmd(User* user)
+void	Server::_msgCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::namesCmd(User* user)
+void	Server::_namesCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::nickCmd(User* user)
+void	Server::_nickCmd(User* user)
 {
 	if (user->getArgs().size() < 1)
-		user->reply(IRC_NO_NICK);
+		user->reply(IRC_NO_NICK(user->getServer()));
 	std::string		nick = user->getArgs()[0];
-	for (size_t i = 0; i < _users; ++i)
-	{
-		if (nick == _users[i].getNickname())
-			user->reply(IRC_NICK_USED(nick));
-	}
-	user->setNickname(nick);
+	// for (size_t i = 0; i < _users; ++i)
+	// {
+	// 	if (nick == _users[i].getNick())
+	// 		user->reply(IRC_NICK_USED(user->getServer(), nick));
+	// } TODO
+	user->setNick(nick);
 }
 
-void	Server::noticeCmd(User* user)
+void	Server::_noticeCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::partCmd(User* user)
+void	Server::_partCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::passCmd(User* user)
+void	Server::_passCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::pingCmd(User* user)
+void	Server::_pingCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::quitCmd(User* user)
+void	Server::_quitCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::topicCmd(User* user)
+void	Server::_topicCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::userCmd(User* user)
+void	Server::_userCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
-void	Server::whoCmd(User* user)
+void	Server::_whoCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }

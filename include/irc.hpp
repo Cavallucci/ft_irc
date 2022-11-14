@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 22:58:15 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 13:51:14 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@ class Channel;
 
 # define CALL_MEMBER_FN(ptrToObject,ptrToMember)	((*ptrToObject).*(ptrToMember))
 
-typedef std::vector<std::string>	str_vec;
+typedef std::vector<std::string>			str_vec;
+typedef std::map<std::string, Channel *>	chan_map;
+typedef std::map<std::string, User *>		usr_map;
 
 # include "User.hpp"
 # include "Server.hpp"
@@ -61,16 +63,18 @@ typedef std::vector<std::string>	str_vec;
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_TOO_LONG							"❌ Message truncated to 512 bytes on socket "
 # define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
+# define ERR_CHANNEL_NOT_FOUND					"❌ There isn't any channel with this name!"
 # define RUNNING								"✅ The server is up and running"
 # define RECV_ZERO								"🤔 Command not ending with '\\r\\n' found on socket "
 # define BUFFER_SIZE							2048
 
 // list of numeric replies sent by the server
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
-# define IRC(code)								":IRC " code " :"
-# define IRC_CMD_NOT_FOUND(nick, cmd)			IRC("421") + nick + " " + cmd + " :Unknown command"
 # define IRC_TOO_MANY_PARAM						"There cannot be more than 15 parameters in your command"
-# define IRC_NO_NICK							IRC(431) + "No nickname given"
-# define IRC_NICK_USED							IRC(433) + nick + ":Nickname is already in use"
+# define IRC_CMD_NOT_FOUND(srv, nick, cmd)		":" + srv + " 421 :" + nick + " " + cmd + " :Unknown command"
+# define IRC_NO_NICK(srv)						":" + srv + " 431 :No nickname given"
+# define IRC_NICK_USED(srv, nick)				":" + srv + " 433 " + nick + " :Nickname is already in use"
+
+# define RPL_WELCOME(srv, nick, user, host)		":" + srv + " 001 " + nick + " :Welcome to the " + srv + " network, " + nick + "[" + user + "@" + host + "]"
 
 #endif

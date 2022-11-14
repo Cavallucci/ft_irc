@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 23:01:45 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 13:54:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,55 +14,121 @@
 
 //-------------------------------- CONSTRUCTORS -------------------------------
 
-User::User()
+User::User() : _nickname(""), _hostname(""), _username(""), _realname(""),
+_input(""), _welcomed(false), _fd(-1), _args(str_vec()), _channels(chan_map())
 {
-
 }
+
+// TODO custom constructor in Server
 
 User::User(User const & src)
 {
-	(void)src;
+	*this = src;
 }
 
 //-------------------------------- DESTRUCTORS --------------------------------
 
 User::~User()
 {
-
+	_args.clear();
+	clearChannels();
 }
 
 //--------------------------------- OVERLOAD ----------------------------------
 
 User &				User::operator=(User const & rhs)
 {
-	(void)rhs;
-	//if (this != &rhs)
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	if (this != &rhs)
+	{
+		this->setNick(rhs.getNick());
+		this->setHost(rhs.getHost());
+		this->setUser(rhs.getUser());
+		this->setReal(rhs.getReal());
+		this->setServer(rhs.getServer());
+		if (rhs.hasBeenWelcomed())
+			this->welcome(true);
+		this->setFd(rhs.getFd());
+		this->clearChannels();
+		chan_map	chan = rhs.getChannels();
+		for (chan_map::const_iterator it = chan.begin();
+		it != chan.end();
+		it++)
+			this->addChannel(it->first);
+	}
 	return *this;
 }
 
 std::ostream &			operator<<(std::ostream & o, User const & e)
 {
-	(void)e;
-	//o << "Value = " << e.getValue();
+	o << YEL "User(" << &e << ") 🔶" END << std::endl;
+	o << "🔸Nickname:			" << e.getNick() << std::endl;
+	o << "🔸Hostname:			" << e.getHost() << std::endl;
+	o << "🔸Username:			" << e.getUser() << std::endl;
+	o << "🔸Realname:			" << e.getReal() << std::endl;
+	o << "🔸Server:				" << e.getServer() << std::endl;
+	o << "🔸Has been welcomed:	" << e.hasBeenWelcomed() << std::endl;
+	o << "🔸File descriptor:	" << e.getFd() << std::endl;
+	o << "🔸Command parameters:	";
+	str_vec		args = e.getArgs();
+	for (str_vec::const_iterator it = args.begin(); it != args.end(); it++)
+		o << "[" << *it << "] ";
+	o << std::endl;
+	o << "🔸Channels:			";
+	chan_map	chan = e.getChannels();
+	for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
 	return o;
 }
 
 //---------------------------------- METHODS ----------------------------------
 
-void	User::reply(std::string msg)
+void				User::reply(std::string msg)
 {
-	msg.append("\r\n");
+	msg.append("\r\n"); // TODO
 }
 
-//---------------------------- ACCESSORS & MUTATORS ---------------------------
+void				User::welcome(bool silently)
+{
+	if (!silently)
+	{
+		reply(RPL_WELCOME(getServer(), getNick(), getUser(), \
+			getHost()));
+	}
+	_welcomed = true;
+}
 
-int					User::getFd(void) { return _fd; }
-std::string			User::getInput(void) { return _input; }
-std::string			User::getNickname(void) { return _nickname; }
+//---------------------------- ACCESSORS / GETTERS ----------------------------
+
+std::string			User::getNick(void) const { return _nickname; }
+std::string			User::getHost(void) const { return _hostname; }
+std::string			User::getUser(void) const { return _username; }
+std::string			User::getReal(void) const { return _realname; }
+std::string			User::getServer(void) const { return _server; }
+std::string			User::getInput(void) const { return _input; }
+bool				User::hasBeenWelcomed(void) const { return _welcomed; }
+int					User::getFd(void) const { return _fd; }
 str_vec const &		User::getArgs(void) const { return _args; }
+chan_map const		User::getChannels() const { return _channels; }
+Channel *			User::getChannel(std::string chan_name) const
+{
+	chan_map	chan = getChannels();
+	for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
+	{
+		if (it->first == chan_name)
+			return it->second;
+	}
+	throw std::out_of_range(ERR_CHANNEL_NOT_FOUND);
+}
+
+//----------------------------- MUTATORS / SETTERS ----------------------------
+
+void				User::setNick(std::string name) { _nickname = name; }
+void				User::setHost(std::string name) { _hostname = name; }
+void				User::setUser(std::string name) { _username = name; }
+void				User::setReal(std::string name) { _realname = name; }
+void				User::setServer(std::string name) { _server = name; }
+void				User::setFd(int fd) { _fd = fd; }
 
 bool				User::setInput(void)
 {
@@ -80,14 +146,14 @@ bool				User::setInput(void)
 				std::cout << RECV_ZERO << getFd() << std::endl;
 			else if (bytes < 0)
 				std::cerr << RED ERR_RECV << getFd() << END << std::endl;
-			return (false);
+			return (false); // an error occurred, somehow
 		}
 		_input.append(buf);
-		if (bytes > 512) // IRC messages are limited to 512 characters
+		if (bytes > 512)
 		{
 			std::cerr << RED ERR_TOO_LONG << getFd() << END << std::endl;
 			_input.erase(510, std::string::npos);
-			break ;
+			break ; // IRC messages are limited to 512 char including "\r\n"
 		}
 	}
 	if (_input.rfind("\r\n") == _input.length() - 2) // removes the final "\r\n"
@@ -99,21 +165,43 @@ bool				User::setInput(void)
 	return (true);
 }
 
-void				User::setNickname(std::string nick)
+void				User::resetInput(void)
 {
-	_nickname = nick;
+	_input.clear();
+	_args.clear();
 }
 
 bool				User::setArgs(str_vec args)
 {
 	if (args.size() > 15)
-	return (false);
+		return (false);
 	_args = args;
 	return (true);
 }
 
-void				User::resetInput(void)
+bool				User::addChannel(std::string chan_name)
 {
-	_input.clear();
-	_args.clear();
+	if (_channels.find(chan_name) == _channels.end()) {
+		Channel		*channel_ptr = NULL;
+		// TODO
+		_channels[chan_name] = channel_ptr;
+		return (true);
+	} else { // already joined
+		return (false);
+	}
+}
+
+bool				User::rmChannel(std::string chan_name)
+{
+	if (_channels.find(chan_name) == _channels.end()) {
+		return (false);
+	} else {
+		_channels.erase(chan_name);
+		return (true);
+	}
+}
+
+void				User::clearChannels()
+{
+	_channels.clear();
 }

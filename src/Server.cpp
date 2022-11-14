@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/13 21:52:54 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 13:48:34 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 bool running;
 //-------------------------------- CONSTRUCTORS -------------------------------
 
-Server::Server() : _port(""), _host(""), _pwd("")
+Server::Server() : _port(""), _host(""), _pwd(""), _name("IRC")
 {
 }
 
 Server::Server(std::string port, std::string pwd) :
-_port(port), _host("localhost"), _pwd(pwd)
+_port(port), _host("localhost"), _pwd(pwd), _name("IRC")
 {
 	_serverSetUp();
 	_initCommands();
@@ -165,9 +165,11 @@ bool	Server::_parseInput(User *user)
 			cmd_str[i] = _ascii_to_lower(cmd_str[i]);
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
-		user->reply(IRC_CMD_NOT_FOUND(user->getNickname(), cmd_str));
+		user->reply(IRC_CMD_NOT_FOUND(user->getServer(), user->getNick(), cmd_str));
 	}
 	return true;
 }
 
 //---------------------------- ACCESSORS & MUTATORS ---------------------------
+
+std::string		Server::getName(void) { return _name; }
