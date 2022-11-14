@@ -174,9 +174,8 @@ void	Server::_addUser(void)
 		_users.insert(std::make_pair(new_fd, new User(new_fd, &their_addr)));
 		
 		getnameinfo((struct sockaddr *)&their_addr, addr_size, host, INET6_ADDRSTRLEN,\
-		
 		serv, INET6_ADDRSTRLEN, 0); // Look up the host name and service name information for a given struct sockaddr
-		std::cout :: "New connexion from " << _host << ":" << port << " on socket " << new_fd << std::endl;
+		std::cout << "New connexion from " << _host << ":" << host << " on socket " << new_fd << std::endl;
 	}
 }
 

@@ -19,6 +19,7 @@ class User
 {
 	public:
 		User();
+		User(int fd, struct sockaddr_storage	*addr);
 		User(const User & src);
 		~User();
 		User &	operator=(User const & rhs);

@@ -15,16 +15,15 @@
 //-------------------------------- CONSTRUCTORS -------------------------------
 
 User::User() : _nickname(""), _hostname(""), _username(""), _realname(""),
-_input(""), _welcomed(false), _fd(-1), _args(str_vec()), _channels(chan_map(), _addr(NULL))
+_input(""), _welcomed(false), _fd(-1), _args(str_vec()), _channels(chan_map()), _addr(NULL)
 {
 }
 
 User::User(int fd, struct sockaddr_storage	*addr) : _nickname(""), _hostname("localhost"), _username(""), _realname(""),
-_input(""), _welcomed(false), _fd(fd), _args(str_vec()), _channels(chan_map(), _addr(addr))
+_input(""), _welcomed(false), _fd(fd), _args(str_vec()), _channels(chan_map()), _addr(addr)
 {
+	(void)_addr;
 }
-
-// TODO custom constructor in Server
 
 User::User(User const & src)
 {
