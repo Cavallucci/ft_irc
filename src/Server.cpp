@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 15:43:47 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 21:42:50 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	Server::_serverConnect(void)
 	_pfds.push_back(fd_server);
 
 	std::cout << "Waiting for clients..." << std::endl;
-
+	/*
 	while (running)
 	{
 		poll(_pfds.data(), _pfds.size(), -1);
@@ -162,6 +162,7 @@ void	Server::_serverConnect(void)
 	}
 	//_closeAll();
 	std::cout << "OK" << std::endl;
+	*/
 }
 
 char	Server::_ascii_to_lower(char in) {
@@ -187,7 +188,7 @@ bool	Server::_parseInput(User *user)
 		if (!user->setArgs(args))
 		{
 			std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
-			user->reply(IRC_TOO_MANY_PARAM);
+			user->reply(ERR_MORE_15_PARAM);
 			return true;
 		}
 	}
@@ -196,7 +197,7 @@ bool	Server::_parseInput(User *user)
 			cmd_str[i] = _ascii_to_lower(cmd_str[i]);
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
-		user->reply(IRC_CMD_NOT_FOUND(user->getServer(), user->getNick(), cmd_str));
+		user->reply(ERR_CMD_NOT_FOUND(user->getServer(), user->getNick(), cmd_str));
 	}
 	return true;
 }
@@ -227,6 +228,12 @@ User *			Server::_getUser(std::string nick) const
 	throw std::out_of_range(ERR_USER_NOT_FOUND);
 }
 
+bool			Server::_isIn(int fd) const
+{
+	if (_users.count(fd))
+		return (true);
+	return (false);
+}
 
 //----------------------------- MUTATORS / SETTERS ----------------------------
 
