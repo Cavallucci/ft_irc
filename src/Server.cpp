@@ -115,16 +115,7 @@ void	Server::_serverConnect(void)
 		{
 			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
 			{
-				std::cout << "PULLHUP\n";
-				if (User *user = _users.at(iterator->fd))
-				{
-					_users.erase(iterator->fd);
-					close(i);
-				}
-				_pfds.erase(iterator);
-				while (user->isInChan())
-					_partCmd()
-				
+				std::cout << "PULLHUP\n";	
 				//delUser :
 					//erase
 					//close
@@ -134,14 +125,10 @@ void	Server::_serverConnect(void)
 			if (iterator->revents & POLLIN) //returns && data is ready
 			{
 				std::cout << "PULLIN\n";
-				if (iterator == _listener)
+				if (iterator->fd == _listener)
 				{
-					//client connect :
-					//accepted()
-					//adduser :
-						//push_back()
-						//insert
-					//getnameinfo
+					_addUser();
+					
 				}
 				
 				//client msg :
@@ -162,6 +149,35 @@ void	Server::_serverConnect(void)
 	}
 	//_closeAll();
 	std::cout << "OK" << std::endl;
+}
+
+void	Server::_addUser(void)
+{
+	int						new_fd;
+	struct sockaddr_storage their_addr;
+	socklen_t				addr_size;
+	struct pollfd			pfd;
+	char					host[INET6_ADDRSTRLEN];
+	char					serv[1000];
+
+	addr_size = sizeof their_addr;
+	new_fd = accept(_listener, (struct sockaddr *)&their_addr, &addr_size);
+	if (new_fd == -1)
+		throw std::runtime_error(ERR_USER_FD);
+	else
+	{
+		pfd.fd = new_fd;
+		pfd.events = POLLIN;
+		pfd.revents = 0;
+		
+		_pfds.push_back(pfd);
+		_users.insert(std::make_pair(new_fd, new User(new_fd, &their_addr)));
+		
+		getnameinfo((struct sockaddr *)&their_addr, addr_size, host, INET6_ADDRSTRLEN,\
+		
+		serv, INET6_ADDRSTRLEN, 0); // Look up the host name and service name information for a given struct sockaddr
+		std::cout :: "New connexion from " << _host << ":" << port << " on socket " << new_fd << std::endl;
+	}
 }
 
 char	Server::_ascii_to_lower(char in) {

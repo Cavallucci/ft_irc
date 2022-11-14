@@ -36,7 +36,7 @@ class Channel;
 
 typedef std::vector<std::string>			str_vec;
 typedef std::map<std::string, Channel *>	chan_map;
-typedef std::map<std::string, User *>		usr_map;
+typedef std::map<int, User *>		usr_map;
 
 # include "User.hpp"
 # include "Server.hpp"
@@ -66,6 +66,7 @@ typedef std::map<std::string, User *>		usr_map;
 # define ERR_CHANNEL_NOT_FOUND					"❌ There isn't any channel with this name!"
 # define RUNNING								"✅ The server is up and running"
 # define RECV_ZERO								"🤔 Command not ending with '\\r\\n' found on socket "
+# define ERR_USER_FD                            "❌ Error while accepting user fd"
 # define BUFFER_SIZE							2048
 
 // list of numeric replies sent by the server

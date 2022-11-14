@@ -40,6 +40,7 @@ class Server
 		// Server set up methods
 		void								_serverSetUp(void);
 		void								_serverConnect(void);
+		void								_addUser(void);
 		bool								_parseInput(User *user);
 		// Methods related to commands management
 		char								_ascii_to_lower(char in);
