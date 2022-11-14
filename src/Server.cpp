@@ -13,6 +13,7 @@
 #include "Server.hpp"
 
 bool running;
+
 //-------------------------------- CONSTRUCTORS -------------------------------
 
 Server::Server() : _port(""), _host(""), _pwd(""), _name("IRC")
@@ -99,7 +100,7 @@ void	Server::_serverConnect(void)
 		//the socket descriptor :
 		_listener,
 		//events we're interest in :
-		POLLIN,
+		POLLIN, //---> Alert when data is ready to recv
 		//poll returns :
 		0
 	};
@@ -109,27 +110,57 @@ void	Server::_serverConnect(void)
 
 	while (running)
 	{
-		//poll
-		//client connect :
-			//accepted()
-			//adduser :
-				//push_back()
-				//insert
-			//getnameinfo
-		//client msg :
-			//getmessage :
-				//clearmsg
-				//rfind
-				//recv
-				//append
-				//setmessage
-			//deleteuser :
-				//erase
-				//partcmd : ?
-					//
-			//handlecmd : ?
-				//
+		poll(_pfds.data(), _pfds.size(), -1);
+		for (pfds_it iterator = _pfds.begin(); iterator != _pfds.end(); iterator++)
+		{
+			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
+			{
+				std::cout << "PULLHUP\n";
+				if (User *user = _users.at(iterator->fd))
+				{
+					_users.erase(iterator->fd);
+					close(i);
+				}
+				_pfds.erase(iterator);
+				while (user->isInChan())
+					_partCmd()
+				
+				//delUser :
+					//erase
+					//close
+					//_partCmd :
+						//
+			}
+			if (iterator->revents & POLLIN) //returns && data is ready
+			{
+				std::cout << "PULLIN\n";
+				if (iterator == _listener)
+				{
+					//client connect :
+					//accepted()
+					//adduser :
+						//push_back()
+						//insert
+					//getnameinfo
+				}
+				
+				//client msg :
+					//getmessage :
+						//clearmsg
+						//rfind
+						//recv
+						//append
+						//setmessage
+					//deleteuser :
+						//erase
+						//partcmd : ?
+							//
+					//handlecmd : ?
+						//
+			}
+		}
 	}
+	//_closeAll();
 	std::cout << "OK" << std::endl;
 }
 
