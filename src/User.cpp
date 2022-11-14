@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 13:54:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 15:40:27 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ bool				User::hasBeenWelcomed(void) const { return _welcomed; }
 int					User::getFd(void) const { return _fd; }
 str_vec const &		User::getArgs(void) const { return _args; }
 chan_map const		User::getChannels() const { return _channels; }
+
 Channel *			User::getChannel(std::string chan_name) const
 {
 	chan_map	chan = getChannels();

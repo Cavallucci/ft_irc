@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 13:48:34 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 15:43:47 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	Server::_serverConnect(void)
 				_pfds.erase(iterator);
 				while (user->isInChan())
 					_partCmd()
-				
+
 				//delUser :
 					//erase
 					//close
@@ -143,7 +143,7 @@ void	Server::_serverConnect(void)
 						//insert
 					//getnameinfo
 				}
-				
+
 				//client msg :
 					//getmessage :
 						//clearmsg
@@ -201,6 +201,41 @@ bool	Server::_parseInput(User *user)
 	return true;
 }
 
-//---------------------------- ACCESSORS & MUTATORS ---------------------------
+//---------------------------- ACCESSORS / GETTERS ----------------------------
 
-std::string		Server::getName(void) { return _name; }
+std::string		Server::_getName(void) const { return _name; }
+usr_map			Server::_getUsers() const { return _users; }
+chan_map		Server::_getChannels() const { return _channels; }
+
+User *			Server::_getUser(int fd) const
+{
+	for (usr_map::const_iterator it = _users.begin(); it != _users.end(); it++)
+	{
+		if (it->first == fd)
+			return it->second;
+	}
+	throw std::out_of_range(ERR_USER_NOT_FOUND);
+}
+
+User *			Server::_getUser(std::string nick) const
+{
+	for (usr_map::const_iterator it = _users.begin(); it != _users.end(); it++)
+	{
+		if (it->second->getNick() == nick)
+			return it->second;
+	}
+	throw std::out_of_range(ERR_USER_NOT_FOUND);
+}
+
+
+//----------------------------- MUTATORS / SETTERS ----------------------------
+
+void			Server::_addChannel(Channel *chan)
+{
+	(void)chan; // TODO
+}
+
+void			Server::_delChannel(Channel *chan)
+{
+	(void)chan; // TODO
+}

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 12:16:14 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 15:36:53 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ class Server
 		Server(const Server & src);
 		~Server();
 		Server &	operator=(Server const & rhs);
-		std::string							getName(void);
-
 	private:
 		// Class variables
 		std::string							_port;
@@ -37,6 +35,16 @@ class Server
 		std::map<std::string, ServerFnPtr>	_commands;
 		std::vector<struct pollfd>			_pfds;
 		usr_map								_users;
+		chan_map							_channels;
+		// Getters & accessors
+		std::string							_getName(void) const;
+		usr_map								_getUsers() const;
+		User *								_getUser(int fd) const;
+		User *								_getUser(std::string nick) const;
+		chan_map							_getChannels() const;
+		// Setters & mutators
+		void								_addChannel(Channel *chan);
+		void								_delChannel(Channel *chan);
 		// Server set up methods
 		void								_serverSetUp(void);
 		void								_serverConnect(void);

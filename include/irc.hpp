@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 13:51:14 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 15:39:39 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Channel;
 
 typedef std::vector<std::string>			str_vec;
 typedef std::map<std::string, Channel *>	chan_map;
-typedef std::map<std::string, User *>		usr_map;
+typedef std::map<int, User *>				usr_map;
 
 # include "User.hpp"
 # include "Server.hpp"
@@ -64,6 +64,7 @@ typedef std::map<std::string, User *>		usr_map;
 # define ERR_TOO_LONG							"❌ Message truncated to 512 bytes on socket "
 # define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
 # define ERR_CHANNEL_NOT_FOUND					"❌ There isn't any channel with this name!"
+# define ERR_USER_NOT_FOUND						"❌ There isn't any user with this nickname!"
 # define RUNNING								"✅ The server is up and running"
 # define RECV_ZERO								"🤔 Command not ending with '\\r\\n' found on socket "
 # define BUFFER_SIZE							2048

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 13:52:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 14:53:50 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,11 @@ void	Server::_nickCmd(User* user)
 	if (user->getArgs().size() < 1)
 		user->reply(IRC_NO_NICK(user->getServer()));
 	std::string		nick = user->getArgs()[0];
+	// for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
+	// {
+	// 	if (it->first == chan_name)
+	// 		return it->second;
+	// }
 	// for (size_t i = 0; i < _users; ++i)
 	// {
 	// 	if (nick == _users[i].getNick())
