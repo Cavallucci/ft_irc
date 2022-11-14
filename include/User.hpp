@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 13:52:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/14 14:55:00 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ class User
 		User(const User & src);
 		~User();
 		User &	operator=(User const & rhs);
-		// METHODS
+		// Methods
 		void								reply(std::string msg);
 		void								welcome(bool silently);
-		// ACCESSORS & MUTATORS
+		// Getters & accessors
 		std::string							getNick(void) const;
 		std::string							getHost(void) const;
 		std::string							getUser(void) const;
@@ -37,6 +37,7 @@ class User
 		str_vec const &						getArgs(void) const;
 		chan_map const						getChannels() const;
 		Channel *							getChannel(std::string) const;
+		// Setters & mutators
 		void								setNick(std::string name);
 		void								setHost(std::string name);
 		void								setUser(std::string name);
@@ -61,7 +62,7 @@ class User
 		int									_fd;
 		str_vec								_args;
 		chan_map							_channels;
-		// struct sockaddr_storage				*_addr; // TODO
+		struct sockaddr_storage				*_addr;
 };
 
 std::ostream &	operator<<(std::ostream & o, User const & e);
