@@ -124,31 +124,22 @@ void	Server::_serverConnect(void)
 			}
 			if (iterator->revents & POLLIN) //returns && data is ready
 			{
-				std::cout << "PULLIN\n";
 				if (iterator->fd == _listener)
 				{
 					_addUser();
-					
+					break;
 				}
-
-				//client msg :
-					//getmessage :
-						//clearmsg
-						//rfind
-						//recv
-						//append
-						//setmessage
-					//deleteuser :
-						//erase
-						//partcmd : ?
-							//
-					//handlecmd : ?
-						//
+				User		*user = _users.at(iterator->fd);
+				if (user->setInput() == false)
+					std::cout << "delete user\n";
+				//TODO _deleteUser(user);
 			}
+			if (iterator == _pfds.end())
+				break;
 		}
 	}
-	//_closeAll();
 	std::cout << "OK" << std::endl;
+	//_closeAll(); //TODO
 }
 
 void	Server::_addUser(void)
@@ -158,7 +149,7 @@ void	Server::_addUser(void)
 	socklen_t				addr_size;
 	struct pollfd			pfd;
 	char					host[INET6_ADDRSTRLEN];
-	char					serv[1000];
+	char					serv[INET6_ADDRSTRLEN]; // TODO a voir si 1000
 
 	addr_size = sizeof their_addr;
 	new_fd = accept(_listener, (struct sockaddr *)&their_addr, &addr_size);
