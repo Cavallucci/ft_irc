@@ -66,7 +66,6 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_CHANNEL_NOT_FOUND					"❌ There isn't any channel with this name!"
 # define ERR_USER_NOT_FOUND						"❌ There isn't any user with this nickname!"
 # define RUNNING								"✅ The server is up and running"
-# define RECV_ZERO								" Socket has hang up"
 # define ERR_USER_FD                            "❌ Error while accepting user fd"
 # define BUFFER_SIZE							2048
 

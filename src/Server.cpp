@@ -116,11 +116,7 @@ void	Server::_serverConnect(void)
 			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
 			{
 				std::cout << "PULLHUP\n";	
-				//delUser :
-					//erase
-					//close
-					//_partCmd :
-						//
+				_deleteUser(iterator);
 			}
 			if (iterator->revents & POLLIN) //returns && data is ready
 			{
@@ -131,8 +127,7 @@ void	Server::_serverConnect(void)
 				}
 				User		*user = _users.at(iterator->fd);
 				if (user->setInput() == false)
-					std::cout << "delete user\n";
-				//TODO _deleteUser(user);
+					_deleteUser(iterator);
 			}
 			if (iterator == _pfds.end())
 				break;
@@ -168,6 +163,21 @@ void	Server::_addUser(void)
 		serv, INET6_ADDRSTRLEN, 0); // Look up the host name and service name information for a given struct sockaddr
 		std::cout << "New connexion from " << _host << ":" << host << " on socket " << new_fd << std::endl;
 	}
+}
+
+void	Server::_deleteUser(pfds_it &it)
+{
+	User	*user = _users.at(it->fd);
+
+	if (it->fd > 0)
+	{
+		_users.erase(it->fd);
+		close(it->fd);
+	}
+	_pfds.erase(it);
+	// while (user->_channels.size() != 0)
+		//TODO supprimer des channels ou le user est present
+	delete user;
 }
 
 char	Server::_ascii_to_lower(char in) {

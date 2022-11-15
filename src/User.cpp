@@ -148,7 +148,7 @@ bool				User::setInput(void)
 		if (bytes <= 0)
 		{
 			if (!bytes)
-				std::cout << getFd() << RECV_ZERO << std::endl;
+				std::cout << getNick() << " on socket " << getFd() << " has hang up" << std::endl;
 			else if (bytes < 0)
 				std::cerr << RED ERR_RECV << getFd() << END << std::endl;
 			return (false); // an error occurred, somehow
