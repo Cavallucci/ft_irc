@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 16:51:07 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 18:15:58 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,13 +181,6 @@ void	Server::_deleteUser(pfds_it &it)
 	*/
 }
 
-char	Server::_ascii_to_lower(char in)
-{
-	if (in <= 'Z' && in >= 'A')
-		return in - ('Z' - 'z');
-	return in;
-}
-
 bool	Server::_parseInput(User *user)
 {
 	if (!user->setInput()) // the user has disconnected or an error occurred
@@ -196,12 +189,7 @@ bool	Server::_parseInput(User *user)
 	std::string				cmd_str = user->getInput().substr(0, pos);
 	if (user->getInput().length() != cmd_str.length())
 	{
-		std::string			arg_str = user->getInput().substr(pos + 1);
-		std::stringstream	arg_stream(arg_str);
-		str_vec				args;
-		std::string			tmp;
-		while (getline(arg_stream, tmp, ' '))
-			args.push_back(tmp);
+		str_vec				args = split_str(user->getInput().substr(pos + 1), ' ');
 		if (!user->setArgs(args))
 		{
 			std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
@@ -211,7 +199,7 @@ bool	Server::_parseInput(User *user)
 	}
 	try {
 		for (size_t i = 0; i < cmd_str.size(); i++) // to lower case
-			cmd_str[i] = _ascii_to_lower(cmd_str[i]);
+			cmd_str[i] = ascii_to_lower(cmd_str[i]);
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
 		user->reply(ERR_UNKNOWNCOMMAND(user->getServer(), user->getNick(), cmd_str));
@@ -232,7 +220,8 @@ User *			Server::getUser(int fd) const
 		if (it->first == fd)
 			return it->second;
 	}
-	throw std::out_of_range(ERR_USER_NOT_FOUND);
+	std::cerr << RED ERR_USER_FD_NOT_FOUND << fd << END << std::endl;
+	return NULL;
 }
 
 User *			Server::getUser(std::string nick) const
@@ -242,7 +231,8 @@ User *			Server::getUser(std::string nick) const
 		if (it->second->getNick() == nick)
 			return it->second;
 	}
-	throw std::out_of_range(ERR_USER_NOT_FOUND);
+	std::cerr << RED ERR_USER_NICK_NOT_FOUND << nick << END << std::endl;
+	return NULL;
 }
 
 bool			Server::fdAlreadyIn(int fd) const
@@ -250,6 +240,18 @@ bool			Server::fdAlreadyIn(int fd) const
 	if (_users.count(fd))
 		return (true);
 	return (false);
+}
+
+Channel *		Server::getChannel(std::string chan_name) const
+{
+	chan_map	chan = getChannels();
+	for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
+	{
+		if (it->first == chan_name)
+			return it->second;
+	}
+	std::cerr << RED ERR_CHANNEL_NOT_FOUND << chan_name << END << std::endl;
+	return NULL;
 }
 
 //----------------------------- MUTATORS / SETTERS ----------------------------

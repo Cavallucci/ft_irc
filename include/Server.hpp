@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 15:55:42 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 18:12:33 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Server
 		bool								fdAlreadyIn(int fd) const;
 		User *								getUser(std::string nick) const;
 		chan_map							getChannels() const;
+		Channel *							getChannel(std::string chan_name) const;
 		// Setters & mutators
 		void								addChannel(Channel *chan);
 		void								delChannel(Channel *chan);
@@ -54,7 +55,6 @@ class Server
 		//void								_clientHandle(pfds_it &iterator);
 		bool								_parseInput(User *user);
 		// Methods related to commands management
-		char								_ascii_to_lower(char in);
 		void								_initCommands(void);
 		void								_inviteCmd(User* user);
 		void								_joinCmd(User* user);

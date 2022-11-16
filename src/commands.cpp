@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 16:31:31 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 18:20:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	Server::_initCommands(void)
 INVITE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
 */
-void	Server::_inviteCmd(User* user)
+void	Server::_inviteCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NEEDMOREPARAMS
@@ -55,12 +55,23 @@ void	Server::_inviteCmd(User* user)
 JOIN command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.1
 */
-void	Server::_joinCmd(User* user)
+void	Server::_joinCmd(User *user)
 {
 	// TODO verifier que l'utilisateur a deja ete accueilli
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
 			user->getNick(), "JOIN"));
+	str_vec		chans = split_str(user->getArgs()[0], ',');
+	str_vec		passwords;
+	if (!user->getArgs().size() == 1)
+		passwords = split_str(user->getArgs()[1], ',');
+	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name)
+	{
+		if (!is_valid_channel_name(*name, user, getName()))
+			continue ;
+		Channel		*chan = getChannel(*name);
+	}
+
 	// ERR_NEEDMOREPARAMS
 	// ERR_BANNEDFROMCHAN
 	// ERR_INVITEONLYCHAN
@@ -76,7 +87,7 @@ void	Server::_joinCmd(User* user)
 KICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
-void	Server::_kickCmd(User* user)
+void	Server::_kickCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NEEDMOREPARAMS
@@ -91,14 +102,14 @@ void	Server::_kickCmd(User* user)
 LIST command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 */
-void	Server::_listCmd(User* user)
+void	Server::_listCmd(User *user)
 {
 
+	(void)user->getArgs(); // TODO
 	// ERR_NOSUCHSERVER
 	// RPL_LISTSTART
 	// RPL_LIST
 	// RPL_LISTEND
-	(void)user->getArgs(); // TODO
 }
 
 
@@ -106,7 +117,7 @@ void	Server::_listCmd(User* user)
 MODE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 */
-void	Server::_modeCmd(User* user)
+void	Server::_modeCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NEEDMOREPARAMS
@@ -129,7 +140,7 @@ void	Server::_modeCmd(User* user)
 PRIVMSG command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
 */
-void	Server::_msgCmd(User* user)
+void	Server::_msgCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NORECIPIENT
@@ -148,7 +159,7 @@ void	Server::_msgCmd(User* user)
 NAMES command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.5
 */
-void	Server::_namesCmd(User* user)
+void	Server::_namesCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// RPL_NAMREPLY
@@ -160,7 +171,7 @@ void	Server::_namesCmd(User* user)
 NICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.2
 */
-void	Server::_nickCmd(User* user)
+void	Server::_nickCmd(User *user)
 {
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NONICKNAMEGIVEN(user->getServer()));
@@ -182,7 +193,7 @@ void	Server::_nickCmd(User* user)
 NOTICE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2
 */
-void	Server::_noticeCmd(User* user)
+void	Server::_noticeCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NORECIPIENT
@@ -200,7 +211,7 @@ void	Server::_noticeCmd(User* user)
 PART command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.2
 */
-void	Server::_partCmd(User* user)
+void	Server::_partCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NEEDMOREPARAMS
@@ -213,7 +224,7 @@ void	Server::_partCmd(User* user)
 PASS command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.1
 */
-void	Server::_passCmd(User* user)
+void	Server::_passCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NEEDMOREPARAMS
@@ -225,7 +236,7 @@ void	Server::_passCmd(User* user)
 PING command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.6.2
 */
-void	Server::_pingCmd(User* user)
+void	Server::_pingCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NOORIGIN
@@ -237,7 +248,7 @@ void	Server::_pingCmd(User* user)
 QUIT command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.6
 */
-void	Server::_quitCmd(User* user)
+void	Server::_quitCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 }
@@ -247,7 +258,7 @@ void	Server::_quitCmd(User* user)
 TOPIC command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.4
 */
-void	Server::_topicCmd(User* user)
+void	Server::_topicCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 
@@ -263,7 +274,7 @@ void	Server::_topicCmd(User* user)
 USER command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.3
 */
-void	Server::_userCmd(User* user)
+void	Server::_userCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NEEDMOREPARAMS
@@ -275,7 +286,7 @@ void	Server::_userCmd(User* user)
 WHO command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.5.1
 */
-void	Server::_whoCmd(User* user)
+void	Server::_whoCmd(User *user)
 {
 	(void)user->getArgs(); // TODO
 	// ERR_NOSUCHSERVER
@@ -414,8 +425,8 @@ whois			-> displays information about users in the specified channels
 whowas			-> displays historical user information
 window			-> manipulates the window layout and positioning attributes
 
------------------------------ other IRC commands ------------------------------
+----------------------------- IRC server commands -----------------------------
 
-pass			-> 🔴🔵
-user			-> 🔴🔵
+PASS			-> 🔴🔵
+USER			-> 🔴🔵
 */

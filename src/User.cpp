@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 15:40:27 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 18:11:35 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,8 @@ Channel *			User::getChannel(std::string chan_name) const
 		if (it->first == chan_name)
 			return it->second;
 	}
-	throw std::out_of_range(ERR_CHANNEL_NOT_FOUND);
+	std::cerr << RED ERR_CHANNEL_NOT_FOUND << chan_name << END << std::endl;
+	return NULL;
 }
 
 //----------------------------- MUTATORS / SETTERS ----------------------------
