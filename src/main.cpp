@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:20:15 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/11 12:27:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 15:46:13 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 		}
 		running = true;
 		std::string		password = argv[2];
-		
+
 		Server	server(argv[1], password);
 		// server.start();
 		return (EXIT_SUCCESS);

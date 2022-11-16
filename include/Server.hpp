@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 15:36:53 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 15:47:39 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Server
 		std::string							_getName(void) const;
 		usr_map								_getUsers() const;
 		User *								_getUser(int fd) const;
+		bool								_fdAlreadyIn(int fd) const;
 		User *								_getUser(std::string nick) const;
 		chan_map							_getChannels() const;
 		// Setters & mutators

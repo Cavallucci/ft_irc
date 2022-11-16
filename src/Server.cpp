@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 15:43:47 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 15:48:29 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	Server::_serverConnect(void)
 	_pfds.push_back(fd_server);
 
 	std::cout << "Waiting for clients..." << std::endl;
-
+	/*
 	while (running)
 	{
 		poll(_pfds.data(), _pfds.size(), -1);
@@ -115,7 +115,7 @@ void	Server::_serverConnect(void)
 		{
 			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
 			{
-				std::cout << "PULLHUP\n";	
+				std::cout << "PULLHUP\n";
 				_deleteUser(iterator);
 			}
 			if (iterator->revents & POLLIN) //returns && data is ready
@@ -155,10 +155,10 @@ void	Server::_addUser(void)
 		pfd.fd = new_fd;
 		pfd.events = POLLIN;
 		pfd.revents = 0;
-		
+
 		_pfds.push_back(pfd);
 		_users.insert(std::make_pair(new_fd, new User(new_fd, &their_addr)));
-		
+
 		getnameinfo((struct sockaddr *)&their_addr, addr_size, host, INET6_ADDRSTRLEN,\
 		serv, INET6_ADDRSTRLEN, 0); // Look up the host name and service name information for a given struct sockaddr
 		std::cout << "New connexion from " << _host << ":" << host << " on socket " << new_fd << std::endl;
@@ -178,9 +178,11 @@ void	Server::_deleteUser(pfds_it &it)
 	// while (user->_channels.size() != 0)
 		//TODO supprimer des channels ou le user est present
 	delete user;
+	*/
 }
 
-char	Server::_ascii_to_lower(char in) {
+char	Server::_ascii_to_lower(char in)
+{
 	if (in <= 'Z' && in >= 'A')
 		return in - ('Z' - 'z');
 	return in;
@@ -203,7 +205,7 @@ bool	Server::_parseInput(User *user)
 		if (!user->setArgs(args))
 		{
 			std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
-			user->reply(IRC_TOO_MANY_PARAM);
+			user->reply(ERR_MORE_15_PARAM);
 			return true;
 		}
 	}
@@ -212,7 +214,7 @@ bool	Server::_parseInput(User *user)
 			cmd_str[i] = _ascii_to_lower(cmd_str[i]);
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
-		user->reply(IRC_CMD_NOT_FOUND(user->getServer(), user->getNick(), cmd_str));
+		user->reply(ERR_CMD_NOT_FOUND(user->getServer(), user->getNick(), cmd_str));
 	}
 	return true;
 }
@@ -243,6 +245,12 @@ User *			Server::_getUser(std::string nick) const
 	throw std::out_of_range(ERR_USER_NOT_FOUND);
 }
 
+bool			Server::_fdAlreadyIn(int fd) const
+{
+	if (_users.count(fd))
+		return (true);
+	return (false);
+}
 
 //----------------------------- MUTATORS / SETTERS ----------------------------
 

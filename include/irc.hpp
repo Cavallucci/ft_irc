@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 15:39:39 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 15:46:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,19 +62,19 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_BIND_SOCKET						"❌ Error while binding socket"
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_TOO_LONG							"❌ Message truncated to 512 bytes on socket "
-# define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
 # define ERR_CHANNEL_NOT_FOUND					"❌ There isn't any channel with this name!"
 # define ERR_USER_NOT_FOUND						"❌ There isn't any user with this nickname!"
+# define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
 # define RUNNING								"✅ The server is up and running"
 # define ERR_USER_FD                            "❌ Error while accepting user fd"
 # define BUFFER_SIZE							2048
 
 // list of numeric replies sent by the server
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
-# define IRC_TOO_MANY_PARAM						"There cannot be more than 15 parameters in your command"
-# define IRC_CMD_NOT_FOUND(srv, nick, cmd)		":" + srv + " 421 :" + nick + " " + cmd + " :Unknown command"
-# define IRC_NO_NICK(srv)						":" + srv + " 431 :No nickname given"
-# define IRC_NICK_USED(srv, nick)				":" + srv + " 433 " + nick + " :Nickname is already in use"
+# define ERR_MORE_15_PARAM						"There cannot be more than 15 parameters in your command"
+# define ERR_CMD_NOT_FOUND(srv, nick, cmd)		":" + srv + " 421 :" + nick + " " + cmd + " :Unknown command"
+# define ERR_NO_NICK(srv)						":" + srv + " 431 :No nickname given"
+# define ERR_NICK_USED(srv, nick)				":" + srv + " 436 :" + nick + " :Nickname collision KILL"
 
 # define RPL_WELCOME(srv, nick, user, host)		":" + srv + " 001 " + nick + " :Welcome to the " + srv + " network, " + nick + "[" + user + "@" + host + "]"
 

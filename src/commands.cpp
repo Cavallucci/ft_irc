@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 14:53:50 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 15:46:03 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	Server::_inviteCmd(User* user)
 void	Server::_joinCmd(User* user)
 {
 	// https://irssi.org/documentation/help/join/
+
 	(void)user->getArgs(); // TODO
 }
 
@@ -74,19 +75,14 @@ void	Server::_namesCmd(User* user)
 void	Server::_nickCmd(User* user)
 {
 	if (user->getArgs().size() < 1)
-		user->reply(IRC_NO_NICK(user->getServer()));
+		return user->reply(ERR_NO_NICK(user->getServer()));
 	std::string		nick = user->getArgs()[0];
-	// for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
-	// {
-	// 	if (it->first == chan_name)
-	// 		return it->second;
-	// }
-	// for (size_t i = 0; i < _users; ++i)
-	// {
-	// 	if (nick == _users[i].getNick())
-	// 		user->reply(IRC_NICK_USED(user->getServer(), nick));
-	// } TODO
+	if (_fdAlreadyIn(user->getFd()))
+		return user->reply(ERR_NICK_USED(_getName(), user->getNick()));
 	user->setNick(nick);
+	// TODO to check: user logged in, username set
+	if (!user->hasBeenWelcomed())
+		user->welcome(false);
 }
 
 void	Server::_noticeCmd(User* user)
