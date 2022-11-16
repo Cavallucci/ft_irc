@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 15:46:03 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 16:13:27 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,91 +35,187 @@ void	Server::_initCommands(void)
 
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
 
+/*
+INVITE command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
+*/
 void	Server::_inviteCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NEEDMOREPARAMS
+	// ERR_NOSUCHNICK
+	// ERR_NOTONCHANNEL
+	// ERR_USERONCHANNEL
+	// ERR_CHANOPRIVSNEEDED
+	// RPL_INVITING
+	// RPL_AWAY
 }
 
+/*
+JOIN command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.1
+*/
 void	Server::_joinCmd(User* user)
 {
+	// TODO verifier que l'utilisateur a deja ete accueilli
+	if (user->getArgs().size() < 1)
+		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
+			user->getNick(), "JOIN"));
 	// https://irssi.org/documentation/help/join/
 
-	(void)user->getArgs(); // TODO
+	// ERR_NEEDMOREPARAMS
+	// ERR_BANNEDFROMCHAN
+	// ERR_INVITEONLYCHAN
+	// ERR_BADCHANNELKEY
+	// ERR_CHANNELISFULL
+	// ERR_BADCHANMASK
+	// ERR_NOSUCHCHANNEL
+	// ERR_TOOMANYCHANNELS
+	// RPL_TOPIC
 }
 
+/*
+KICK command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
+*/
 void	Server::_kickCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+LIST command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
+*/
 void	Server::_listCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+MODE command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
+*/
 void	Server::_modeCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+PRIVMSG command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
+*/
 void	Server::_msgCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+NAMES command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.5
+*/
 void	Server::_namesCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+NICK command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.2
+*/
 void	Server::_nickCmd(User* user)
 {
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NO_NICK(user->getServer()));
 	std::string		nick = user->getArgs()[0];
-	if (_fdAlreadyIn(user->getFd()))
-		return user->reply(ERR_NICK_USED(_getName(), user->getNick()));
+	if (fdAlreadyIn(user->getFd()))
+		return user->reply(ERR_NICK_USED(getName(), user->getNick()));
 	user->setNick(nick);
 	// TODO to check: user logged in, username set
 	if (!user->hasBeenWelcomed())
 		user->welcome(false);
 }
 
+
+/*
+NOTICE command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2.
+*/
 void	Server::_noticeCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+PART command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.2
+*/
 void	Server::_partCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+PASS command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.1
+*/
 void	Server::_passCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+PING command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.6.2
+*/
 void	Server::_pingCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+QUIT command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.6
+*/
 void	Server::_quitCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+TOPIC command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.4
+*/
 void	Server::_topicCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+USER command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.3
+*/
 void	Server::_userCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
 }
 
+
+/*
+WHO command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.5.1
+*/
 void	Server::_whoCmd(User* user)
 {
 	(void)user->getArgs(); // TODO

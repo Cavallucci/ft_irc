@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 15:48:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 15:56:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,11 +221,11 @@ bool	Server::_parseInput(User *user)
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------
 
-std::string		Server::_getName(void) const { return _name; }
-usr_map			Server::_getUsers() const { return _users; }
-chan_map		Server::_getChannels() const { return _channels; }
+std::string		Server::getName(void) const { return _name; }
+usr_map			Server::getUsers() const { return _users; }
+chan_map		Server::getChannels() const { return _channels; }
 
-User *			Server::_getUser(int fd) const
+User *			Server::getUser(int fd) const
 {
 	for (usr_map::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
@@ -235,7 +235,7 @@ User *			Server::_getUser(int fd) const
 	throw std::out_of_range(ERR_USER_NOT_FOUND);
 }
 
-User *			Server::_getUser(std::string nick) const
+User *			Server::getUser(std::string nick) const
 {
 	for (usr_map::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
@@ -245,7 +245,7 @@ User *			Server::_getUser(std::string nick) const
 	throw std::out_of_range(ERR_USER_NOT_FOUND);
 }
 
-bool			Server::_fdAlreadyIn(int fd) const
+bool			Server::fdAlreadyIn(int fd) const
 {
 	if (_users.count(fd))
 		return (true);
@@ -254,12 +254,12 @@ bool			Server::_fdAlreadyIn(int fd) const
 
 //----------------------------- MUTATORS / SETTERS ----------------------------
 
-void			Server::_addChannel(Channel *chan)
+void			Server::addChannel(Channel *chan)
 {
 	(void)chan; // TODO
 }
 
-void			Server::_delChannel(Channel *chan)
+void			Server::delChannel(Channel *chan)
 {
 	(void)chan; // TODO
 }

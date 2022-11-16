@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 15:47:39 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 15:55:42 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,16 @@ class Server
 		Server(const Server & src);
 		~Server();
 		Server &	operator=(Server const & rhs);
+		// Getters & accessors
+		std::string							getName(void) const;
+		usr_map								getUsers() const;
+		User *								getUser(int fd) const;
+		bool								fdAlreadyIn(int fd) const;
+		User *								getUser(std::string nick) const;
+		chan_map							getChannels() const;
+		// Setters & mutators
+		void								addChannel(Channel *chan);
+		void								delChannel(Channel *chan);
 	private:
 		// Class variables
 		std::string							_port;
@@ -36,16 +46,6 @@ class Server
 		std::vector<struct pollfd>			_pfds;
 		usr_map								_users;
 		chan_map							_channels;
-		// Getters & accessors
-		std::string							_getName(void) const;
-		usr_map								_getUsers() const;
-		User *								_getUser(int fd) const;
-		bool								_fdAlreadyIn(int fd) const;
-		User *								_getUser(std::string nick) const;
-		chan_map							_getChannels() const;
-		// Setters & mutators
-		void								_addChannel(Channel *chan);
-		void								_delChannel(Channel *chan);
 		// Server set up methods
 		void								_serverSetUp(void);
 		void								_serverConnect(void);

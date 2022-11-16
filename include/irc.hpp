@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 15:46:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 16:01:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_CMD_NOT_FOUND(srv, nick, cmd)		":" + srv + " 421 :" + nick + " " + cmd + " :Unknown command"
 # define ERR_NO_NICK(srv)						":" + srv + " 431 :No nickname given"
 # define ERR_NICK_USED(srv, nick)				":" + srv + " 436 :" + nick + " :Nickname collision KILL"
+# define ERR_NEEDMOREPARAMS(srv, nick, cmd)		":" + srv + " 461 :" + nick + " " + cmd + " :Not enough parameters"
 
 # define RPL_WELCOME(srv, nick, user, host)		":" + srv + " 001 " + nick + " :Welcome to the " + srv + " network, " + nick + "[" + user + "@" + host + "]"
 
