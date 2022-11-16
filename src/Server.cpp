@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 15:56:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 16:51:07 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,7 @@ bool	Server::_parseInput(User *user)
 		if (!user->setArgs(args))
 		{
 			std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
-			user->reply(ERR_MORE_15_PARAM);
+			user->reply(ERR_15_PARAM);
 			return true;
 		}
 	}
@@ -214,7 +214,7 @@ bool	Server::_parseInput(User *user)
 			cmd_str[i] = _ascii_to_lower(cmd_str[i]);
 		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 	} catch (const std::out_of_range &e) {
-		user->reply(ERR_CMD_NOT_FOUND(user->getServer(), user->getNick(), cmd_str));
+		user->reply(ERR_UNKNOWNCOMMAND(user->getServer(), user->getNick(), cmd_str));
 	}
 	return true;
 }

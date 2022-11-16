@@ -115,3 +115,5 @@ https://wiki.ircnow.org/index.php?n=Netcat.Irc
 https://phil.lavin.me.uk/2012/02/how-to-use-netcat-a-netcat-tutorial/
 
 https://gist.github.com/vivien/3b1c2efb80f3f3dde001
+
+https://dd.ircdocs.horse/refs/commands/

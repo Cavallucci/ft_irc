@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 16:13:27 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/16 16:31:31 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,6 @@ void	Server::_joinCmd(User* user)
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
 			user->getNick(), "JOIN"));
-	// https://irssi.org/documentation/help/join/
-
 	// ERR_NEEDMOREPARAMS
 	// ERR_BANNEDFROMCHAN
 	// ERR_INVITEONLYCHAN
@@ -81,6 +79,11 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 void	Server::_kickCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NEEDMOREPARAMS
+	// ERR_NOSUCHCHANNEL
+	// ERR_BADCHANMASK
+	// ERR_CHANOPRIVSNEEDED
+	// ERR_NOTONCHANNEL
 }
 
 
@@ -90,6 +93,11 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 */
 void	Server::_listCmd(User* user)
 {
+
+	// ERR_NOSUCHSERVER
+	// RPL_LISTSTART
+	// RPL_LIST
+	// RPL_LISTEND
 	(void)user->getArgs(); // TODO
 }
 
@@ -101,6 +109,19 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 void	Server::_modeCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NEEDMOREPARAMS
+	// RPL_CHANNELMODEIS
+	// ERR_CHANOPRIVSNEEDED
+	// ERR_NOSUCHNICK
+	// ERR_NOTONCHANNEL
+	// ERR_KEYSET
+	// RPL_BANLIST
+	// RPL_ENDOFBANLIST
+	// ERR_UNKNOWNMODE
+	// ERR_NOSUCHCHANNEL
+	// ERR_USERSDONTMATCH
+	// RPL_UMODEIS
+	// ERR_UMODEUNKNOWNFLAG
 }
 
 
@@ -111,6 +132,15 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
 void	Server::_msgCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NORECIPIENT
+	// ERR_NOTEXTTOSEND
+	// ERR_CANNOTSENDTOCHAN
+	// ERR_NOTOPLEVEL
+	// ERR_WILDTOPLEVEL
+	// ERR_TOOMANYTARGETS
+	// ERR_NOSUCHNICK
+	// RPL_AWAY
+
 }
 
 
@@ -121,6 +151,8 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.5
 void	Server::_namesCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// RPL_NAMREPLY
+	// RPL_ENDOFNAMES
 }
 
 
@@ -131,24 +163,36 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.2
 void	Server::_nickCmd(User* user)
 {
 	if (user->getArgs().size() < 1)
-		return user->reply(ERR_NO_NICK(user->getServer()));
+		return user->reply(ERR_NONICKNAMEGIVEN(user->getServer()));
 	std::string		nick = user->getArgs()[0];
 	if (fdAlreadyIn(user->getFd()))
-		return user->reply(ERR_NICK_USED(getName(), user->getNick()));
+		return user->reply(ERR_NICKCOLLISION(getName(), user->getNick()));
 	user->setNick(nick);
 	// TODO to check: user logged in, username set
 	if (!user->hasBeenWelcomed())
 		user->welcome(false);
+	// ERR_NONICKNAMEGIVEN
+	// ERR_ERRONEUSNICKNAME
+	// ERR_NICKNAMEINUSE
+	// ERR_NICKCOLLISION
 }
 
 
 /*
 NOTICE command as described here:
-https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2.
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2
 */
 void	Server::_noticeCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NORECIPIENT
+	// ERR_NOTEXTTOSEND
+	// ERR_CANNOTSENDTOCHAN
+	// ERR_NOTOPLEVEL
+	// ERR_WILDTOPLEVEL
+	// ERR_TOOMANYTARGETS
+	// ERR_NOSUCHNICK
+	// RPL_AWAY
 }
 
 
@@ -159,6 +203,9 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.2
 void	Server::_partCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NEEDMOREPARAMS
+	// ERR_NOSUCHCHANNEL
+	// ERR_NOTONCHANNEL
 }
 
 
@@ -169,6 +216,8 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.1
 void	Server::_passCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NEEDMOREPARAMS
+	// ERR_ALREADYREGISTRED
 }
 
 
@@ -179,6 +228,8 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.6.2
 void	Server::_pingCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NOORIGIN
+	// ERR_NOSUCHSERVER
 }
 
 
@@ -199,6 +250,12 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.4
 void	Server::_topicCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+
+	// ERR_NEEDMOREPARAMS
+	// ERR_NOTONCHANNEL
+	// RPL_NOTOPIC
+	// RPL_TOPIC
+	// ERR_CHANOPRIVSNEEDED
 }
 
 
@@ -209,6 +266,8 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.3
 void	Server::_userCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NEEDMOREPARAMS
+	// ERR_ALREADYREGISTRED
 }
 
 
@@ -219,6 +278,9 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.5.1
 void	Server::_whoCmd(User* user)
 {
 	(void)user->getArgs(); // TODO
+	// ERR_NOSUCHSERVER
+	// RPL_WHOREPLY
+	// RPL_ENDOFWHO
 }
 
 /*
