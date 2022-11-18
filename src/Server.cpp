@@ -134,7 +134,6 @@ void	Server::_serverConnect(void)
 				break;
 		}
 	}
-	std::cout << "OK" << std::endl;
 	//_closeAll(); //TODO
 }
 
@@ -145,7 +144,7 @@ void	Server::_addUser(void)
 	socklen_t				addr_size;
 	struct pollfd			pfd;
 	char					host[INET6_ADDRSTRLEN];
-	char					serv[1000]; // TODO a voir si 1000
+	char					serv[INET6_ADDRSTRLEN]; // TODO a voir si 1000
 
 	addr_size = sizeof their_addr;
 	new_fd = accept(_listener, (struct sockaddr *)&their_addr, &addr_size);
@@ -176,8 +175,8 @@ void	Server::_deleteUser(pfds_it &it)
 		close(it->fd);
 	}
 	_pfds.erase(it);
-	// while (user->_channels.size() != 0)
-		//TODO supprimer des channels ou le user est present
+	while (user->getChannels().size() != 0)
+		_joinCmd(user);
 	delete user;
 }
 
