@@ -114,8 +114,8 @@ void	Server::_serverConnect(void)
 		{
 			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
 			{
-				std::cout << "PULLHUP\n";
 				_deleteUser(iterator);
+				std::cout << "User deleted" << std::endl;
 			}
 			if (iterator->revents & POLLIN) //returns && data is ready
 			{
@@ -125,10 +125,8 @@ void	Server::_serverConnect(void)
 					break;
 				}
 				User		*user = _users.at(iterator->fd);
-				if (user->setInput() == false)
+				if (_parseInput(user) == false)
 					_deleteUser(iterator);
-				else
-					_inviteCmd(user);
 			}
 			if (iterator == _pfds.end())
 				break;
@@ -186,6 +184,7 @@ bool	Server::_parseInput(User *user)
 		return false; // we're going to remove the user iterator
 	std::string::size_type	pos = user->getInput().find(' '); // might be string::npos
 	std::string				cmd_str = user->getInput().substr(0, pos);
+	std::cout << "im cmt str = \"" << cmd_str << "\"" << std::endl;;
 	if (user->getInput().length() != cmd_str.length())
 	{
 		str_vec				args = split_str(user->getInput().substr(pos + 1), ' ');
