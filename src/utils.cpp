@@ -21,6 +21,7 @@ char		ascii_to_lower(char in)
 
 str_vec		split_str(std::string initial, char delimiter)
 {
+	(void)delimiter; //TODO a enlever?
 	std::stringstream	arg_stream(initial);
 	str_vec				output;
 	std::string			tmp;

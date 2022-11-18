@@ -22,7 +22,6 @@ _input(""), _welcomed(false), _fd(-1), _args(str_vec()), _channels(chan_map()), 
 User::User(int fd, struct sockaddr_storage	*addr) : _nickname(""), _hostname("localhost"), _username(""), _realname(""),
 _input(""), _welcomed(false), _fd(fd), _args(str_vec()), _channels(chan_map()), _addr(addr)
 {
-	(void)_addr;
 }
 
 User::User(User const & src)
@@ -135,6 +134,7 @@ void				User::setUser(std::string name) { _username = name; }
 void				User::setReal(std::string name) { _realname = name; }
 void				User::setServer(std::string name) { _server = name; }
 void				User::setFd(int fd) { _fd = fd; }
+void				User::setAddr(struct sockaddr_storage *addr) { _addr = addr; }
 
 bool				User::setInput(void)
 {

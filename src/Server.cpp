@@ -107,7 +107,6 @@ void	Server::_serverConnect(void)
 	_pfds.push_back(fd_server);
 
 	std::cout << "Waiting for clients..." << std::endl;
-	/*
 	while (running)
 	{
 		poll(_pfds.data(), _pfds.size(), -1);
@@ -128,6 +127,8 @@ void	Server::_serverConnect(void)
 				User		*user = _users.at(iterator->fd);
 				if (user->setInput() == false)
 					_deleteUser(iterator);
+				else
+					_inviteCmd(user);
 			}
 			if (iterator == _pfds.end())
 				break;
@@ -144,7 +145,7 @@ void	Server::_addUser(void)
 	socklen_t				addr_size;
 	struct pollfd			pfd;
 	char					host[INET6_ADDRSTRLEN];
-	char					serv[INET6_ADDRSTRLEN]; // TODO a voir si 1000
+	char					serv[1000]; // TODO a voir si 1000
 
 	addr_size = sizeof their_addr;
 	new_fd = accept(_listener, (struct sockaddr *)&their_addr, &addr_size);
@@ -161,7 +162,7 @@ void	Server::_addUser(void)
 
 		getnameinfo((struct sockaddr *)&their_addr, addr_size, host, INET6_ADDRSTRLEN,\
 		serv, INET6_ADDRSTRLEN, 0); // Look up the host name and service name information for a given struct sockaddr
-		std::cout << "New connexion from " << _host << ":" << host << " on socket " << new_fd << std::endl;
+		std::cout << "New connexion from " << _host << ":" << serv << " on socket " << new_fd << std::endl;
 	}
 }
 
@@ -178,7 +179,6 @@ void	Server::_deleteUser(pfds_it &it)
 	// while (user->_channels.size() != 0)
 		//TODO supprimer des channels ou le user est present
 	delete user;
-	*/
 }
 
 bool	Server::_parseInput(User *user)

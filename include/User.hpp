@@ -51,6 +51,7 @@ class User
 		bool								addChannel(std::string);
 		bool								rmChannel(std::string);
 		void								clearChannels();
+		void								setAddr(struct sockaddr_storage *addr);
 	private:
 		std::string							_nickname;
 		std::string							_hostname;

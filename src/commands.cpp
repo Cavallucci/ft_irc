@@ -41,7 +41,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
 */
 void	Server::_inviteCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	user->getArgs(); // TODO
 	// ERR_NEEDMOREPARAMS
 	// ERR_NOSUCHNICK
 	// ERR_NOTONCHANNEL
@@ -63,13 +63,14 @@ void	Server::_joinCmd(User *user)
 			user->getNick(), "JOIN"));
 	str_vec		chans = split_str(user->getArgs()[0], ',');
 	str_vec		passwords;
-	if (!user->getArgs().size() == 1)
+	if (user->getArgs().size() != 1)
 		passwords = split_str(user->getArgs()[1], ',');
 	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name)
 	{
 		if (!is_valid_channel_name(*name, user, getName()))
 			continue ;
 		Channel		*chan = getChannel(*name);
+		(void)chan; //TODO a enlever?
 	}
 
 	// ERR_NEEDMOREPARAMS
