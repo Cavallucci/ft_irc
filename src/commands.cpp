@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 18:20:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/18 19:28:39 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,30 @@ void	Server::_joinCmd(User *user)
 {
 	// TODO verifier que l'utilisateur a deja ete accueilli
 	if (user->getArgs().size() < 1)
+	{
 		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
 			user->getNick(), "JOIN"));
+	}
 	str_vec		chans = split_str(user->getArgs()[0], ',');
-	str_vec		passwords;
-	if (!user->getArgs().size() == 1)
-		passwords = split_str(user->getArgs()[1], ',');
-	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name)
+	size_t	nth = 0;
+	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++nth)
 	{
 		if (!is_valid_channel_name(*name, user, getName()))
 			continue ;
 		Channel		*chan = getChannel(*name);
+		if (chan == NULL) { // channel has to be created
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
+		} else if (chan->canJoin(user, nth)) { // channel already exists
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
+			if (chan->isInvited(user->getFd()))
+				chan->rmInvite(user);
+			chan->addUser(user);
+			// MARQUE-PAGE broadcast
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
+		}
 	}
 
 	// ERR_NEEDMOREPARAMS

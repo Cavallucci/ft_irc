@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:19:36 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 18:04:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/18 19:29:10 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ str_vec		split_str(std::string initial, char delimiter)
 	std::stringstream	arg_stream(initial);
 	str_vec				output;
 	std::string			tmp;
-	while (getline(arg_stream, tmp, ' '))
+	while (getline(arg_stream, tmp, delimiter))
 		output.push_back(tmp);
 	return output;
 }
@@ -34,7 +34,7 @@ bool		is_valid_channel_name(std::string chan, User *user, std::string srv)
 	// channels names must begin with a '&' or '#' character
 	if (chan[0] != '&' && chan[0] != '#')
 	{
-		user->reply(ERR_BADCHANMASK(srv));
+		user->reply(ERR_BADCHANMASK(srv, chan));
 		return false;
 	}
 	// channels names are strings of length up to 200 characters
