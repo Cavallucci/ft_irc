@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:19:36 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 15:10:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 15:47:30 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,11 @@ char		ascii_to_lower(char in)
 
 str_vec		split_str(std::string initial, char delimiter)
 {
-	(void)delimiter; //TODO a enlever?
 	std::stringstream	arg_stream(initial);
 	str_vec				output;
 	std::string			tmp;
 	while (getline(arg_stream, tmp, delimiter))
 		output.push_back(tmp);
-	return (output);
-}
-
-std::string		join_vec(str_vec vec, std::string glue)
-{
-	std::string		output;
-	size_t			i = vec.size() - 1;
-	for (str_vec::iterator it = vec.begin(); it != vec.end(); ++it, --i)
-	{
-		output.append(*it);
-		if (i)
-			output.append(glue);
-	}
 	return (output);
 }
 

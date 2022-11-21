@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 13:45:26 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 17:47:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,30 @@ str_vec const &		User::getArgs(void) const { return _args; }
 chan_map const		User::getChannels() const { return _channels; }
 bool				User::isLoggedIn(void) const { return _loggedIn; }
 
+bool				User::hasMode(char c) const
+{
+	if (_mode.find(c) != std::string::npos)
+		return (true);
+	return (false);
+}
+
+std::string			User::getRawArgs(size_t skipped) const
+{
+	std::string		output = _rawArgs;
+	while (skipped > 0)
+	{
+		std::string::size_type	pos = output.find(' ');
+		if (pos == std::string::npos)
+		{
+			output = "";
+			break ;
+		}
+		output = output.substr(pos + 1);
+		skipped--;
+	}
+	return output;
+}
+
 Channel *			User::getChannel(std::string chan_name) const
 {
 	chan_map	chan = getChannels();
@@ -137,6 +161,7 @@ void				User::setServer(std::string name) { _server = name; }
 void				User::setFd(int fd) { _fd = fd; }
 void				User::setAddr(struct sockaddr_storage *addr) { _addr = addr; }
 void				User::logIn(void) { _loggedIn = true; }
+void				User::setRawArgs(std::string content) { _rawArgs = content; }
 
 bool				User::setInput(void)
 {

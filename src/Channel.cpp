@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 14:32:51 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 18:23:10 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,41 @@ void					Channel::broadcast(std::string msg)
 	}
 }
 
+void					Channel::rpl_whoreply(User *user, std::string srv)
+{
+	if (hasMode('p') && !isIn(user->getFd()))
+		return ;
+	// TODO checker si le mode 's' doit changer quelque chose ou pas ici
+	for (usr_map::iterator it = _users.begin(); it != _users.end(); ++it)
+	{
+		if (!it->second->hasMode('i')) {
+			user->reply(RPL_WHOREPLY(
+				srv,
+				getName(), // channel
+				it->second->getUser(),
+				it->second->getHost(),
+				it->second->getNick(),
+				it->second->getReal()
+			));
+		}
+	}
+}
+
 //---------------------------- ACCESSORS / GETTERS ----------------------------
 
 std::string			Channel::getName(void) const { return _name; }
 std::string			Channel::getTopic(void) const { return _topic; }
 size_t				Channel::getMaxUsers(void) const { return _maxUsers; }
 bool				Channel::hasPassword() const { return _password != ""; }
-std::string			Channel::getMode(void) const { return _mode; }
 std::string			Channel::getTopicCtxt(void) const { return _topicCtxt; }
 size_t				Channel::getNbUsers(void) const { return _users.size(); }
+
+bool				Channel::hasMode(char c) const
+{
+	if (_mode.find(c) != std::string::npos)
+		return (true);
+	return (false);
+}
 
 bool				Channel::pwMatches(User *user, size_t nth) const
 {
@@ -123,7 +149,7 @@ bool				Channel::isInvited(int fd) const
 
 bool				Channel::canJoin(User *user, size_t nth) const
 {
-	bool	isInviteOnly = (getMode().find('i') == std::string::npos);
+	bool	isInviteOnly = hasMode('i');
 	if (isInviteOnly && !isInvited(user->getFd()))
 		user->reply(ERR_INVITEONLYCHAN(user->getServer(), getName()));
 	else if (getNbUsers() + 1 > getMaxUsers())
@@ -207,4 +233,12 @@ void				Channel::rmInvite(User *user)
 {
 	if (isInvited(user->getFd()))
 		_invited.erase(user->getFd());
+}
+
+void				Channel::setTopic(std::string topic, std::string nick)
+{
+	std::stringstream	tmp;
+	tmp << time(NULL);
+	_topic = topic;
+	_topicCtxt = nick + " " + tmp.str();
 }

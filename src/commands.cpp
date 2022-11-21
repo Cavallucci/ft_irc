@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 15:08:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 18:24:51 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,15 @@ void	Server::_initCommands(void)
 
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
 
+// TODO pour toutes les cmd: vérifier quel est le comportement attendu quand il y a trop d'arguments
+
 /*
 INVITE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
 */
 void	Server::_inviteCmd(User *user)
 {
-	user->getArgs(); // TODO
+	user->getArgs(); // FIXME
 	// ERR_NEEDMOREPARAMS
 	// ERR_NOSUCHNICK
 	// ERR_NOTONCHANNEL
@@ -57,18 +59,19 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.1
 */
 void	Server::_joinCmd(User *user)
 {
-	// TODO verifier que l'utilisateur a deja ete accueilli
+	if (!user->hasBeenWelcomed())
+		return;
 	if (user->getArgs().size() < 1)
 	{
 		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
 			user->getNick(), "JOIN"));
 	}
 	str_vec		chans = split_str(user->getArgs()[0], ',');
-	size_t	nth = 0;
+	size_t		nth = 0;
 	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++nth)
 	{
 		if (!is_valid_channel_name(*name, user, getSrv()))
-			continue ;
+			continue ; // TODO vérifier que pas de message d'erreur, simplement ignoré
 		Channel		*chan = getChannel(*name);
 		if (chan == NULL) { // channel has to be created
 			chan = newChan(user, *name, nth);
@@ -96,7 +99,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
 void	Server::_kickCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	(void)user->getArgs(); // FIXME
 	// ERR_NEEDMOREPARAMS
 	// ERR_NOSUCHCHANNEL
 	// ERR_BADCHANMASK
@@ -112,7 +115,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 void	Server::_listCmd(User *user)
 {
 
-	(void)user->getArgs(); // TODO
+	(void)user->getArgs(); // FIXME
 	// ERR_NOSUCHSERVER
 	// RPL_LISTSTART
 	// RPL_LIST
@@ -126,7 +129,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 */
 void	Server::_modeCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	(void)user->getArgs(); // FIXME
 	// ERR_NEEDMOREPARAMS
 	// RPL_CHANNELMODEIS
 	// ERR_CHANOPRIVSNEEDED
@@ -149,7 +152,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
 */
 void	Server::_msgCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	(void)user->getArgs(); // FIXME
 	// ERR_NORECIPIENT
 	// ERR_NOTEXTTOSEND
 	// ERR_CANNOTSENDTOCHAN
@@ -168,7 +171,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.5
 */
 void	Server::_namesCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	(void)user->getArgs(); // FIXME
 	// RPL_NAMREPLY
 	// RPL_ENDOFNAMES
 }
@@ -183,16 +186,19 @@ void	Server::_nickCmd(User *user)
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NONICKNAMEGIVEN(user->getServer()));
 	std::string		nick = user->getArgs()[0];
-	if (fdAlreadyIn(user->getFd()))
-		return user->reply(ERR_NICKCOLLISION(getSrv(), user->getNick()));
+	if (nick.length() > 9)
+		return user->reply(ERR_ERRONEUSNICKNAME(getSrv(), nick));
+	if (nick.find_first_not_of(ALLOWED_CHAR_IN_NICK) != std::string::npos)
+		return user->reply(ERR_ERRONEUSNICKNAME(getSrv(), nick));
+	for (usr_map::iterator it = _users.begin(); it != _users.end(); ++it)
+	{
+		if (it->second->getNick() == nick)
+			return user->reply(ERR_NICKNAMEINUSE(getSrv(), nick));
+	}
+	// ERR_NICKCOLLISION doesn't need to be implemented with 1 server only
 	user->setNick(nick);
-	// TODO to check: user logged in, username set
-	if (!user->hasBeenWelcomed())
+	if (!user->getUser().empty() && user->isLoggedIn() && !user->hasBeenWelcomed())
 		user->welcome(false);
-	// ERR_NONICKNAMEGIVEN
-	// ERR_ERRONEUSNICKNAME
-	// ERR_NICKNAMEINUSE
-	// ERR_NICKCOLLISION
 }
 
 
@@ -202,7 +208,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2
 */
 void	Server::_noticeCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	(void)user->getArgs(); // FIXME
 	// ERR_NORECIPIENT
 	// ERR_NOTEXTTOSEND
 	// ERR_CANNOTSENDTOCHAN
@@ -220,7 +226,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.2
 */
 void	Server::_partCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	(void)user->getArgs(); // FIXME
 	// ERR_NEEDMOREPARAMS
 	// ERR_NOSUCHCHANNEL
 	// ERR_NOTONCHANNEL
@@ -233,17 +239,16 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.1
 */
 void	Server::_passCmd(User *user)
 {
-	std::string		password;
 	if (user->hasBeenWelcomed())
 		return (user->reply(ERR_ALREADYREGISTRED(getSrv())));
 	if (user->getArgs().size() < 1)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PASS")));
 	// TODO un mot de passe peut il contenir un espace ? peut il être une chaîne vide ?
-	password = user->getArgs()[0];
+	std::string		password = user->getArgs()[0];
 	if (password == getPwd())
 	{
 		user->logIn();
-		if (user->getNick().length() && user->getUser().length())
+		if (!user->getNick().empty() && !user->getUser().empty())
 			user->welcome(false);
 	} else {
 		// TODO est-ce que "PASS mauvais_mdp" déconnecte l'utilisateur ?
@@ -258,9 +263,15 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.6.2
 */
 void	Server::_pingCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
-	// ERR_NOORIGIN
-	// ERR_NOSUCHSERVER
+	if (!user->hasBeenWelcomed())
+		return ;
+	std::string		param = user->getRawArgs(0);
+	// TODO si plusieurs params fournis, seul le 1er est retenu ou est-ce que l'on compte les espaces ?
+	if (param.empty())
+		return (user->reply(ERR_NOORIGIN(getSrv())));
+	if (param != _host && param != getSrv())
+		return (user->reply(ERR_NOSUCHSERVER(getSrv(), param)));
+	user->reply(RPL_PING(user->getNick(), getSrv()));
 }
 
 
@@ -272,7 +283,7 @@ void	Server::_quitCmd(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	std::string		quit_msg = join_vec(user->getArgs(), " ");
+	std::string		quit_msg = user->getRawArgs(0);
 	// gets the user out of every channel
 	chan_map	channels = user->getChannels();
 	for (chan_map::iterator it = channels.begin(); it != channels.end(); ++it)
@@ -310,13 +321,34 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.4
 */
 void	Server::_topicCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
-
-	// ERR_NEEDMOREPARAMS
-	// ERR_NOTONCHANNEL
-	// RPL_NOTOPIC
-	// RPL_TOPIC
-	// ERR_CHANOPRIVSNEEDED
+	if (!user->hasBeenWelcomed())
+		return;
+	if (user->getArgs().size() < 1)
+		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "TOPIC")));
+	std::string		name = user->getArgs()[0];
+	Channel			*chan = getChannel(name);
+	// TODO checker si on peut TOPIC sans être dedans : filtrer, chercher dans les channels de l'User ?
+	if (chan != NULL) { // channel does exist & the user can access it
+		// the user simply wants to view the channel topic
+		if (user->getArgs()[1].find(':') == std::string::npos) {
+			if (chan->getTopic() == "")
+				return (user->reply(RPL_NOTOPIC(user->getNick(), name)));
+			return (user->reply(RPL_TOPIC(user->getNick(), name, chan->getTopic())));
+		}
+		// the topic for that channel will be changed if its modes permit it
+		std::string		topic = user->getRawArgs(1);
+		topic = topic.substr(topic.find(':') + 1);
+		// TODO tester comportement attendu si pas de ':' avant le topic
+		// TODO vérifier l'ordre de priorité des messages d'erreur suivants
+		if (chan->hasMode('t') && !chan->isOp(user->getFd()))
+			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
+		if (!chan->isIn(user->getFd()))
+			return (user->reply(ERR_NOTONCHANNEL(getSrv(), name)));
+		chan->setTopic(topic, user->getNick());
+		chan->broadcast(RPL_TOPIC(user->getNick(), name, topic));
+	} else { // channel not found
+		user->reply(ERR_NOTONCHANNEL(getSrv(), name));
+	}
 }
 
 
@@ -347,10 +379,24 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.5.1
 */
 void	Server::_whoCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	if (user->hasBeenWelcomed())
+		return ;
+	// TODO tester comportement si pas d'arguments
+	std::string		name = user->getArgs()[0];
+	Channel			*chan = getChannel(name);
+	if (chan != NULL) { // channel found based on the name passed to WHO
+		chan->rpl_whoreply(user, getSrv());
+	} else { // channel not found
+		// TODO <name> is matched against users' host, server, realname & nickname
+		User		*target = getUser(name);
+		if (target && (!target->hasMode('i') || user == target))
+		{
+			user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
+				target->getHost(), target->getNick(), target->getReal()));
+		}
+	}
+	user->reply(RPL_ENDOFWHO(getSrv(), user->getNick()));
 	// ERR_NOSUCHSERVER
-	// RPL_WHOREPLY
-	// RPL_ENDOFWHO
 }
 
 /*

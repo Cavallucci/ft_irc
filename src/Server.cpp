@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 14:53:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 16:21:26 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,8 @@ bool	Server::_parseInput(User *user)
 	std::cout << "im cmt str = \"" << cmd_str << "\"" << std::endl;;
 	if (user->getInput().length() != cmd_str.length())
 	{
-		str_vec				args = split_str(user->getInput().substr(pos + 1), ' ');
+		user->setRawArgs(user->getInput().substr(pos + 1));
+		str_vec				args = split_str(user->getRawArgs(0), ' ');
 		if (!user->setArgs(args))
 		{
 			std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
@@ -232,13 +233,6 @@ User *			Server::getUser(std::string nick) const
 	}
 	std::cerr << RED ERR_USER_NICK_NOT_FOUND << nick << END << std::endl;
 	return NULL;
-}
-
-bool			Server::fdAlreadyIn(int fd) const
-{
-	if (_users.count(fd))
-		return (true);
-	return (false);
 }
 
 Channel *		Server::getChannel(std::string chan_name) const

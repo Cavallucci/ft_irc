@@ -8,20 +8,7 @@
 
 typedef std::vector<std::string>			str_vec;
 
-
-std::string		join_vec(str_vec vec, std::string glue)
-{
-	std::string		output;
-	size_t			i = vec.size() - 1;
-	for (str_vec::iterator it = vec.begin(); it != vec.end(); ++it, --i)
-	{
-		output.append(*it);
-		if (i)
-			output.append(glue);
-	}
-	return (output);
-}
-
+# define ALLOWED_CHAR_IN_NICK					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_[]{}\\`|"
 
 int main(int argc, char **argv)
 {
@@ -46,8 +33,8 @@ int main(int argc, char **argv)
 		for (str_vec::const_iterator i = args.begin(); i != args.end(); ++i)
 			std::cout << *i << std::endl;
 		std::cout << "]" << std::endl;
-		std::string		test_join = join_vec(args, "_");
-		std::cout << "test join_vec: [" << test_join << "]" << std::endl;
+		if (arg.find_first_not_of(ALLOWED_CHAR_IN_NICK) != std::string::npos)
+			std::cout << "Invalid char found!" << std::endl;
 	}
 	else
 		std::cout << "Wrong number of arguments" << std::endl;

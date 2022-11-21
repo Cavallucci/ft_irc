@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 15:04:10 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 18:19:58 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef std::map<int, User *>				usr_map;
 
 // custom error messages
 # define BUFFER_SIZE							2048
+# define ALLOWED_CHAR_IN_NICK					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_[]{}\\`|"
 # define ERR_NB_ARG								"❌ Invalid command, usage: ./ircserv <port> <password>"
 # define ERR_PORT_NB							"❌ Invalid port number, an integer is expected"
 # define ERR_PORT_RANGE							"❌ Invalid port, it should be in the range of 0 to 65535"
@@ -66,7 +67,7 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
 # define RUNNING								"✅ The server is up and running"
 # define ERR_TOO_LONG							"📜 Message truncated to 512 bytes on socket "
-# define BYE									"👋 User left on socket "
+# define BYE									"👋 Someone left, socket "
 # define ERR_CHANNEL_NOT_FOUND					"❓ There isn't any channel with this name: "
 # define ERR_USER_FD_NOT_FOUND					"❓ There isn't any user with this fd: "
 # define ERR_USER_NICK_NOT_FOUND				"❓ There isn't any user with this nickname: "
@@ -120,17 +121,17 @@ typedef std::map<int, User *>				usr_map;
 # define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
-# define RPL_WHOREPLY(s, c, u, h, n, ho, r)		":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" <H|G>[*][@|+] :"+ho+" "+r
+# define RPL_WHOREPLY(s, c, u, h, n, r)		":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" <H|G>[*][@|+] : "+r
 
 // List of custom (non official) replies by alphabetical order
 # define ERR_15_PARAM							"There cannot be more than 15 parameters in your command"
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
 # define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT :" + msg
+# define RPL_PING(nick, server)					":" + nick + "@IRC PONG " + server
 
 // utils.cpp
 char			ascii_to_lower(char in);
 str_vec			split_str(std::string initial, char delimiter);
 bool			is_valid_channel_name(std::string chan, User *user, std::string srv);
-std::string		join_vec(str_vec vec, std::string glue);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 14:30:50 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 17:45:05 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class Channel
 		~Channel();
 		Channel &	operator=(Channel const & rhs);
 		void			broadcast(std::string msg);
+		void			rpl_whoreply(User *user, std::string srv);
 		// Getters & accessors
 		std::string		getName(void) const;
 		std::string		getTopic(void) const;
@@ -37,8 +38,8 @@ class Channel
 		bool			isInvited(int fd) const;
 		bool			hasPassword() const;
 		bool			pwMatches(User *user, size_t nth) const;
-		std::string		getMode(void) const;
 		std::string		getTopicCtxt(void) const;
+		bool			hasMode(char c) const;
 		// Setters & mutators
 		void			addUser(User *user);
 		void			delUser(User *user);
@@ -52,6 +53,7 @@ class Channel
 		void			invite(User *user);
 		void			rmInvite(User *user);
 		void			setPassword(std::string password);
+		void			setTopic(std::string topic, std::string nick);
 	private:
 		std::string		_name;
 		std::string		_topic;
@@ -66,8 +68,8 @@ class Channel
 		/*
 		CHANNELS MODES
 		'o' = operator status
-		'p' = channel not displayed in your WHOIS output
-		's' = channel will not be displayed in the LIST output
+		'p' = private, channel not displayed in your WHOIS output
+		's' = secret, channel will not be displayed in the LIST output
 		'i' = invite-only channel
 		't' = ability to modify the topic
 		'n' = users not on the channel cannot send messages to it
