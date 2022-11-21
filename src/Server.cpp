@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 09:45:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 14:53:46 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,14 +122,14 @@ void	Server::_serverConnect(void)
 				if (iterator->fd == _listener)
 				{
 					_addUser();
-					break;
+					break ;
 				}
 				User		*user = _users.at(iterator->fd);
 				if (_parseInput(user) == false)
 					_deleteUser(iterator);
 			}
 			if (iterator == _pfds.end())
-				break;
+				break ;
 		}
 	}
 	//_closeAll(); //TODO
@@ -207,9 +207,10 @@ bool	Server::_parseInput(User *user)
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------
 
-std::string		Server::getName(void) const { return _name; }
+std::string		Server::getSrv(void) const { return _name; }
 usr_map			Server::getUsers() const { return _users; }
 chan_map		Server::getChannels() const { return _channels; }
+std::string		Server::getPwd(void) const { return _pwd; };
 
 User *			Server::getUser(int fd) const
 {
@@ -279,5 +280,6 @@ Channel			*Server::newChan(User *user, std::string name, size_t nth)
 
 void			Server::delChannel(Channel *chan)
 {
+	// TODO sûrement des leaks ici
 	_channels.erase(chan->getName());
 }

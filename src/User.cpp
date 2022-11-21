@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 18:11:35 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 13:45:26 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ bool				User::hasBeenWelcomed(void) const { return _welcomed; }
 int					User::getFd(void) const { return _fd; }
 str_vec const &		User::getArgs(void) const { return _args; }
 chan_map const		User::getChannels() const { return _channels; }
+bool				User::isLoggedIn(void) const { return _loggedIn; }
 
 Channel *			User::getChannel(std::string chan_name) const
 {
@@ -135,6 +136,7 @@ void				User::setReal(std::string name) { _realname = name; }
 void				User::setServer(std::string name) { _server = name; }
 void				User::setFd(int fd) { _fd = fd; }
 void				User::setAddr(struct sockaddr_storage *addr) { _addr = addr; }
+void				User::logIn(void) { _loggedIn = true; }
 
 bool				User::setInput(void)
 {

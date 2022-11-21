@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 09:51:45 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 15:08:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,22 @@ void	Server::_joinCmd(User *user)
 	size_t	nth = 0;
 	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++nth)
 	{
-		if (!is_valid_channel_name(*name, user, getName()))
+		if (!is_valid_channel_name(*name, user, getSrv()))
 			continue ;
 		Channel		*chan = getChannel(*name);
 		if (chan == NULL) { // channel has to be created
 			chan = newChan(user, *name, nth);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			// TODO chan->rpl_namreply(user, true);
+		} else if (chan->canJoin(user, nth)) { // channel already exists
+			if (chan->isInvited(user->getFd()))
+				chan->rmInvite(user);
 			chan->addUser(user);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			if (chan->getTopic() != "")
 			{
-				user->reply(RPL_TOPIC(getName(), *name, chan->getTopic()));
-				user->reply(RPL_TOPICWHOTIME(getName(), *name, chan->getTopicCtxt()));
+				user->reply(RPL_TOPIC(getSrv(), *name, chan->getTopic()));
+				user->reply(RPL_TOPICWHOTIME(getSrv(), *name, chan->getTopicCtxt()));
 			}
 			// TODO channel->rpl_namreply(user, true);
 		}
@@ -181,7 +184,7 @@ void	Server::_nickCmd(User *user)
 		return user->reply(ERR_NONICKNAMEGIVEN(user->getServer()));
 	std::string		nick = user->getArgs()[0];
 	if (fdAlreadyIn(user->getFd()))
-		return user->reply(ERR_NICKCOLLISION(getName(), user->getNick()));
+		return user->reply(ERR_NICKCOLLISION(getSrv(), user->getNick()));
 	user->setNick(nick);
 	// TODO to check: user logged in, username set
 	if (!user->hasBeenWelcomed())
@@ -230,9 +233,22 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.1
 */
 void	Server::_passCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
-	// ERR_NEEDMOREPARAMS
-	// ERR_ALREADYREGISTRED
+	std::string		password;
+	if (user->hasBeenWelcomed())
+		return (user->reply(ERR_ALREADYREGISTRED(getSrv())));
+	if (user->getArgs().size() < 1)
+		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PASS")));
+	// TODO un mot de passe peut il contenir un espace ? peut il être une chaîne vide ?
+	password = user->getArgs()[0];
+	if (password == getPwd())
+	{
+		user->logIn();
+		if (user->getNick().length() && user->getUser().length())
+			user->welcome(false);
+	} else {
+		// TODO est-ce que "PASS mauvais_mdp" déconnecte l'utilisateur ?
+		user->reply(ERR_PASSWDMISMATCH(getSrv()));
+	}
 }
 
 
@@ -254,7 +270,37 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.6
 */
 void	Server::_quitCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
+	if (!user->hasBeenWelcomed())
+		return ;
+	std::string		quit_msg = join_vec(user->getArgs(), " ");
+	// gets the user out of every channel
+	chan_map	channels = user->getChannels();
+	for (chan_map::iterator it = channels.begin(); it != channels.end(); ++it)
+	{
+		// TODO checker quel est le quit_msg par défaut
+		it->second->delUser(user);
+		if (it->second->getNbUsers() > 0)
+			it->second->broadcast(RPL_QUIT(user->getNick(), quit_msg));
+		else
+			delChannel(it->second);
+	}
+	// frees the chan_vec of the User instance
+	user->clearChannels();
+	// deletes the User instance itself
+	// TODO remplacer les lignes ci-dessous par Server::_deleteUser ?
+	int				fd = user->getFd();
+	close(fd);
+	_users.erase(fd);
+	delete user;
+	for (pfds_it it = _pfds.begin(); it != _pfds.end(); ++it)
+	{
+		if (it->fd == fd)
+		{
+			_pfds.erase(it);
+			break;
+		}
+	}
+	std::cout << MAG BYE << fd << END << std::endl;
 }
 
 
@@ -280,9 +326,18 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.3
 */
 void	Server::_userCmd(User *user)
 {
-	(void)user->getArgs(); // TODO
-	// ERR_NEEDMOREPARAMS
-	// ERR_ALREADYREGISTRED
+	if (user->hasBeenWelcomed())
+		return user->reply(ERR_ALREADYREGISTRED(getSrv()));
+	// TODO vérifier ce qu'il doit se passer si real_name ne commence pas avec ':'
+	if (user->getArgs().size() < 4 || user->getArgs()[3][0] != ':')
+		return user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "USER"));
+	// TODO vérifier ce qu'il doit se passer si Nick non encore défini
+	user->setUser(user->getArgs()[0]);
+	user->setHost(user->getArgs()[1]);
+	user->setServer(user->getArgs()[2]);
+	user->setReal(user->getArgs()[3]);
+	if (user->getNick().size() && user->isLoggedIn() && !user->hasBeenWelcomed())
+		user->welcome(false);
 }
 
 

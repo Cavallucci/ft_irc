@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 09:45:34 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 14:53:40 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ class Server
 		~Server();
 		Server &	operator=(Server const & rhs);
 		// Getters & accessors
-		std::string							getName(void) const;
+		std::string							getSrv(void) const;
+		std::string							getPwd(void) const;
 		usr_map								getUsers() const;
 		User *								getUser(int fd) const;
 		bool								fdAlreadyIn(int fd) const;

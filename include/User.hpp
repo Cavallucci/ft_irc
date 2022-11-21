@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/14 14:55:00 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 13:45:06 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class User
 		std::string							getServer(void) const;
 		std::string							getInput(void) const;
 		bool								hasBeenWelcomed(void) const;
+		bool								isLoggedIn(void) const;
 		int									getFd(void) const;
 		str_vec const &						getArgs(void) const;
 		chan_map const						getChannels() const;
@@ -45,6 +46,7 @@ class User
 		void								setReal(std::string name);
 		void								setServer(std::string name);
 		bool								setInput(void);
+		void								logIn(void);
 		void								resetInput(void);
 		void								setFd(int fd);
 		bool								setArgs(str_vec);
@@ -61,6 +63,7 @@ class User
 		std::string							_input;
 		// std::string							_mode; // TODO
 		bool								_welcomed;
+		bool								_loggedIn;
 		int									_fd;
 		str_vec								_args;
 		chan_map							_channels;

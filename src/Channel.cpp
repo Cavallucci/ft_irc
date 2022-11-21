@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 09:48:06 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 14:32:51 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ std::string			Channel::getTopic(void) const { return _topic; }
 size_t				Channel::getMaxUsers(void) const { return _maxUsers; }
 bool				Channel::hasPassword() const { return _password != ""; }
 std::string			Channel::getMode(void) const { return _mode; }
-std::string			Channel::getTopicCtxt(void) const { return _topicCtxt; };
+std::string			Channel::getTopicCtxt(void) const { return _topicCtxt; }
+size_t				Channel::getNbUsers(void) const { return _users.size(); }
 
 bool				Channel::pwMatches(User *user, size_t nth) const
 {
@@ -125,7 +126,7 @@ bool				Channel::canJoin(User *user, size_t nth) const
 	bool	isInviteOnly = (getMode().find('i') == std::string::npos);
 	if (isInviteOnly && !isInvited(user->getFd()))
 		user->reply(ERR_INVITEONLYCHAN(user->getServer(), getName()));
-	else if (_users.size() + 1 > getMaxUsers())
+	else if (getNbUsers() + 1 > getMaxUsers())
 		user->reply(ERR_CHANNELISFULL(user->getServer(), getName()));
 	else if (isBanned(user->getFd()))
 		user->reply(ERR_BANNEDFROMCHAN(user->getServer(), getName()));

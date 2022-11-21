@@ -119,3 +119,7 @@ https://gist.github.com/vivien/3b1c2efb80f3f3dde001
 https://dd.ircdocs.horse/refs/commands/
 
 https://matrix-org.github.io/matrix-appservice-irc/latest/irc_modes.html
+
+http://abcdrfc.free.fr/rfc-vf/rfc1459.html
+
+https://mathieu-lemoine.developpez.com/tutoriels/irc/protocole

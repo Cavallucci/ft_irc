@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 09:40:14 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 15:04:10 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
 # define RUNNING								"✅ The server is up and running"
 # define ERR_TOO_LONG							"📜 Message truncated to 512 bytes on socket "
+# define BYE									"👋 User left on socket "
 # define ERR_CHANNEL_NOT_FOUND					"❓ There isn't any channel with this name: "
 # define ERR_USER_FD_NOT_FOUND					"❓ There isn't any user with this fd: "
 # define ERR_USER_NICK_NOT_FOUND				"❓ There isn't any user with this nickname: "
@@ -94,6 +95,7 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_NOTEXTTOSEND(srv)					":" + srv + " 412 :No text to send"
 # define ERR_NOTONCHANNEL(srv, chan)			":" + srv + " 442 :" + chan + " :You're not on that channel"
 # define ERR_NOTOPLEVEL(srv, mask)				":" + srv + " 413 :" + mask + " :No toplevel domain specified"
+# define ERR_PASSWDMISMATCH(srv)				":" + srv + " 464 :Password incorrect"
 # define ERR_TOOMANYCHANNELS(srv, chan)			":" + srv + " 405 :" + chan + " :You have joined too many channels"
 # define ERR_TOOMANYTARGETS(srv, target)		":" + srv + " 407 :" + target + " :Duplicate recipients. No message delivered"
 # define ERR_UMODEUNKNOWNFLAG(srv)				":" + srv + " 501 :Unknown MODE flag"
@@ -123,10 +125,12 @@ typedef std::map<int, User *>				usr_map;
 // List of custom (non official) replies by alphabetical order
 # define ERR_15_PARAM							"There cannot be more than 15 parameters in your command"
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
+# define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT :" + msg
 
 // utils.cpp
 char			ascii_to_lower(char in);
 str_vec			split_str(std::string initial, char delimiter);
 bool			is_valid_channel_name(std::string chan, User *user, std::string srv);
+std::string		join_vec(str_vec vec, std::string glue);
 
 #endif

@@ -8,18 +8,19 @@
 
 typedef std::vector<std::string>			str_vec;
 
-class Server
+
+std::string		join_vec(str_vec vec, std::string glue)
 {
-	public:
-		str_vec		getTest() const
-		{
-			str_vec		test;
-			test.push_back("hello");
-			test.push_back(", ");
-			test.push_back("world");
-			return test;
-		};
-};
+	std::string		output;
+	size_t			i = vec.size() - 1;
+	for (str_vec::iterator it = vec.begin(); it != vec.end(); ++it, --i)
+	{
+		output.append(*it);
+		if (i)
+			output.append(glue);
+	}
+	return (output);
+}
 
 
 int main(int argc, char **argv)
@@ -42,16 +43,11 @@ int main(int argc, char **argv)
 		}
 		std::cout << "command: [" << cmd_str << "]" << std::endl;
 		std::cout << "args: [";
-		Server server;
 		for (str_vec::const_iterator i = args.begin(); i != args.end(); ++i)
 			std::cout << *i << std::endl;
 		std::cout << "]" << std::endl;
-		std::cout << "mon test: [" << args[0] << "]" << std::endl;
-		str_vec		tmp = server.getTest();
-		for (str_vec::const_iterator it = tmp.begin();
-			it != tmp.end();
-			it++)
-			std::cout << *it << std::endl;
+		std::string		test_join = join_vec(args, "_");
+		std::cout << "test join_vec: [" << test_join << "]" << std::endl;
 	}
 	else
 		std::cout << "Wrong number of arguments" << std::endl;

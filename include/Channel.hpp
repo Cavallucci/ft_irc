@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 09:48:11 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 14:30:50 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class Channel
 		// Getters & accessors
 		std::string		getName(void) const;
 		std::string		getTopic(void) const;
+		size_t			getNbUsers(void) const;
 		bool			isIn(int fd) const;
 		bool			isOp(int fd) const;
 		bool			isBanned(int fd) const;
