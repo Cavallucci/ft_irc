@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 18:20:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 09:51:45 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,33 +59,36 @@ void	Server::_joinCmd(User *user)
 {
 	// TODO verifier que l'utilisateur a deja ete accueilli
 	if (user->getArgs().size() < 1)
+	{
 		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
 			user->getNick(), "JOIN"));
+	}
 	str_vec		chans = split_str(user->getArgs()[0], ',');
-	str_vec		passwords;
-	if (user->getArgs().size() != 1)
-		passwords = split_str(user->getArgs()[1], ',');
-	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name)
+	size_t	nth = 0;
+	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++nth)
 	{
 		if (!is_valid_channel_name(*name, user, getName()))
 			continue ;
 		Channel		*chan = getChannel(*name);
-		(void)chan; //TODO a enlever?
+		if (chan == NULL) { // channel has to be created
+			chan = newChan(user, *name, nth);
+			chan->broadcast(RPL_JOIN(user->getNick(), *name));
+			// TODO chan->rpl_namreply(user, true);
+			chan->addUser(user);
+			chan->broadcast(RPL_JOIN(user->getNick(), *name));
+			if (chan->getTopic() != "")
+			{
+				user->reply(RPL_TOPIC(getName(), *name, chan->getTopic()));
+				user->reply(RPL_TOPICWHOTIME(getName(), *name, chan->getTopicCtxt()));
+			}
+			// TODO channel->rpl_namreply(user, true);
+		}
 	}
-
-	// ERR_NEEDMOREPARAMS
-	// ERR_BANNEDFROMCHAN
-	// ERR_INVITEONLYCHAN
-	// ERR_BADCHANNELKEY
-	// ERR_CHANNELISFULL
-	// ERR_BADCHANMASK
 	// ERR_NOSUCHCHANNEL
 	// ERR_TOOMANYCHANNELS
-	// RPL_TOPIC
 }
 
 /*
-KICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
 void	Server::_kickCmd(User *user)

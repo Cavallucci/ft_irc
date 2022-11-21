@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 18:15:58 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 09:45:29 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,10 +256,28 @@ Channel *		Server::getChannel(std::string chan_name) const
 
 void			Server::addChannel(Channel *chan)
 {
-	(void)chan; // TODO
+	_channels[chan->getName()] = chan;
+}
+
+Channel			*Server::newChan(User *user, std::string name, size_t nth)
+{
+	str_vec			passwords;
+	std::string		pw;
+	if (user->getArgs().size() == 2)
+		passwords = split_str(user->getArgs()[1], ',');
+	if (passwords.size() >= nth)
+		pw = passwords[nth];
+	// TODO checker s'il est possible de définir un password ""
+	Channel		*chan = new Channel(name, pw);
+
+	std::cout << GRN "Channel " << name << " created." END << std::endl;
+	chan->addUser(user);
+	chan->addOp(user);
+	addChannel(chan);
+	return (chan);
 }
 
 void			Server::delChannel(Channel *chan)
 {
-	(void)chan; // TODO
+	_channels.erase(chan->getName());
 }
