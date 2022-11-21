@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/18 18:53:42 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 09:40:14 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,8 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_USER_FD_NOT_FOUND					"❓ There isn't any user with this fd: "
 # define ERR_USER_NICK_NOT_FOUND				"❓ There isn't any user with this nickname: "
 
-// list of numeric replies sent by the server by alphabetical order
+// list of official numeric replies sent by the server by alphabetical order
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
-# define ERR_15_PARAM							"There cannot be more than 15 parameters in your command"
 # define ERR_ALREADYREGISTRED(srv)				":" + srv + " 462 :You may not reregister"
 # define ERR_BADCHANMASK(srv, chan)				":" + srv + " 476 :" + chan + " :Bad Channel Mask"
 # define ERR_BADCHANNELKEY(srv, chan)			":" + srv + " 475 :" + chan + " :Cannot join channel (+k)"
@@ -116,9 +115,14 @@ typedef std::map<int, User *>				usr_map;
 # define RPL_NAMREPLY(srv, chan)				":" + srv + " 353 :" + chan + " :[[@|+]<nick> [[@|+]<nick> [...]]]"
 # define RPL_NOTOPIC(srv, chan)					":" + srv + " 331 :" + chan + " :No topic is set"
 # define RPL_TOPIC(srv, chan, topic)			":" + srv + " 332 :" + chan + " :" + topic
+# define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
 # define RPL_WHOREPLY(s, c, u, h, n, ho, r)		":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" <H|G>[*][@|+] :"+ho+" "+r
+
+// List of custom (non official) replies by alphabetical order
+# define ERR_15_PARAM							"There cannot be more than 15 parameters in your command"
+# define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
 
 // utils.cpp
 char			ascii_to_lower(char in);

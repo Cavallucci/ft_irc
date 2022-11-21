@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/18 19:16:14 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 09:48:11 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@ class Channel
 {
 	public:
 		Channel();
+		Channel(std::string name, std::string password);
 		Channel(const Channel & src);
 		~Channel();
 		Channel &	operator=(Channel const & rhs);
-		void			broadcast(std::string);
+		void			broadcast(std::string msg);
 		// Getters & accessors
 		std::string		getName(void) const;
 		std::string		getTopic(void) const;
@@ -36,6 +37,7 @@ class Channel
 		bool			hasPassword() const;
 		bool			pwMatches(User *user, size_t nth) const;
 		std::string		getMode(void) const;
+		std::string		getTopicCtxt(void) const;
 		// Setters & mutators
 		void			addUser(User *user);
 		void			delUser(User *user);
@@ -59,6 +61,7 @@ class Channel
 		usr_map			_invited;
 		size_t			_maxUsers;
 		std::string		_password;
+		std::string		_topicCtxt; // topic setter & timestamp
 		/*
 		CHANNELS MODES
 		'o' = operator status

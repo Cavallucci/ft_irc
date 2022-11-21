@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/18 19:28:39 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/21 09:49:43 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,29 +71,24 @@ void	Server::_joinCmd(User *user)
 			continue ;
 		Channel		*chan = getChannel(*name);
 		if (chan == NULL) { // channel has to be created
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
+			chan = newChan(user, *name, nth);
+			chan->broadcast(RPL_JOIN(user->getNick(), *name));
+			// TODO chan->rpl_namreply(user, true);
 		} else if (chan->canJoin(user, nth)) { // channel already exists
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
 			if (chan->isInvited(user->getFd()))
 				chan->rmInvite(user);
 			chan->addUser(user);
-			// MARQUE-PAGE broadcast
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO
+			chan->broadcast(RPL_JOIN(user->getNick(), *name));
+			if (chan->getTopic() != "")
+			{
+				user->reply(RPL_TOPIC(getName(), *name, chan->getTopic()));
+				user->reply(RPL_TOPICWHOTIME(getName(), *name, chan->getTopicCtxt()));
+			}
+			// TODO channel->rpl_namreply(user, true);
 		}
 	}
-
-	// ERR_NEEDMOREPARAMS
-	// ERR_BANNEDFROMCHAN
-	// ERR_INVITEONLYCHAN
-	// ERR_BADCHANNELKEY
-	// ERR_CHANNELISFULL
-	// ERR_BADCHANMASK
 	// ERR_NOSUCHCHANNEL
 	// ERR_TOOMANYCHANNELS
-	// RPL_TOPIC
 }
 
 /*
