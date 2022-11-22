@@ -27,6 +27,7 @@
 # include <unistd.h>
 # include <map>
 # include <vector>
+# include <csignal>
 
 class User;
 class Server;

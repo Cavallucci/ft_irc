@@ -125,14 +125,14 @@ void	Server::_serverConnect(void)
 					break ;
 				}
 				User		*user = _users.at(iterator->fd);
-				if (_parseInput(user) == false)
-					_deleteUser(iterator);
+				 if (_parseInput(user) == false)
+				 	_deleteUser(iterator);
 			}
 			if (iterator == _pfds.end())
 				break ;
 		}
 	}
-	//_closeAll(); //TODO
+	_closeAll();
 }
 
 void	Server::_addUser(void)
@@ -184,7 +184,7 @@ bool	Server::_parseInput(User *user)
 		return false; // we're going to remove the user iterator
 	std::string::size_type	pos = user->getInput().find(' '); // might be string::npos
 	std::string				cmd_str = user->getInput().substr(0, pos);
-	std::cout << "im cmt str = \"" << cmd_str << "\"" << std::endl;;
+	
 	if (user->getInput().length() != cmd_str.length())
 	{
 		user->setRawArgs(user->getInput().substr(pos + 1));
@@ -204,6 +204,16 @@ bool	Server::_parseInput(User *user)
 		user->reply(ERR_UNKNOWNCOMMAND(user->getServer(), user->getNick(), cmd_str));
 	}
 	return true;
+}
+
+void	Server::_closeAll(void)
+{
+	for (chan_it iterator = _channels.begin(); iterator != _channels.end(); iterator++)
+		delete iterator->second;
+	for (pfds_it iterator = _pfds.begin(); iterator != _pfds.end(); iterator++)
+		close(iterator->fd);
+	for (user_it iterator = _users.begin(); iterator != _users.end(); iterator++)
+		delete iterator->second;
 }
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------

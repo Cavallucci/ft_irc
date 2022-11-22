@@ -167,8 +167,9 @@ bool				User::setInput(void)
 {
 	int				bytes;
 	char			buf[BUFFER_SIZE];
-
+std::cout << "1/_input = " << _input << std::endl;
 	resetInput();
+std::cout << "2/_input = " << _input << std::endl;
 	while (_input.length() < 2 || _input.rfind("\r\n") != _input.length() - 2 )
 	{
 		memset(buf, 0, BUFFER_SIZE);
@@ -195,6 +196,7 @@ bool				User::setInput(void)
 	_input.erase(_input.find_last_not_of(' ') + 1); // removes suffixing spaces
 	while (_input.rfind("  ") != std::string::npos) // removes duplicate spaces
 		_input.replace(_input.find("  "), 2, " ");
+std::cout << "3/_input = " << _input << std::endl;
 	return (true);
 }
 

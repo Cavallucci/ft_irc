@@ -14,10 +14,14 @@
 
 extern bool running;
 
+void	signHandler(int signum)
+{
+	(void)signum;
+	running = false;
+}
+
 int main(int argc, char **argv)
 {
-	// verifier bool avec un "signal"
-    // faire tourner le server
 	try
 	{
 		if (argc != 3) {
@@ -39,11 +43,12 @@ int main(int argc, char **argv)
 			throw std::runtime_error(ERR_EMPTY_PWD);
 		}
 		running = true;
+		signal(SIGINT, signHandler); // TODO a supprimer ? 
 		std::string		password = argv[2];
 
 		Server	server(argv[1], password);
-		// server.start();
-		return (EXIT_SUCCESS);
+
+//		return (EXIT_SUCCESS);
 	}
 	catch (const std::exception &err)
 	{

@@ -18,7 +18,10 @@
 class Server
 {
 	public:
-		typedef std::vector<pollfd>::iterator	pfds_it;
+		// Iterators
+		typedef std::vector<pollfd>::iterator				pfds_it;
+		typedef std::map<std::string, Channel *>::iterator	chan_it;
+		typedef std::map<int, User *>::iterator				user_it;
 		typedef void							(Server::*ServerFnPtr)( User * );
 		Server();
 		Server(std::string port, std::string pwd);
@@ -55,6 +58,7 @@ class Server
 		void								_deleteUser(pfds_it &it);
 		//void								_clientHandle(pfds_it &iterator);
 		bool								_parseInput(User *user);
+		void								_closeAll(void);
 		// Methods related to commands management
 		void								_initCommands(void);
 		void								_inviteCmd(User* user);
