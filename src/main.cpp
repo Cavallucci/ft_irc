@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:20:15 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/16 15:46:13 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 11:45:29 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ int main(int argc, char **argv)
 			throw std::runtime_error(ERR_EMPTY_PWD);
 		}
 		running = true;
-		signal(SIGINT, signHandler); // TODO a supprimer ? 
+		signal(SIGINT, signHandler); // TODO a supprimer ?
 		std::string		password = argv[2];
 
 		Server	server(argv[1], password);
 
-//		return (EXIT_SUCCESS);
+		return (EXIT_SUCCESS);
 	}
 	catch (const std::exception &err)
 	{

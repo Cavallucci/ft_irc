@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 11:40:13 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 16:36:00 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,19 @@
 
 //-------------------------------- CONSTRUCTORS -------------------------------
 
-User::User() : _nickname(""), _hostname(""), _username(""), _realname(""),
-_input(""), _welcomed(false), _fd(-1), _args(str_vec()), _channels(chan_map()), _addr(NULL)
+User::User() : _input(""), _rawArgs(""), _nickname(""), _hostname(""),
+_username(""), _realname(""), _mode(""), _welcomed(false), _loggedIn(false),
+_fd(-1), _addr(NULL)
 {
 }
 
-User::User(int fd, struct sockaddr_storage	*addr) : _nickname(""), _hostname("localhost"), _username(""), _realname(""),
-_input(""), _welcomed(false), _fd(fd), _args(str_vec()), _channels(chan_map()), _addr(addr)
+
+User::User(int fd, struct sockaddr_storage *addr) : _input(""), _rawArgs(""),
+_nickname(""), _hostname("localhost"), _username(""), _realname(""), _mode(""),
+_welcomed(false), _loggedIn(false), _fd(fd), _addr(addr)
 {
 }
+
 
 User::User(User const & src)
 {
@@ -41,15 +45,15 @@ User::~User()
 
 User &				User::operator=(User const & rhs)
 {
+	// TODO verifier qu'on a oublie aucun membre dans la copie meme si a priori elle ne sert pas
 	if (this != &rhs)
 	{
 		this->setNick(rhs.getNick());
 		this->setHost(rhs.getHost());
 		this->setUser(rhs.getUser());
 		this->setReal(rhs.getReal());
-		this->setServer(rhs.getServer());
 		if (rhs.hasBeenWelcomed())
-			this->welcome(true);
+			this->welcome("", true);
 		this->setFd(rhs.getFd());
 		this->clearChannels();
 		chan_map	chan = rhs.getChannels();
@@ -61,14 +65,15 @@ User &				User::operator=(User const & rhs)
 	return *this;
 }
 
-std::ostream &			operator<<(std::ostream & o, User const & e)
+
+std::ostream &		operator<<(std::ostream & o, User const & e)
 {
+	// TODO verifier qu'on a oublie aucun membre dans l'affichage meme si a priori il ne sert pas
 	o << YEL "User(" << &e << ") 🔶" END << std::endl;
 	o << "🔸Nickname:			" << e.getNick() << std::endl;
 	o << "🔸Hostname:			" << e.getHost() << std::endl;
 	o << "🔸Username:			" << e.getUser() << std::endl;
 	o << "🔸Realname:			" << e.getReal() << std::endl;
-	o << "🔸Server:				" << e.getServer() << std::endl;
 	o << "🔸Has been welcomed:	" << e.hasBeenWelcomed() << std::endl;
 	o << "🔸File descriptor:	" << e.getFd() << std::endl;
 	o << "🔸Command parameters:	";
@@ -88,32 +93,46 @@ std::ostream &			operator<<(std::ostream & o, User const & e)
 
 void				User::reply(std::string msg)
 {
-	msg.append("\r\n"); // TODO
+	// TODO reponse au client a faire
+	std::cout << CYN << msg << END << std::endl;
 }
 
-void				User::welcome(bool silently)
+
+void				User::welcome(std::string srv, bool silently)
 {
 	if (!silently)
-	{
-		reply(RPL_WELCOME(getServer(), getNick(), getUser(), \
-			getHost()));
-	}
+		reply(RPL_WELCOME(srv, getNick(), getUser(), getHost()));
 	_welcomed = true;
 }
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------
 
+std::string			User::getInput(void) const { return _input; }
+str_vec const &		User::getArgs(void) const { return _args; }
 std::string			User::getNick(void) const { return _nickname; }
 std::string			User::getHost(void) const { return _hostname; }
 std::string			User::getUser(void) const { return _username; }
 std::string			User::getReal(void) const { return _realname; }
-std::string			User::getServer(void) const { return _server; }
-std::string			User::getInput(void) const { return _input; }
 bool				User::hasBeenWelcomed(void) const { return _welcomed; }
-int					User::getFd(void) const { return _fd; }
-str_vec const &		User::getArgs(void) const { return _args; }
-chan_map const		User::getChannels() const { return _channels; }
 bool				User::isLoggedIn(void) const { return _loggedIn; }
+int					User::getFd(void) const { return _fd; }
+chan_map const		User::getChannels() const { return _channels; }
+
+
+str_vec				User::getCommands(std::string input) const
+{
+	str_vec		commands = split_str(input, IRC_DELIMITER, false);
+	if (DEBUG)
+		std::cout << YEL "2️⃣  Commands:" END << std::endl;
+	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it)
+	{
+		(*it).erase(0, (*it).find_first_not_of(' ')); // removes prefixing spaces
+		if (DEBUG)
+			std::cout << YEL "[" END << *it << YEL "]" END << std::endl;
+	}
+	return commands;
+}
+
 
 bool				User::hasMode(char c) const
 {
@@ -122,9 +141,17 @@ bool				User::hasMode(char c) const
 	return (false);
 }
 
+
+/*
+getRawArgs skips as many words as required, for instance with
+_rawArgs = "hello   world,    how are  you?"
+skipped = 2
+"how are  you?" will be returned.
+*/
 std::string			User::getRawArgs(size_t skipped) const
 {
 	std::string		output = _rawArgs;
+	output.erase(0, output.find_first_not_of(' ')); // removes prefixing spaces
 	while (skipped > 0)
 	{
 		std::string::size_type	pos = output.find(' ');
@@ -133,11 +160,13 @@ std::string			User::getRawArgs(size_t skipped) const
 			output = "";
 			break ;
 		}
-		output = output.substr(pos + 1);
+		output.erase(0, pos); // removes a word
+		output.erase(0, output.find_first_not_of(' '));
 		skipped--;
 	}
 	return output;
 }
+
 
 Channel *			User::getChannel(std::string chan_name) const
 {
@@ -157,23 +186,30 @@ void				User::setNick(std::string name) { _nickname = name; }
 void				User::setHost(std::string name) { _hostname = name; }
 void				User::setUser(std::string name) { _username = name; }
 void				User::setReal(std::string name) { _realname = name; }
-void				User::setServer(std::string name) { _server = name; }
 void				User::setFd(int fd) { _fd = fd; }
 void				User::setAddr(struct sockaddr_storage *addr) { _addr = addr; }
 void				User::logIn(void) { _loggedIn = true; }
-void				User::setRawArgs(std::string content) { _rawArgs = content; }
+
+
+void				User::setRawArgs(std::string content) {
+	_rawArgs = content;
+	if (DEBUG)
+	{
+		std::cout << YEL "4️⃣  Raw arguments: [" END;
+		std::cout << content << YEL "]" END << std::endl;
+	}
+}
+
 
 bool				User::setInput(void)
 {
 	int				bytes;
 	char			buf[BUFFER_SIZE];
-std::cout << "1/_input = " << _input << std::endl;
 	resetInput();
-std::cout << "2/_input = " << _input << std::endl;
-	while (_input.length() < 2 || _input.rfind("\r\n") != _input.length() - 2 )
+	while (_input.length() < 2 || _input.rfind(IRC_DELIMITER) != _input.length() - 2)
 	{
 		memset(buf, 0, BUFFER_SIZE);
-		bytes = recv(getFd(), buf, BUFFER_SIZE, 0);
+		bytes = recv(getFd(), buf, BUFFER_SIZE, MSG_DONTWAIT);
 		if (bytes <= 0)
 		{
 			if (!bytes)
@@ -183,22 +219,20 @@ std::cout << "2/_input = " << _input << std::endl;
 			return (false); // an error occurred, somehow
 		}
 		_input.append(buf);
-		if (bytes > 512)
-		{
-			std::cerr << RED ERR_TOO_LONG << getFd() << END << std::endl;
-			_input.erase(510, std::string::npos);
-			break ; // IRC messages are limited to 512 char including "\r\n"
-		}
 	}
-	if (_input.rfind("\r\n") == _input.length() - 2) // removes the final "\r\n"
-		_input.erase(_input.length() - 2);
-	_input.erase(0, _input.find_first_not_of(' ')); // removes prefixing spaces
-	_input.erase(_input.find_last_not_of(' ') + 1); // removes suffixing spaces
-	while (_input.rfind("  ") != std::string::npos) // removes duplicate spaces
-		_input.replace(_input.find("  "), 2, " ");
-std::cout << "3/_input = " << _input << std::endl;
+	// we'll accept very long input not ending with "\r\n" since it doesn't matter
+	if (bytes > 512) // IRC messages are limited to 512 char including "\r\n"
+	{
+		std::cerr << RED ERR_TOO_LONG << getFd() << END << std::endl;
+		_input.erase(510, std::string::npos);
+		_input.append(IRC_DELIMITER);
+	}
+	_input.erase(_input.length() - 2); // removes the final "\r\n"
+	if (DEBUG)
+		std::cout << YEL "1️⃣  Input : [" END << _input << YEL "]" << END << std::endl;
 	return (true);
 }
+
 
 void				User::resetInput(void)
 {
@@ -206,26 +240,38 @@ void				User::resetInput(void)
 	_args.clear();
 }
 
+
 bool				User::setArgs(str_vec args)
 {
 	// TODO message peut surement etre plus de 15 mots
-	if (args.size() > 15)
-		return (false);
+	// if (args.size() > 15)
+	// 	return (false);
 	_args = args;
+	if (DEBUG)
+		std::cout << YEL "5️⃣  Arguments:" END;
+	for (str_vec::iterator it = _args.begin(); it != _args.end(); ++it)
+	{
+		(*it).erase(0, (*it).find_first_not_of(' ')); // removes prefixing spaces
+		if (DEBUG)
+			std::cout << YEL " [" END << *it << YEL "]" END;
+	}
+	std::cout << std::endl;
 	return (true);
 }
+
 
 bool				User::addChannel(std::string chan_name)
 {
 	if (_channels.find(chan_name) == _channels.end()) {
 		Channel		*channel_ptr = NULL;
-		// TODO
+		// TODO constructeur etc.
 		_channels[chan_name] = channel_ptr;
 		return (true);
 	} else { // already joined
 		return (false);
 	}
 }
+
 
 bool				User::rmChannel(std::string chan_name)
 {
@@ -236,6 +282,7 @@ bool				User::rmChannel(std::string chan_name)
 		return (true);
 	}
 }
+
 
 void				User::clearChannels()
 {

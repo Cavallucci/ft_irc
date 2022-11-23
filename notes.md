@@ -125,3 +125,9 @@ http://abcdrfc.free.fr/rfc-vf/rfc1459.html
 https://mathieu-lemoine.developpez.com/tutoriels/irc/protocole
 
 http://riivo.planc.ee/irc/rfc/index.php?page=reply.php&rnr=436
+
+
+
+_input.erase(_input.find_last_not_of(' ') + 1); // removes suffixing spaces
+while (_input.rfind("  ") != std::string::npos) // removes duplicate spaces
+	_input.replace(_input.find("  "), 2, " ");

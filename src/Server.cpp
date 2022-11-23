@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 16:21:26 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 16:35:09 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ Server::~Server()
 
 Server &				Server::operator=(Server const & rhs)
 {
+	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
 	(void)rhs;
 	//if (this != &rhs)
 	//{
@@ -53,6 +54,7 @@ Server &				Server::operator=(Server const & rhs)
 
 std::ostream &			operator<<(std::ostream & o, Server const & e)
 {
+	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
 	(void)e;
 	//o << "Value = " << e.getValue();
 	return o;
@@ -106,7 +108,7 @@ void	Server::_serverConnect(void)
 	};
 	_pfds.push_back(fd_server);
 
-	std::cout << "Waiting for clients..." << std::endl;
+	std::cout << GRN RUNNING END << std::endl;
 	while (running)
 	{
 		poll(_pfds.data(), _pfds.size(), -1);
@@ -125,8 +127,8 @@ void	Server::_serverConnect(void)
 					break ;
 				}
 				User		*user = _users.at(iterator->fd);
-				 if (_parseInput(user) == false)
-				 	_deleteUser(iterator);
+				if (_parseInput(user) == false)
+					_deleteUser(iterator);
 			}
 			if (iterator == _pfds.end())
 				break ;
@@ -138,13 +140,13 @@ void	Server::_serverConnect(void)
 void	Server::_addUser(void)
 {
 	int						new_fd;
-	struct sockaddr_storage their_addr;
+	struct sockaddr_storage	their_addr;
 	socklen_t				addr_size;
 	struct pollfd			pfd;
 	char					host[INET6_ADDRSTRLEN];
 	char					serv[INET6_ADDRSTRLEN]; // TODO a voir si 1000
 
-	addr_size = sizeof their_addr;
+	addr_size = sizeof(their_addr);
 	new_fd = accept(_listener, (struct sockaddr *)&their_addr, &addr_size);
 	if (new_fd == -1)
 		throw std::runtime_error(ERR_USER_FD);
@@ -158,8 +160,9 @@ void	Server::_addUser(void)
 		_users.insert(std::make_pair(new_fd, new User(new_fd, &their_addr)));
 
 		getnameinfo((struct sockaddr *)&their_addr, addr_size, host, INET6_ADDRSTRLEN,\
-		serv, INET6_ADDRSTRLEN, 0); // Look up the host name and service name information for a given struct sockaddr
-		std::cout << "New connexion from " << _host << ":" << serv << " on socket " << new_fd << std::endl;
+			serv, INET6_ADDRSTRLEN, 0); // Look up the host name and service name information for a given struct sockaddr
+		std::cout << GRN "🙋 New connexion from " << _host << ":" << serv;
+		std::cout << " on socket " << new_fd << END << std::endl;
 	}
 }
 
@@ -181,29 +184,37 @@ void	Server::_deleteUser(pfds_it &it)
 bool	Server::_parseInput(User *user)
 {
 	if (!user->setInput()) // the user has disconnected or an error occurred
-		return false; // we're going to remove the user iterator
-	std::string::size_type	pos = user->getInput().find(' '); // might be string::npos
-	std::string				cmd_str = user->getInput().substr(0, pos);
-	
-	if (user->getInput().length() != cmd_str.length())
+		return (false); // we're going to remove the user iterator
+	str_vec						commands = user->getCommands(user->getInput());
+	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it)
 	{
-		user->setRawArgs(user->getInput().substr(pos + 1));
-		str_vec				args = split_str(user->getRawArgs(0), ' ');
-		if (!user->setArgs(args))
+		std::string::size_type	pos = (*it).find(' '); // might be string::npos
+		std::string				cmd_str = (*it).substr(0, pos);
+		if (DEBUG)
 		{
-			std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
-			user->reply(ERR_15_PARAM);
-			return true;
+			std::cout << std::endl << YEL "3️⃣  Command: [" END;
+			std::cout << cmd_str << YEL "]" END << std::endl;
+		}
+		if ((*it).length() != cmd_str.length()) // there are arguments but maybe just spaces
+		{
+			user->setRawArgs((*it).substr(pos + 1));
+			str_vec				args = split_str(user->getRawArgs(0), " ", false);
+			if (!user->setArgs(args))
+			{
+				std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
+				user->reply(ERR_15_PARAM);
+				return (true);
+			}
+		}
+		try {
+			for (size_t i = 0; i < cmd_str.size(); i++) // CMD to lower case
+				cmd_str[i] = ascii_to_lower(cmd_str[i]);
+			CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
+		} catch (const std::out_of_range &e) {
+			user->reply(ERR_UNKNOWNCOMMAND(getSrv(), user->getNick(), cmd_str));
 		}
 	}
-	try {
-		for (size_t i = 0; i < cmd_str.size(); i++) // to lower case
-			cmd_str[i] = ascii_to_lower(cmd_str[i]);
-		CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
-	} catch (const std::out_of_range &e) {
-		user->reply(ERR_UNKNOWNCOMMAND(user->getServer(), user->getNick(), cmd_str));
-	}
-	return true;
+	return (true);
 }
 
 void	Server::_closeAll(void)
@@ -223,7 +234,7 @@ usr_map			Server::getUsers() const { return _users; }
 chan_map		Server::getChannels() const { return _channels; }
 std::string		Server::getPwd(void) const { return _pwd; };
 
-User *			Server::getUser(int fd) const
+User			*Server::getUser(int fd) const
 {
 	for (usr_map::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
@@ -234,7 +245,7 @@ User *			Server::getUser(int fd) const
 	return NULL;
 }
 
-User *			Server::getUser(std::string nick) const
+User			*Server::getUser(std::string nick) const
 {
 	for (usr_map::const_iterator it = _users.begin(); it != _users.end(); it++)
 	{
@@ -245,7 +256,7 @@ User *			Server::getUser(std::string nick) const
 	return NULL;
 }
 
-Channel *		Server::getChannel(std::string chan_name) const
+Channel			*Server::getChannel(std::string chan_name) const
 {
 	chan_map	chan = getChannels();
 	for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
@@ -269,7 +280,7 @@ Channel			*Server::newChan(User *user, std::string name, size_t nth)
 	str_vec			passwords;
 	std::string		pw;
 	if (user->getArgs().size() == 2)
-		passwords = split_str(user->getArgs()[1], ',');
+		passwords = split_str(user->getArgs()[1], ",", true);
 	if (passwords.size() >= nth)
 		pw = passwords[nth];
 	// TODO checker s'il est possible de définir un password ""

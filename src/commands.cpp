@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 11:42:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 15:58:57 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,8 @@ void	Server::_joinCmd(User *user)
 	if (!user->hasBeenWelcomed())
 		return ;
 	if (user->getArgs().size() < 1)
-	{
-		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
-			user->getNick(), "JOIN"));
-	}
-	str_vec		chans = split_str(user->getArgs()[0], ',');
+		return user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "JOIN"));
+	str_vec		chans = split_str(user->getArgs()[0], ",", true);
 	size_t		nth = 0;
 	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++nth)
 	{
@@ -93,7 +90,7 @@ void	Server::_joinCmd(User *user)
 			chan = newChan(user, *name, nth);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			// TODO chan->rpl_namreply(user, true);
-		} else if (chan->canJoin(user, nth)) { // channel already exists
+		} else if (chan->canJoin(getSrv(), user, nth)) { // channel already exists
 			if (chan->isInvited(user->getFd()))
 				chan->rmInvite(user);
 			chan->addUser(user);
@@ -198,7 +195,7 @@ void	Server::_msgCmd(User *user)
 	// TODO est-ce que les : sont indispensables ?
 	if (user->getArgs()[0][0] != ':')
 		return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
-	str_vec			targets = split_str(user->getArgs()[0], ',');
+	str_vec			targets = split_str(user->getArgs()[0], ",", true);
 	std::string		message = user->getArgs()[1];
 	for (str_vec::iterator it = targets.begin(); it != targets.end(); ++it)
 	{
@@ -250,7 +247,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.2
 void	Server::_nickCmd(User *user)
 {
 	if (user->getArgs().size() < 1)
-		return user->reply(ERR_NONICKNAMEGIVEN(user->getServer()));
+		return user->reply(ERR_NONICKNAMEGIVEN(getSrv()));
 	std::string		nick = user->getArgs()[0];
 	if (nick.length() > 9)
 		return user->reply(ERR_ERRONEUSNICKNAME(getSrv(), nick));
@@ -264,7 +261,7 @@ void	Server::_nickCmd(User *user)
 	// ERR_NICKCOLLISION doesn't need to be implemented with 1 server only
 	user->setNick(nick);
 	if (!user->getUser().empty() && user->isLoggedIn() && !user->hasBeenWelcomed())
-		user->welcome(false);
+		user->welcome(getSrv(), false);
 }
 
 
@@ -315,7 +312,7 @@ void	Server::_passCmd(User *user)
 	{
 		user->logIn();
 		if (!user->getNick().empty() && !user->getUser().empty())
-			user->welcome(false);
+			user->welcome(getSrv(), false);
 	} else {
 		// TODO est-ce que "PASS mauvais_mdp" déconnecte l'utilisateur ?
 		user->reply(ERR_PASSWDMISMATCH(getSrv()));
@@ -432,10 +429,9 @@ void	Server::_userCmd(User *user)
 	// TODO vérifier ce qu'il doit se passer si Nick non encore défini
 	user->setUser(user->getArgs()[0]);
 	user->setHost(user->getArgs()[1]);
-	user->setServer(user->getArgs()[2]);
 	user->setReal(user->getArgs()[3]);
 	if (user->getNick().size() && user->isLoggedIn() && !user->hasBeenWelcomed())
-		user->welcome(false);
+		user->welcome(getSrv(), false);
 }
 
 

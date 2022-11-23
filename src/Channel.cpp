@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 18:23:10 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 16:02:31 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ Channel::~Channel()
 
 Channel &				Channel::operator=(Channel const & rhs)
 {
+	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
 	(void)rhs;
 	//if (this != &rhs)
 	//{
@@ -49,6 +50,7 @@ Channel &				Channel::operator=(Channel const & rhs)
 
 std::ostream &			operator<<(std::ostream & o, Channel const & e)
 {
+	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
 	(void)e;
 	//o << "Value = " << e.getValue();
 	return o;
@@ -105,7 +107,7 @@ bool				Channel::pwMatches(User *user, size_t nth) const
 	str_vec		passwords;
 	if (user->getArgs().size() == 1)
 		return (false);
-	passwords = split_str(user->getArgs()[1], ',');
+	passwords = split_str(user->getArgs()[1], ",", true);
 	if (passwords.size() < nth)
 		return (false);
 	// TODO checker s'il est possible de définir un password ""
@@ -147,17 +149,17 @@ bool				Channel::isInvited(int fd) const
 	return (false);
 }
 
-bool				Channel::canJoin(User *user, size_t nth) const
+bool				Channel::canJoin(std::string srv, User *user, size_t nth) const
 {
 	bool	isInviteOnly = hasMode('i');
 	if (isInviteOnly && !isInvited(user->getFd()))
-		user->reply(ERR_INVITEONLYCHAN(user->getServer(), getName()));
+		user->reply(ERR_INVITEONLYCHAN(srv, getName()));
 	else if (getNbUsers() + 1 > getMaxUsers())
-		user->reply(ERR_CHANNELISFULL(user->getServer(), getName()));
+		user->reply(ERR_CHANNELISFULL(srv, getName()));
 	else if (isBanned(user->getFd()))
-		user->reply(ERR_BANNEDFROMCHAN(user->getServer(), getName()));
+		user->reply(ERR_BANNEDFROMCHAN(srv, getName()));
 	else if (hasPassword() && !pwMatches(user, nth))
-		user->reply(ERR_BADCHANNELKEY(user->getServer(), getName()));
+		user->reply(ERR_BADCHANNELKEY(srv, getName()));
 	else
 		return (true);
 	return (false);

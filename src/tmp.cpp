@@ -8,7 +8,20 @@
 
 typedef std::vector<std::string>			str_vec;
 
-# define ALLOWED_CHAR_IN_NICK					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_[]{}\\`|"
+str_vec		split_str(std::string initial, std::string separator)
+{
+	str_vec			output;
+	size_t			pos = 0;
+	std::string		tmp;
+	while ((pos = initial.find(separator)) != std::string::npos) {
+		tmp = initial.substr(0, pos);
+		output.push_back(tmp);
+		initial.erase(0, pos + separator.length());
+	}
+	output.push_back(initial);
+	return output;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -23,18 +36,13 @@ int main(int argc, char **argv)
 		if (input.length() != cmd_str.length())
 		{
 			arg = input.substr(pos + 1, std::string::npos);
-			std::stringstream			arg_stream(arg);
-			std::string					tmp;
-			while (getline(arg_stream, tmp, ' '))
-				args.push_back(tmp);
+			args = split_str(arg, " ");
 		}
 		std::cout << "command: [" << cmd_str << "]" << std::endl;
 		std::cout << "args: [";
 		for (str_vec::const_iterator i = args.begin(); i != args.end(); ++i)
-			std::cout << *i << std::endl;
+			std::cout << "{" << *i << "}" << std::endl;
 		std::cout << "]" << std::endl;
-		if (arg.find_first_not_of(ALLOWED_CHAR_IN_NICK) != std::string::npos)
-			std::cout << "Invalid char found!" << std::endl;
 	}
 	else
 		std::cout << "Wrong number of arguments" << std::endl;

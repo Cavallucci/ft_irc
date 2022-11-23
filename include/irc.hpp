@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 11:26:40 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 16:35:02 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ typedef std::map<int, User *>				usr_map;
 # define WHT									"\033[1;37m"
 # define END									"\033[0m"
 
+# define DEBUG									1
+# define IRC_DELIMITER							"\r\n"
+
 // custom error messages
 # define BUFFER_SIZE							2048
 # define ALLOWED_CHAR_IN_NICK					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_[]{}\\`|"
@@ -67,7 +70,7 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_USER_FD							"❌ Error while accepting user fd"
 # define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
-# define RUNNING								"✅ The server is up and running"
+# define RUNNING								"✅ The server is running, waiting for clients..."
 # define ERR_TOO_LONG							"📜 Message truncated to 512 bytes on socket "
 # define BYE									"👋 Someone left, socket "
 # define ERR_CHANNEL_NOT_FOUND					"❓ There isn't any channel with this name: "
@@ -135,7 +138,7 @@ typedef std::map<int, User *>				usr_map;
 
 // utils.cpp
 char			ascii_to_lower(char in);
-str_vec			split_str(std::string initial, char delimiter);
+str_vec			split_str(std::string initial, std::string separator, bool with_empty);
 bool			is_valid_channel_name(std::string chan, User *user, std::string srv);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 17:45:05 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 15:55:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Channel
 		bool			isBanned(int fd) const;
 		bool			isMod(int fd) const;
 		size_t			getMaxUsers(void) const;
-		bool			canJoin(User *user, size_t nth) const;
+		bool			canJoin(std::string srv, User *user, size_t nth) const;
 		bool			isInvited(int fd) const;
 		bool			hasPassword() const;
 		bool			pwMatches(User *user, size_t nth) const;
