@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 18:19:58 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 11:26:40 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Channel;
 # define CALL_MEMBER_FN(ptrToObject,ptrToMember)	((*ptrToObject).*(ptrToMember))
 
 typedef std::vector<std::string>			str_vec;
+typedef std::vector<User *>					usr_vec;
 typedef std::map<std::string, Channel *>	chan_map;
 typedef std::map<int, User *>				usr_map;
 
@@ -122,13 +123,15 @@ typedef std::map<int, User *>				usr_map;
 # define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
-# define RPL_WHOREPLY(s, c, u, h, n, r)		":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" <H|G>[*][@|+] : "+r
+# define RPL_WHOREPLY(s, c, u, h, n, r)			":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" <H|G>[*][@|+] : "+r
 
-// List of custom (non official) replies by alphabetical order
+// List of custom, non official replies by alphabetical order
 # define ERR_15_PARAM							"There cannot be more than 15 parameters in your command"
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
 # define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT :" + msg
-# define RPL_PING(nick, server)					":" + nick + "@IRC PONG " + server
+# define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
+# define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE:" + by + " " + channel
+# define RPL_KICK(nick, who, channel)			":" + nick + "@IRC KICK:" + who + " " + channel
 
 // utils.cpp
 char			ascii_to_lower(char in);

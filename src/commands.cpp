@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 18:24:51 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 11:42:37 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,29 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
 */
 void	Server::_inviteCmd(User *user)
 {
-	user->getArgs(); // FIXME
-	// ERR_NEEDMOREPARAMS
-	// ERR_NOSUCHNICK
-	// ERR_NOTONCHANNEL
-	// ERR_USERONCHANNEL
-	// ERR_CHANOPRIVSNEEDED
-	// RPL_INVITING
+	if (!user->hasBeenWelcomed())
+		return ;
+	// TODO tester comportement attendu si plus de 2 arguments sont fournis
+	if (user->getArgs().size() < 2)
+		user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "INVITE"));
+	std::string		guest_nick = user->getArgs()[0];
+	std::string		target_chan = user->getArgs()[1];
+	User			*guest = getUser(guest_nick);
+	Channel			*channel = getChannel(target_chan);
+	if (guest == NULL)
+		return (user->reply(ERR_NOSUCHNICK(getSrv(), user->getNick())));
+	if (channel)
+	{
+		if (!channel->isIn(user->getFd()))
+			return (user->reply(ERR_NOTONCHANNEL(getSrv(), target_chan)));
+		if (channel->isIn(guest->getFd()))
+			return (user->reply(ERR_USERONCHANNEL(getSrv(), guest->getUser(), target_chan)));
+		if (!channel->isOp(user->getFd()))
+			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), target_chan)));
+		user->reply(RPL_INVITING(getSrv(), target_chan, guest_nick));
+		guest->reply(RPL_INVITE(guest_nick, user->getNick(), target_chan));
+		channel->addUser(guest);
+	}
 	// RPL_AWAY
 }
 
@@ -60,7 +76,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.1
 void	Server::_joinCmd(User *user)
 {
 	if (!user->hasBeenWelcomed())
-		return;
+		return ;
 	if (user->getArgs().size() < 1)
 	{
 		return user->reply(ERR_NEEDMOREPARAMS(user->getServer(), \
@@ -95,16 +111,37 @@ void	Server::_joinCmd(User *user)
 }
 
 /*
+KICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
 void	Server::_kickCmd(User *user)
 {
-	(void)user->getArgs(); // FIXME
-	// ERR_NEEDMOREPARAMS
-	// ERR_NOSUCHCHANNEL
+	if (!user->hasBeenWelcomed())
+		return ;
+	if (user->getArgs().size() < 2)
+		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "KICK")));
+	std::string		channel_name = user->getArgs()[0];
+	std::string		target_user = user->getArgs()[1];
+	Channel			*channel = getChannel(channel_name);
+	User			*target = getUser(target_user);
+	// TODO verifier l'ordre de priorité des erreurs
+	// TODO on peut aussi gérer [KICK channel1,channel2 user1,user2]
+	if (channel == NULL)
+		return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), channel_name)));
+	// TODO tester qu'on renvoie bien ERR_NOTONCHANNEL si l'utilisateur n'existe pas du tout
+	if (target == NULL || !channel->isIn(user->getFd()) || !channel->isIn(target->getFd()))
+		return (user->reply(ERR_NOTONCHANNEL(getSrv(), channel_name)));
+	if (!channel->isOp(user->getFd()))
+		return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), channel_name)));
+	// TODO verifier que target recoit bien le message de broadcast concernant son propre KICK
+	channel->broadcast(RPL_KICK(user->getNick(), target_user, channel_name));
+	target->rmChannel(channel_name);
+	// TODO et si target est moderator ? operator ? deja ban ? invite ? on le retire de toutes les listes ?
+	channel->delUser(target);
+	if (!channel->getNbUsers())
+		delChannel(channel);
+	// TODO possibilite d'ajouter un commentaire au KICK
 	// ERR_BADCHANMASK
-	// ERR_CHANOPRIVSNEEDED
-	// ERR_NOTONCHANNEL
 }
 
 
@@ -152,16 +189,45 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
 */
 void	Server::_msgCmd(User *user)
 {
-	(void)user->getArgs(); // FIXME
+	if (!user->hasBeenWelcomed())
+		return ;
+	// TODO verifier que les espaces sont indispensable, est-ce que [PRIVMSG nick:test] marche ?
+	// TODO verifier l'ordre de priorité des erreurs
+	if (user->getArgs().size() < 2)
+		return (user->reply(ERR_NOTEXTTOSEND(getSrv())));
+	// TODO est-ce que les : sont indispensables ?
+	if (user->getArgs()[0][0] != ':')
+		return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
+	str_vec			targets = split_str(user->getArgs()[0], ',');
+	std::string		message = user->getArgs()[1];
+	for (str_vec::iterator it = targets.begin(); it != targets.end(); ++it)
+	{
+		if ((*it)[0] == '#' || (*it)[0] == '&') { // the target is a channel
+			Channel		*channel = getChannel(*it);
+			if (channel == NULL)
+				user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
+			else {
+				// MARQUE-PAGE
+				// if (!channel->isIn(user->getFd()) && channel->isNoOutside())
+				// 	return (user->reply(ERR_CANNOTSENDTOCHAN(dest)));
+				// TODO bot ?
+				// channel->privmsg(user, msg); MARQUE-PAGE
+			}
+		} else { // the target is a user or a group of users
+			User		*target = getUser(*it);
+			if (target == NULL)
+				user->reply(ERR_NOSUCHNICK(getSrv(), *it));
+			// _msgToUser(user, dest, msg); MARQUE-PAGE
+		}
+	}
 	// ERR_NORECIPIENT
 	// ERR_NOTEXTTOSEND
+
 	// ERR_CANNOTSENDTOCHAN
 	// ERR_NOTOPLEVEL
 	// ERR_WILDTOPLEVEL
 	// ERR_TOOMANYTARGETS
-	// ERR_NOSUCHNICK
 	// RPL_AWAY
-
 }
 
 

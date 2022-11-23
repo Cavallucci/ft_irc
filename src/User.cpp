@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/21 17:47:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 11:40:13 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,7 @@ void				User::resetInput(void)
 
 bool				User::setArgs(str_vec args)
 {
+	// TODO message peut surement etre plus de 15 mots
 	if (args.size() > 15)
 		return (false);
 	_args = args;
