@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 18:04:30 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 18:22:13 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,23 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 */
 void	Server::_modeCmd(User *user)
 {
-	(void)user->getArgs(); // FIXME
+	if (!user->hasBeenWelcomed())
+		return ;
+	if (user->getArgs().size() < 2)
+		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "MODE")));
+	std::string		name = user->getArgs()[0];
+	std::string		action = user->getArgs()[1];
+	if (name[0] == '#' || name[0] == '&') // channel modes
+	{
+		Channel		*channel = getChannel(name);
+		if (channel == NULL)
+			return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), name)));
+		// MARQUE-PAGE
+	}
+	else // user modes
+	{
+		// MARQUE-PAGE
+	}
 	// ERR_NEEDMOREPARAMS
 	// RPL_CHANNELMODEIS
 	// ERR_CHANOPRIVSNEEDED
