@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 15:58:57 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 18:04:30 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	Server::_initCommands(void)
 	_commands["kick"] = &Server::_kickCmd;
 	_commands["list"] = &Server::_listCmd;
 	_commands["mode"] = &Server::_modeCmd;
-	_commands["msg"] = &Server::_msgCmd;
+	_commands["privmsg"] = &Server::_privMsgCmd;
 	_commands["names"] = &Server::_namesCmd;
 	_commands["nick"] = &Server::_nickCmd;
 	_commands["notice"] = &Server::_noticeCmd;
@@ -179,48 +179,56 @@ void	Server::_modeCmd(User *user)
 	// ERR_UMODEUNKNOWNFLAG
 }
 
-
 /*
-PRIVMSG command as described here:
-https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
+The following function may be called by 2 commands: PRIVMSG and NOTICE.
+Contrary to PRIVMSG, with NOTICE, there aren't any automatic replies sent.
 */
-void	Server::_msgCmd(User *user)
+void	Server::_msgCmd(User *user, bool silently)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
 	// TODO verifier que les espaces sont indispensable, est-ce que [PRIVMSG nick:test] marche ?
 	// TODO verifier l'ordre de priorité des erreurs
-	if (user->getArgs().size() < 2)
+	if (user->getArgs().size() < 2 && silently)
+		return ;
+	else if (user->getArgs().size() < 2)
 		return (user->reply(ERR_NOTEXTTOSEND(getSrv())));
 	// TODO est-ce que les : sont indispensables ?
-	if (user->getArgs()[0][0] != ':')
+	if (user->getArgs()[0][0] != ':' && silently)
+		return ;
+	else if (user->getArgs()[0][0] != ':')
 		return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
 	str_vec			targets = split_str(user->getArgs()[0], ",", true);
-	std::string		message = user->getArgs()[1];
+	std::string		message = user->getRawArgs(1);
 	for (str_vec::iterator it = targets.begin(); it != targets.end(); ++it)
 	{
 		if ((*it)[0] == '#' || (*it)[0] == '&') { // the target is a channel
 			Channel		*channel = getChannel(*it);
-			if (channel == NULL)
+			if (channel == NULL && !silently)
 				user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
-			else {
-				// MARQUE-PAGE
-				// if (!channel->isIn(user->getFd()) && channel->isNoOutside())
-				// 	return (user->reply(ERR_CANNOTSENDTOCHAN(dest)));
+			else if (channel != NULL) {
+				if (!channel->isIn(user->getFd()) && channel->hasMode('n'))
+				{
+					if (!silently)
+						user->reply(ERR_CANNOTSENDTOCHAN(getSrv(), *it));
+					continue ;
+				}
 				// TODO bot ?
-				// channel->privmsg(user, msg); MARQUE-PAGE
+				channel->msg(getSrv(), user, message, silently);
 			}
 		} else { // the target is a user or a group of users
 			User		*target = getUser(*it);
-			if (target == NULL)
+			// TODO bot ?
+			if (target == NULL && !silently)
 				user->reply(ERR_NOSUCHNICK(getSrv(), *it));
-			// _msgToUser(user, dest, msg); MARQUE-PAGE
+			// TODO verifier le fonctionnement attendu ici!! Pourquoi faudrait-il boucler sur les channels ?
+			if (target != NULL)
+				target->reply(RPL_MSG(user->getNick(), *it, message));
 		}
 	}
 	// ERR_NORECIPIENT
 	// ERR_NOTEXTTOSEND
 
-	// ERR_CANNOTSENDTOCHAN
 	// ERR_NOTOPLEVEL
 	// ERR_WILDTOPLEVEL
 	// ERR_TOOMANYTARGETS
@@ -269,18 +277,7 @@ void	Server::_nickCmd(User *user)
 NOTICE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2
 */
-void	Server::_noticeCmd(User *user)
-{
-	(void)user->getArgs(); // FIXME
-	// ERR_NORECIPIENT
-	// ERR_NOTEXTTOSEND
-	// ERR_CANNOTSENDTOCHAN
-	// ERR_NOTOPLEVEL
-	// ERR_WILDTOPLEVEL
-	// ERR_TOOMANYTARGETS
-	// ERR_NOSUCHNICK
-	// RPL_AWAY
-}
+void	Server::_noticeCmd(User *user) { _msgCmd(user, true); }
 
 
 /*
@@ -337,6 +334,11 @@ void	Server::_pingCmd(User *user)
 	user->reply(RPL_PING(user->getNick(), getSrv()));
 }
 
+/*
+PRIVMSG command as described here:
+https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
+*/
+void	Server::_privMsgCmd(User *user) { _msgCmd(user, false); }
 
 /*
 QUIT command as described here:

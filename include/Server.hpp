@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 14:53:55 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 17:49:26 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,14 @@ class Server
 		void								_kickCmd(User* user);
 		void								_listCmd(User* user);
 		void								_modeCmd(User* user);
-		void								_msgCmd(User* user);
+		void								_msgCmd(User* user, bool silently);
 		void								_namesCmd(User* user);
 		void								_nickCmd(User* user);
 		void								_noticeCmd(User* user);
 		void								_partCmd(User* user);
 		void								_passCmd(User* user);
 		void								_pingCmd(User* user);
+		void								_privMsgCmd(User *user);
 		void								_quitCmd(User* user);
 		void								_topicCmd(User* user);
 		void								_userCmd(User* user);

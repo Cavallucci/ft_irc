@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 15:55:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 18:03:56 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class Channel
 		Channel &	operator=(Channel const & rhs);
 		void			broadcast(std::string msg);
 		void			rpl_whoreply(User *user, std::string srv);
+		void			msg(std::string srv, User *user, std::string content, bool silently);
 		// Getters & accessors
 		std::string		getName(void) const;
 		std::string		getTopic(void) const;
@@ -68,6 +69,7 @@ class Channel
 		/*
 		CHANNELS MODES
 		'o' = operator status
+		'm' = moderated channel, only moderators & operators may speak
 		'p' = private, channel not displayed in your WHOIS output
 		's' = secret, channel will not be displayed in the LIST output
 		'i' = invite-only channel

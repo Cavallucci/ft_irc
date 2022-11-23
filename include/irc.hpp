@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 16:52:03 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 17:31:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ typedef std::map<int, User *>				usr_map;
 # define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
 # define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE:" + by + " " + channel
 # define RPL_KICK(nick, who, channel)			":" + nick + "@IRC KICK:" + who + " " + channel
+# define RPL_MSG(nick, target, txt)			":" + nick + "@IRC PRIVMSG " + target + " :" + txt
 
 // utils.cpp
 char			ascii_to_lower(char in);
