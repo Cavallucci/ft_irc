@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 16:35:02 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 16:52:03 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef std::map<int, User *>				usr_map;
 
 // custom error messages
 # define BUFFER_SIZE							2048
+# define DEBUG_IS_ON							"🔍 DEBUG mode is ON: have a look at the class User.hpp to better understand how the parsing works"
 # define ALLOWED_CHAR_IN_NICK					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_[]{}\\`|"
 # define ERR_NB_ARG								"❌ Invalid command, usage: ./ircserv <port> <password>"
 # define ERR_PORT_NB							"❌ Invalid port number, an integer is expected"
@@ -65,7 +66,6 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_EMPTY_PWD							"❌ Error: an empty password has been provided"
 # define ERR_GETADDR_INFO						"❌ Error get address informations"
 # define ERR_OPEN_SOCKET						"❌ Error while opening socket"
-# define ERR_RECV								"❌ Error while trying to read (recv) socket "
 # define ERR_BIND_SOCKET						"❌ Error while binding socket"
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_USER_FD							"❌ Error while accepting user fd"
@@ -76,6 +76,8 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_CHANNEL_NOT_FOUND					"❓ There isn't any channel with this name: "
 # define ERR_USER_FD_NOT_FOUND					"❓ There isn't any user with this fd: "
 # define ERR_USER_NICK_NOT_FOUND				"❓ There isn't any user with this nickname: "
+# define ERR_RECV								"❌ Error while trying to read (recv) socket "
+# define RECV_ZERO								"🚫 A socket has hang up, socket"
 
 // list of official numeric replies sent by the server by alphabetical order
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 16:35:09 by llalba           ###   ########.fr       */
+/*   Updated: 2022/11/23 16:52:11 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@ Server::Server() : _port(""), _host(""), _pwd(""), _name("IRC")
 Server::Server(std::string port, std::string pwd) :
 _port(port), _host("localhost"), _pwd(pwd), _name("IRC")
 {
+	if (DEBUG)
+	{
+		std::cout << CYN DEBUG_IS_ON END << std::endl << std::endl;
+	}
 	_serverSetUp();
 	_initCommands();
 	_serverConnect();
