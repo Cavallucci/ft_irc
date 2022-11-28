@@ -94,6 +94,14 @@ std::ostream &		operator<<(std::ostream & o, User const & e)
 void				User::reply(std::string msg)
 {
 	// TODO reponse au client a faire
+	msg.append("\r\n");
+	int		n = 0;
+
+	for (size_t i = 0; i < msg.length(); i += n)
+	{
+		n = send(_fd, &(msg[i]), msg.length() - i, 0);
+		if (n == -1) break;
+	}
 	std::cout << CYN << msg << END << std::endl;
 }
 

@@ -212,8 +212,8 @@ void	Server::_msgCmd(User *user, bool silently)
 	// TODO est-ce que les : sont indispensables ?
 	if (user->getArgs()[0][0] != ':' && silently)
 		return ;
-	else if (user->getArgs()[0][0] != ':')
-		return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
+	//else if (user->getArgs()[0][0] != ':')
+	//	return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
 	str_vec			targets = split_str(user->getArgs()[0], ",", true);
 	std::string		message = user->getRawArgs(1);
 	for (str_vec::iterator it = targets.begin(); it != targets.end(); ++it)
