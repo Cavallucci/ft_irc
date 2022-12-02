@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 16:25:32 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/02 14:58:45 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class User
 		void								reply(std::string msg);
 		void								welcome(std::string srv, bool silently);
 		// Getters & accessors
+		static bool							isValidMode(char mode); // class method
 		std::string							getInput(void) const;
 		str_vec								getCommands(std::string input) const;
 		std::string							getRawArgs(size_t skipped) const;
@@ -35,11 +36,12 @@ class User
 		std::string							getHost(void) const;
 		std::string							getUser(void) const;
 		std::string							getReal(void) const;
+		std::string							getMode(void) const;
 		bool								hasMode(char c) const;
 		bool								hasBeenWelcomed(void) const;
 		bool								isLoggedIn(void) const;
 		int									getFd(void) const;
-		chan_map const						getChannels() const;
+		chan_map const						getChannels(void) const;
 		Channel *							getChannel(std::string) const;
 		// Setters & mutators
 		bool								setInput(void);
@@ -50,6 +52,8 @@ class User
 		void								setHost(std::string name);
 		void								setUser(std::string name);
 		void								setReal(std::string name);
+		void								addMode(char new_mode);
+		void								rmMode(char new_mode);
 		void								logIn(void);
 		void								resetInput(void);
 		void								setFd(int fd);
@@ -58,6 +62,7 @@ class User
 		void								clearChannels();
 		void								setAddr(struct sockaddr_storage *addr);
 	private:
+		static const std::string			_valid_modes;
 		/*
 		⏩ The parsing can be broken down into 4 steps:
 		- STEP 1️⃣: raw user input -> _input

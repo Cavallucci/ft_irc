@@ -6,11 +6,13 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 16:50:31 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/02 15:48:43 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
+
+const std::string	User::_valid_modes = "abcde"; // TODO a mettre a jour
 
 //-------------------------------- CONSTRUCTORS -------------------------------
 
@@ -115,12 +117,14 @@ void				User::welcome(std::string srv, bool silently)
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------
 
+
 std::string			User::getInput(void) const { return _input; }
 str_vec const &		User::getArgs(void) const { return _args; }
 std::string			User::getNick(void) const { return _nickname; }
 std::string			User::getHost(void) const { return _hostname; }
 std::string			User::getUser(void) const { return _username; }
 std::string			User::getReal(void) const { return _realname; }
+std::string			User::getMode(void) const { return _mode; }
 bool				User::hasBeenWelcomed(void) const { return _welcomed; }
 bool				User::isLoggedIn(void) const { return _loggedIn; }
 int					User::getFd(void) const { return _fd; }
@@ -139,6 +143,13 @@ str_vec				User::getCommands(std::string input) const
 			std::cout << YEL "[" END << *it << YEL "]" END << std::endl;
 	}
 	return commands;
+}
+
+bool				User::isValidMode(char mode)
+{
+	if (_valid_modes.find(mode) != std::string::npos)
+		return (true);
+	return (false);
 }
 
 
@@ -197,6 +208,21 @@ void				User::setReal(std::string name) { _realname = name; }
 void				User::setFd(int fd) { _fd = fd; }
 void				User::setAddr(struct sockaddr_storage *addr) { _addr = addr; }
 void				User::logIn(void) { _loggedIn = true; }
+
+
+void				User::addMode(char new_mode)
+{
+	if (_mode.find(new_mode) != std::string::npos)
+		_mode.append(1, new_mode);
+}
+
+
+void				User::rmMode(char new_mode)
+{
+	if (_mode.find(new_mode) != std::string::npos)
+		_mode.erase(_mode.find(new_mode), 1);
+}
+
 
 
 void				User::setRawArgs(std::string content) {

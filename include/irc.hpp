@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 17:31:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/02 12:04:09 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ typedef std::vector<std::string>			str_vec;
 typedef std::vector<User *>					usr_vec;
 typedef std::map<std::string, Channel *>	chan_map;
 typedef std::map<int, User *>				usr_map;
+typedef std::vector<pollfd>::iterator		pfds_it;
+typedef chan_map::iterator					chan_it;
+typedef usr_map::iterator					user_it;
 
 # include "User.hpp"
 # include "Server.hpp"
@@ -114,7 +117,7 @@ typedef std::map<int, User *>				usr_map;
 # define ERR_WILDTOPLEVEL(srv, mask)			":" + srv + " 414 :" + mask + " :No toplevel domain specified"
 # define RPL_AWAY(srv, nick, msg)				":" + srv + " 301 :" + nick + " :" + msg
 # define RPL_BANLIST(srv, chan, ban_id)			":" + srv + " 367 :" + chan + " " + ban_id
-# define RPL_CHANNELMODEIS(srv, chan, mod, par)	":" + srv + " 324 :" + chan + " " + mod + " " + par
+# define RPL_CHANNELMODEIS(srv, chan, mod, par)	":" + srv + " 324 :" + chan + mod + " " + par
 # define RPL_ENDOFBANLIST(srv, chan)			":" + srv + " 368 :" + chan + " :End of channel ban list"
 # define RPL_ENDOFNAMES(srv, chan)				":" + srv + " 366 :" + chan + " :End of /NAMES list"
 # define RPL_ENDOFWHO(srv, name)				":" + srv + " 315 :" + name + " :End of /WHO list"
