@@ -43,10 +43,21 @@ Channel &				Channel::operator=(Channel const & rhs)
 {
 	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
 	(void)rhs;
-	//if (this != &rhs)
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	if (this != &rhs)
+	{
+		this->_name = rhs.getName();
+		this->_maxUsers = rhs.getMaxUsers();
+		this->setPassword(rhs._password);
+		this->_topic = rhs._topic;
+		this->_topicCtxt = rhs._topicCtxt;
+		
+		//maps
+		this->_users = rhs._users;
+		this->_ops = rhs._ops;
+		this->_banned = rhs._banned;
+		this->_moderators = rhs._moderators;
+		this->_invited = rhs._invited;
+	}
 	return *this;
 }
 
@@ -54,8 +65,34 @@ Channel &				Channel::operator=(Channel const & rhs)
 std::ostream &			operator<<(std::ostream & o, Channel const & e)
 {
 	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
-	(void)e;
-	//o << "Value = " << e.getValue();
+	o << YEL "Channel(" << &e << ") 🔶" END << std::endl;
+	o << "🔸Name:			" << e.getName() << std::endl;
+	o << "🔸Topic:			" << e.getTopic() << std::endl;
+	o << "🔸Users:			";
+	usr_map	usr = e.getUsers();
+	for (usr_map::const_iterator it = usr.begin(); it != usr.end(); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
+	o << "🔸Ops:			";
+	usr_map	ops = e.getUsers();
+	for (usr_map::const_iterator it = ops.begin(); it != ops.end() && e.isOp(it->first); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
+	o << "🔸Banned:			";
+	usr_map	ban = e.getUsers();
+	for (usr_map::const_iterator it = ban.begin(); it != ban.end() && e.isBanned(it->first); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
+	o << "🔸Moderators:			";
+	usr_map	mod = e.getUsers();
+	for (usr_map::const_iterator it = mod.begin(); it != mod.end() && e.isMod(it->first); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
+	o << "🔸Invited:			";
+	usr_map	inv = e.getUsers();
+	for (usr_map::const_iterator it = inv.begin(); it != inv.end() && e.isInvited(it->first); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
 	return o;
 }
 
@@ -114,8 +151,18 @@ void			Channel::rpl_chan_mode(User *user, std::string srv)
 
 	for (size_t i = 0; i < _mode.size(); ++i)
 	{
-		// modes.append(" +");
-		// modes.append(_mode[i]);
+		if (i > 0)
+			modes.append(" ");
+		modes.append("+");
+		modes += _mode[i];
+		if (_mode[i] == 'l')
+		{
+			params = "";
+			ss << _maxUsers;
+			ss >> params;
+			ss.clear();
+			modes += " " + params;
+		}
 		// TODO a tester et a terminer
 	}
 	user->reply(RPL_CHANNELMODEIS(srv, getName(), modes, params));
@@ -139,6 +186,7 @@ void			Channel::msg(std::string srv, User *user, std::string txt, bool silently)
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------
 
+usr_map				Channel::getUsers() const { return _users; }
 std::string			Channel::getName(void) const { return _name; }
 std::string			Channel::getTopic(void) const { return _topic; }
 size_t				Channel::getMaxUsers(void) const { return _maxUsers; }
