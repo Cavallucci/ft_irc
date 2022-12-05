@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 18:04:23 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/02 15:48:10 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,23 +59,23 @@ std::ostream &			operator<<(std::ostream & o, Channel const & e)
 	return o;
 }
 
-//---------------------------------- METHODS ----------------------------------
+//------------------------------- REPLY METHODS -------------------------------
 
-void					Channel::broadcast(std::string msg)
+void			Channel::broadcast(std::string msg)
 {
-	for (usr_map::iterator it = _users.begin(); it != _users.end(); ++it)
+	for (user_it it = _users.begin(); it != _users.end(); ++it)
 	{
 		it->second->reply(msg);
 	}
 }
 
 
-void					Channel::rpl_whoreply(User *user, std::string srv)
+void			Channel::rpl_whoreply(User *user, std::string srv)
 {
 	if (hasMode('p') && !isIn(user->getFd()))
 		return ;
 	// TODO checker si le mode 's' doit changer quelque chose ou pas ici
-	for (usr_map::iterator it = _users.begin(); it != _users.end(); ++it)
+	for (user_it it = _users.begin(); it != _users.end(); ++it)
 	{
 		if (!it->second->hasMode('i')) {
 			user->reply(RPL_WHOREPLY(
@@ -91,7 +91,38 @@ void					Channel::rpl_whoreply(User *user, std::string srv)
 }
 
 
-void	Channel::msg(std::string srv, User *user, std::string txt, bool silently)
+void			Channel::rpl_ban_list(User *user, std::string srv)
+{
+	for (user_it it = _banned.begin(); it != _banned.end(); ++it)
+		user->reply(RPL_BANLIST(srv, getName(), it->second->getNick()));
+	user->reply(RPL_ENDOFBANLIST(srv, getName()));
+}
+
+
+void			Channel::rpl_names(User *user, std::string srv)
+{
+	// TODO
+	user->reply(RPL_NAMREPLY(srv, user->getNick())); // TODO a completer
+}
+
+
+void			Channel::rpl_chan_mode(User *user, std::string srv)
+{
+	std::string			modes;
+	std::string			params;
+	std::stringstream	ss;
+
+	for (size_t i = 0; i < _mode.size(); ++i)
+	{
+		// modes.append(" +");
+		// modes.append(_mode[i]);
+		// TODO a tester et a terminer
+	}
+	user->reply(RPL_CHANNELMODEIS(srv, getName(), modes, params));
+}
+
+
+void			Channel::msg(std::string srv, User *user, std::string txt, bool silently)
 {
 	if (hasMode('m') && !(isOp(user->getFd()) || isMod(user->getFd())))
 	{
@@ -99,7 +130,7 @@ void	Channel::msg(std::string srv, User *user, std::string txt, bool silently)
 			user->reply(ERR_CANNOTSENDTOCHAN(srv, getName()));
 		return ;
 	}
-	for (usr_map::iterator it = _users.begin(); it != _users.end(); ++it)
+	for (user_it it = _users.begin(); it != _users.end(); ++it)
 	{
 		if (it->second != user) // the user doesn't want to write to himself
 			it->second->reply(RPL_MSG(user->getNick(), getName(), txt));

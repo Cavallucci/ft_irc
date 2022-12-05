@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 18:22:13 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/02 15:45:38 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,34 +165,51 @@ void	Server::_modeCmd(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	if (user->getArgs().size() < 2)
+	if (user->getArgs().size() < 1)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "MODE")));
 	std::string		name = user->getArgs()[0];
-	std::string		action = user->getArgs()[1];
+	std::string		action;
+	if (user->getArgs().size() >= 2)
+		action = user->getRawArgs(1);
 	if (name[0] == '#' || name[0] == '&') // channel modes
 	{
 		Channel		*channel = getChannel(name);
 		if (channel == NULL)
 			return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), name)));
-		// MARQUE-PAGE
+		if (action.empty()) // the user just wants to get the channel modes
+			return (channel->rpl_chan_mode(user, getSrv())); // RPL_CHANNELMODEIS
+		if (action[0] == 'b')
+			return (channel->rpl_ban_list(user, getSrv())); // RPL_BANLIST, RPL_ENDOFBANLIST
+		if (!channel->isOp(user->getFd()))
+			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
+		if (!(action[0] == '+' || action[0] == '-'))
+			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
+		// TODO verifier l'ordre des messages d'erreur
+		// TODO pour MAJ les options utiliser un std::string [possible_modes] et un vecteur de fonctions membres
 	}
 	else // user modes
 	{
-		// MARQUE-PAGE
+		User		*target = getUser(name);
+		if (target == NULL)
+			return (user->reply(ERR_NOSUCHNICK(getSrv(), name)));
+		if (target != user)
+			return (user->reply(ERR_USERSDONTMATCH(getSrv())));
+		if (action.empty())
+			return (user->reply(RPL_UMODEIS(getSrv(), user->getMode())));
+		if (action[0] != '+' && action[0] != '-')
+			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
+		// TODO tester le comportement quand il a plus que 2 arguments: que faire des espaces? les ignorer ?
+		for (size_t i = 1; i < action.size(); i++) { // ignores the starting '+' or '-'
+			if (!user->isValidMode(action[i]))
+				user->reply(ERR_UNKNOWNMODE(getSrv(), action[i]));
+			else if (action[0] == '+' && action[i] != 'o')
+				user->addMode(action[i]);
+			else if (action[0] == '-')
+				user->rmMode(action[i]);
+		}
 	}
-	// ERR_NEEDMOREPARAMS
-	// RPL_CHANNELMODEIS
-	// ERR_CHANOPRIVSNEEDED
-	// ERR_NOSUCHNICK
 	// ERR_NOTONCHANNEL
 	// ERR_KEYSET
-	// RPL_BANLIST
-	// RPL_ENDOFBANLIST
-	// ERR_UNKNOWNMODE
-	// ERR_NOSUCHCHANNEL
-	// ERR_USERSDONTMATCH
-	// RPL_UMODEIS
-	// ERR_UMODEUNKNOWNFLAG
 }
 
 /*
@@ -252,13 +269,55 @@ void	Server::_msgCmd(User *user, bool silently)
 }
 
 
+//    NAMES #twilight_zone,#42        ; list visible users on #twilight_zone FIXME
+//                                    and #42 if the channels are visible to
+//                                    you.
+
+//    NAMES                           ; list all visible channels and users
+
 /*
 NAMES command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.5
 */
 void	Server::_namesCmd(User *user)
 {
-	(void)user->getArgs(); // FIXME
+	if (!user->hasBeenWelcomed())
+		return ;
+	// TODO tester le comportement quand il a plus que 2 arguments: que faire des espaces? les ignorer ?
+	Channel		*chan = NULL;
+	if (user->getArgs().size()) // ⏩ lists visible users on the specified channels
+	{
+		// TODO MARQUE-PAGE
+	} else { // ⏩ lists absolutely all visible channels and users
+		for (chan_it it = _channels.begin(); it != _channels.end(); ++it)
+		{
+			chan = it->second;
+			if (chan->isIn(user->getFd()) || (!chan->hasMode('p') && !chan->hasMode('s')))
+				chan->rpl_names(user, getSrv());
+		}
+		std::string		list;
+		bool			listed;
+		for (user_it it = _users.begin(); it != _users.end(); ++it)
+		{
+			if (!it->second->hasMode('i')) // checks that the target isn't in invisible mode
+			{
+				listed = false; // checks that the target hasn't already been listed
+				// that is to say that either he's in hidden channels only...
+				chan_map const		its_channels = it->second->getChannels();
+				for (chan_it it = _channels.begin(); it != _channels.end() && !listed; ++it)
+				{
+					if (!it->second->hasMode('p') && !it->second->hasMode('s'))
+						listed = true;
+				} // or that he doesn't have any channel!
+				if (!list.empty())
+					list.append(" ");
+				if (!listed)
+					list.append(it->second->getNick());
+			}
+		}
+		user->reply(RPL_NAMREPLY(getSrv(), "*")); // TODO a completer, tester le format exact attendu
+		user->reply(RPL_ENDOFNAMES(getSrv(), "*")); // TODO a completer, tester le format exact attendu
+	}
 	// RPL_NAMREPLY
 	// RPL_ENDOFNAMES
 }
@@ -277,7 +336,7 @@ void	Server::_nickCmd(User *user)
 		return user->reply(ERR_ERRONEUSNICKNAME(getSrv(), nick));
 	if (nick.find_first_not_of(ALLOWED_CHAR_IN_NICK) != std::string::npos)
 		return user->reply(ERR_ERRONEUSNICKNAME(getSrv(), nick));
-	for (usr_map::iterator it = _users.begin(); it != _users.end(); ++it)
+	for (user_it it = _users.begin(); it != _users.end(); ++it)
 	{
 		if (it->second->getNick() == nick)
 			return user->reply(ERR_NICKNAMEINUSE(getSrv(), nick));
@@ -367,7 +426,7 @@ void	Server::_quitCmd(User *user)
 	std::string		quit_msg = user->getRawArgs(0);
 	// gets the user out of every channel
 	chan_map	channels = user->getChannels();
-	for (chan_map::iterator it = channels.begin(); it != channels.end(); ++it)
+	for (chan_it it = channels.begin(); it != channels.end(); ++it)
 	{
 		// TODO checker quel est le quit_msg par défaut
 		it->second->delUser(user);
