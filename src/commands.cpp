@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/02 15:45:38 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/05 18:39:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,12 +148,40 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 */
 void	Server::_listCmd(User *user)
 {
-
-	(void)user->getArgs(); // FIXME
+	if (!user->hasBeenWelcomed())
+		return;
+	Channel			*chan;
+	std::string		nb_visible;
+	user->reply(RPL_LISTSTART(getSrv()));
+	if (user->getArgs().size()) { // ⏩ lists specified channels and their topics
+		str_vec		chans = split_str(user->getArgs()[0], ",", true);
+		for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name) {
+			chan = getChannel(*name);
+			if (chan == NULL || (chan->hasMode('s') && !(chan->isIn(user->getFd()))))
+				continue ;
+			// TODO vérifier comportement attendu si channel introuvable ... on ignore le pbm et on continue ?
+			nb_visible = ft_to_string(chan->getNbUsers());
+			// TODO ne pas compter les utilisateurs en mode 'p' ou 's' ? à tester
+			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
+				user->reply(RPL_LIST(getSrv(), *name, nb_visible, PRV_TOPIC));
+			else
+				user->reply(RPL_LIST(getSrv(), *name, nb_visible, chan->getTopic()));
+		}
+	} else { // ⏩ lists all visible channels and their topics
+		for (chan_it it = _channels.begin(); it != _channels.end(); ++it) {
+			chan = it->second;
+			if (chan->hasMode('s') && !(chan->isIn(user->getFd())))
+				continue ;
+			nb_visible = ft_to_string(chan->getNbUsers());
+			// TODO ne pas compter les utilisateurs en mode 'p' ou 's' ? 			// TODO ne pas compter les utilisateurs en mode 'p' ou 's' ? à testerà tester
+			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
+				user->reply(RPL_LIST(getSrv(), chan->getName(), nb_visible, PRV_TOPIC));
+			else
+				user->reply(RPL_LIST(getSrv(), chan->getName(), nb_visible, chan->getTopic()));
+		}
+	}
+	user->reply(RPL_LISTEND(getSrv()));
 	// ERR_NOSUCHSERVER
-	// RPL_LISTSTART
-	// RPL_LIST
-	// RPL_LISTEND
 }
 
 
@@ -269,12 +297,6 @@ void	Server::_msgCmd(User *user, bool silently)
 }
 
 
-//    NAMES #twilight_zone,#42        ; list visible users on #twilight_zone FIXME
-//                                    and #42 if the channels are visible to
-//                                    you.
-
-//    NAMES                           ; list all visible channels and users
-
 /*
 NAMES command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.5
@@ -287,7 +309,16 @@ void	Server::_namesCmd(User *user)
 	Channel		*chan = NULL;
 	if (user->getArgs().size()) // ⏩ lists visible users on the specified channels
 	{
-		// TODO MARQUE-PAGE
+		str_vec		chans = split_str(user->getArgs()[0], ",", true);
+		for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name)
+		{
+			Channel		*chan = getChannel(*name);
+			if (chan != NULL && (chan->isIn(user->getFd()) || \
+				(!chan->hasMode('p') && !chan->hasMode('s'))))
+				// TODO chan->rpl_namreply(user, true);
+			user->reply(RPL_ENDOFNAMES(getSrv(), *name));
+			// TODO est-ce qu'on arrête tout au 1er nom de channel invalide ? à tester
+		}
 	} else { // ⏩ lists absolutely all visible channels and users
 		for (chan_it it = _channels.begin(); it != _channels.end(); ++it)
 		{
@@ -361,10 +392,25 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.2
 */
 void	Server::_partCmd(User *user)
 {
-	(void)user->getArgs(); // FIXME
-	// ERR_NEEDMOREPARAMS
-	// ERR_NOSUCHCHANNEL
-	// ERR_NOTONCHANNEL
+	if (!user->hasBeenWelcomed())
+		return ;
+	if (!user->getArgs().size())
+		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PART")));
+	str_vec		names = split_str(user->getArgs()[0], ",", true);
+	Channel		*chan;
+	for (str_vec::iterator it = names.begin(); it != names.end(); ++it) {
+		chan = getChannel(*it);
+		if (chan != NULL) {
+			user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
+		} else if (chan->isIn(user->getFd())) {
+			chan->broadcast(RPL_PART(user->getNick(), *it));
+			(void)user->rmChannel(*it);
+			if (chan->getNbUsers() == 0)
+				delChannel(chan);
+		} else {
+			user->reply(ERR_NOTONCHANNEL(getSrv(), *it));
+		}
+	}
 }
 
 

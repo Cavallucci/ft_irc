@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/02 15:48:10 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/05 18:04:33 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -360,4 +360,5 @@ void				Channel::setTopic(std::string topic, std::string nick)
 	tmp << time(NULL);
 	_topic = topic;
 	_topicCtxt = nick + " " + tmp.str();
+	tmp.clear();
 }
