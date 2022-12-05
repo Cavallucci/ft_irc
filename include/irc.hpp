@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/02 12:04:09 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/05 18:35:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ typedef usr_map::iterator					user_it;
 # define ERR_USER_NICK_NOT_FOUND				"❓ There isn't any user with this nickname: "
 # define ERR_RECV								"❌ Error while trying to read (recv) socket "
 # define RECV_ZERO								"🚫 A socket has hang up, socket"
+# define PRV_TOPIC								"Prv"
 
 // list of official numeric replies sent by the server by alphabetical order
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
@@ -122,7 +123,7 @@ typedef usr_map::iterator					user_it;
 # define RPL_ENDOFNAMES(srv, chan)				":" + srv + " 366 :" + chan + " :End of /NAMES list"
 # define RPL_ENDOFWHO(srv, name)				":" + srv + " 315 :" + name + " :End of /WHO list"
 # define RPL_INVITING(srv, chan, nick)			":" + srv + " 341 :" + chan + " " + nick
-# define RPL_LIST(srv, chan)					":" + srv + " 322 :" + chan + " <# visible> :<topic>"
+# define RPL_LIST(srv, chan, nb, topic)			":" + srv + " 322 :" + chan + " " + nb + " :" + topic
 # define RPL_LISTEND(srv)						":" + srv + " 323 :End of /LIST"
 # define RPL_LISTSTART(srv)						":" + srv + " 321 :Channel :Users  Name"
 # define RPL_NAMREPLY(srv, chan)				":" + srv + " 353 :" + chan + " :[[@|+]<nick> [[@|+]<nick> [...]]]"
@@ -137,6 +138,7 @@ typedef usr_map::iterator					user_it;
 # define ERR_15_PARAM							"There cannot be more than 15 parameters in your command"
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
 # define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT :" + msg
+# define RPL_PART(nick, channel)				":" + nick + "@IRC PART :" + channel
 # define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
 # define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE:" + by + " " + channel
 # define RPL_KICK(nick, who, channel)			":" + nick + "@IRC KICK:" + who + " " + channel
@@ -146,5 +148,6 @@ typedef usr_map::iterator					user_it;
 char			ascii_to_lower(char in);
 str_vec			split_str(std::string initial, std::string separator, bool with_empty);
 bool			is_valid_channel_name(std::string chan, User *user, std::string srv);
+std::string		ft_to_string(size_t	nb);
 
 #endif

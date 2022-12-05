@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:19:36 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 15:17:23 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/05 18:38:00 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ char		ascii_to_lower(char in)
 		return in - ('Z' - 'z');
 	return (in);
 }
+
 
 str_vec		split_str(std::string initial, std::string separator, bool with_empty)
 {
@@ -34,6 +35,7 @@ str_vec		split_str(std::string initial, std::string separator, bool with_empty)
 		output.push_back(initial);
 	return output;
 }
+
 
 bool		is_valid_channel_name(std::string chan, User *user, std::string srv)
 {
@@ -56,4 +58,12 @@ bool		is_valid_channel_name(std::string chan, User *user, std::string srv)
 		return (false);
 	}
 	return (true);
+}
+
+
+std::string		ft_to_string(size_t	nb)
+{
+	std::stringstream	ss;
+	ss << nb;
+	return (ss.str());
 }
