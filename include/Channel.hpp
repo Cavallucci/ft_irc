@@ -30,6 +30,7 @@ class Channel
 		void			rpl_names(User *user, std::string srv);
 		void			msg(std::string srv, User *user, std::string content, bool silently);
 		// Getters & accessors
+		usr_map			getUsers(void) const;
 		std::string		getName(void) const;
 		std::string		getTopic(void) const;
 		size_t			getNbUsers(void) const;

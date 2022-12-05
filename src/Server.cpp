@@ -58,9 +58,7 @@ Server &				Server::operator=(Server const & rhs)
 		this->_commands = rhs._commands;
 		this->_pfds = rhs._pfds;
 
-		usr_map		usr = rhs.getUsers();
-		for (user_it it = usr.begin(); it != usr.end(); it++)
-			this->_addUser(); // TODO  not fill good !!
+		this->_users = rhs.getUsers();
 	}
 	return *this;
 }

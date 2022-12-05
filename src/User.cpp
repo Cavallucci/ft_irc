@@ -50,19 +50,23 @@ User &				User::operator=(User const & rhs)
 	// TODO verifier qu'on a oublie aucun membre dans la copie meme si a priori elle ne sert pas
 	if (this != &rhs)
 	{
+		this->_rawArgs = rhs._rawArgs;
+		this->_mode = rhs._mode;
+		this->_loggedIn = rhs._loggedIn;
+		this->_fd = rhs._fd;
+		this->_addr = rhs._addr;
+		this->setArgs(rhs.getArgs());
+
 		this->setNick(rhs.getNick());
 		this->setHost(rhs.getHost());
 		this->setUser(rhs.getUser());
 		this->setReal(rhs.getReal());
-		this->setArgs(rhs.getArgs());
 		if (rhs.hasBeenWelcomed())
 			this->welcome("", true);
 		this->setFd(rhs.getFd());
 		this->clearChannels();
 		chan_map	chan = rhs.getChannels();
-		for (chan_map::const_iterator it = chan.begin();
-		it != chan.end();
-		it++)
+		for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
 			this->addChannel(it->first);
 	}
 	return *this;
@@ -96,7 +100,6 @@ std::ostream &		operator<<(std::ostream & o, User const & e)
 
 void				User::reply(std::string msg)
 {
-	// TODO reponse au client a faire
 	msg.append("\r\n");
 	int		n = 0;
 
