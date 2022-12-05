@@ -54,6 +54,7 @@ User &				User::operator=(User const & rhs)
 		this->setHost(rhs.getHost());
 		this->setUser(rhs.getUser());
 		this->setReal(rhs.getReal());
+		this->setArgs(rhs.getArgs());
 		if (rhs.hasBeenWelcomed())
 			this->welcome("", true);
 		this->setFd(rhs.getFd());

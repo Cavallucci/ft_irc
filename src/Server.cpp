@@ -47,20 +47,39 @@ Server::~Server()
 
 Server &				Server::operator=(Server const & rhs)
 {
-	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
-	(void)rhs;
-	//if (this != &rhs)
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	// TODO verifier qu'on a oublie aucun membre
+	if (this != &rhs)
+	{
+		this->_port = rhs._port;
+		this->_host = rhs._host;
+		this->_pwd = rhs._pwd;
+		this->_name = rhs._name;
+		this->_listener = rhs._listener;
+		this->_commands = rhs._commands;
+		this->_pfds = rhs._pfds;
+
+		usr_map		usr = rhs.getUsers();
+		for (user_it it = usr.begin(); it != usr.end(); it++)
+			this->_addUser(); // TODO  not fill good !!
+	}
 	return *this;
 }
 
 std::ostream &			operator<<(std::ostream & o, Server const & e)
 {
-	// TODO completer cette fonction meme si a priori elle ne sert pas cf. User.cpp OVERLOAD
-	(void)e;
-	//o << "Value = " << e.getValue();
+	// TODO verifier qu'on a oublie aucun membre dans l'affichage meme si a priori il ne sert pas
+	o << YEL "Server(" << &e << ") 🔶" END << std::endl;
+	o << "🔸Users:			";
+	usr_map	usr = e.getUsers();
+	for (usr_map::const_iterator it = usr.begin(); it != usr.end(); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
+
+	o << "🔸Channels:			";
+	chan_map	chan = e.getChannels();
+	for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
+		o << "[" << it->first << "] ";
+	o << std::endl;
 	return o;
 }
 
