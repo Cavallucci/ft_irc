@@ -6,31 +6,31 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/05 18:39:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/06 00:01:44 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-void	Server::_initCommands(void)
+void	Server::_initHandlers(void)
 {
 	// by alphabetical order
-	_commands["invite"] = &Server::_inviteCmd;
-	_commands["join"] = &Server::_joinCmd;
-	_commands["kick"] = &Server::_kickCmd;
-	_commands["list"] = &Server::_listCmd;
-	_commands["mode"] = &Server::_modeCmd;
-	_commands["privmsg"] = &Server::_privMsgCmd;
-	_commands["names"] = &Server::_namesCmd;
-	_commands["nick"] = &Server::_nickCmd;
-	_commands["notice"] = &Server::_noticeCmd;
-	_commands["part"] = &Server::_partCmd;
-	_commands["pass"] = &Server::_passCmd;
-	_commands["ping"] = &Server::_pingCmd;
-	_commands["quit"] = &Server::_quitCmd;
-	_commands["topic"] = &Server::_topicCmd;
-	_commands["user"] = &Server::_userCmd;
-	_commands["who"] = &Server::_whoCmd;
+	_commands["invite"] = &Server::_inviteHandler;
+	_commands["join"] = &Server::_joinHandler;
+	_commands["kick"] = &Server::_kickHandler;
+	_commands["list"] = &Server::_listHandler;
+	_commands["mode"] = &Server::_modeHandler;
+	_commands["privmsg"] = &Server::_privMsgHandler;
+	_commands["names"] = &Server::_namesHandler;
+	_commands["nick"] = &Server::_nickHandler;
+	_commands["notice"] = &Server::_noticeHandler;
+	_commands["part"] = &Server::_partHandler;
+	_commands["pass"] = &Server::_passHandler;
+	_commands["ping"] = &Server::_pingHandler;
+	_commands["quit"] = &Server::_quitHandler;
+	_commands["topic"] = &Server::_topicHandler;
+	_commands["user"] = &Server::_userHandler;
+	_commands["who"] = &Server::_whoHandler;
 }
 
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
@@ -41,7 +41,7 @@ void	Server::_initCommands(void)
 INVITE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
 */
-void	Server::_inviteCmd(User *user)
+void	Server::_inviteHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -73,7 +73,7 @@ void	Server::_inviteCmd(User *user)
 JOIN command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.1
 */
-void	Server::_joinCmd(User *user)
+void	Server::_joinHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -111,7 +111,7 @@ void	Server::_joinCmd(User *user)
 KICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
-void	Server::_kickCmd(User *user)
+void	Server::_kickHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -146,7 +146,7 @@ void	Server::_kickCmd(User *user)
 LIST command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 */
-void	Server::_listCmd(User *user)
+void	Server::_listHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return;
@@ -189,7 +189,7 @@ void	Server::_listCmd(User *user)
 MODE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 */
-void	Server::_modeCmd(User *user)
+void	Server::_modeHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -214,6 +214,7 @@ void	Server::_modeCmd(User *user)
 			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
 		// TODO verifier l'ordre des messages d'erreur
 		// TODO pour MAJ les options utiliser un std::string [possible_modes] et un vecteur de fonctions membres
+		// TODO l - set the user limit to channel
 	}
 	else // user modes
 	{
@@ -244,7 +245,7 @@ void	Server::_modeCmd(User *user)
 The following function may be called by 2 commands: PRIVMSG and NOTICE.
 Contrary to PRIVMSG, with NOTICE, there aren't any automatic replies sent.
 */
-void	Server::_msgCmd(User *user, bool silently)
+void	Server::_msgHandler(User *user, bool silently)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -301,7 +302,7 @@ void	Server::_msgCmd(User *user, bool silently)
 NAMES command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.5
 */
-void	Server::_namesCmd(User *user)
+void	Server::_namesHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -358,7 +359,7 @@ void	Server::_namesCmd(User *user)
 NICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.2
 */
-void	Server::_nickCmd(User *user)
+void	Server::_nickHandler(User *user)
 {
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NONICKNAMEGIVEN(getSrv()));
@@ -383,14 +384,14 @@ void	Server::_nickCmd(User *user)
 NOTICE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2
 */
-void	Server::_noticeCmd(User *user) { _msgCmd(user, true); }
+void	Server::_noticeHandler(User *user) { _msgHandler(user, true); }
 
 
 /*
 PART command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.2
 */
-void	Server::_partCmd(User *user)
+void	Server::_partHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -418,7 +419,7 @@ void	Server::_partCmd(User *user)
 PASS command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.1
 */
-void	Server::_passCmd(User *user)
+void	Server::_passHandler(User *user)
 {
 	if (user->hasBeenWelcomed())
 		return (user->reply(ERR_ALREADYREGISTRED(getSrv())));
@@ -442,7 +443,7 @@ void	Server::_passCmd(User *user)
 PING command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.6.2
 */
-void	Server::_pingCmd(User *user)
+void	Server::_pingHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -459,13 +460,13 @@ void	Server::_pingCmd(User *user)
 PRIVMSG command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
 */
-void	Server::_privMsgCmd(User *user) { _msgCmd(user, false); }
+void	Server::_privMsgHandler(User *user) { _msgHandler(user, false); }
 
 /*
 QUIT command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.6
 */
-void	Server::_quitCmd(User *user)
+void	Server::_quitHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -505,7 +506,7 @@ void	Server::_quitCmd(User *user)
 TOPIC command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.4
 */
-void	Server::_topicCmd(User *user)
+void	Server::_topicHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return;
@@ -513,7 +514,7 @@ void	Server::_topicCmd(User *user)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "TOPIC")));
 	std::string		name = user->getArgs()[0];
 	Channel			*chan = getChannel(name);
-	// TODO checker si on peut TOPIC sans être dedans : filtrer, chercher dans les channels de l'User ?
+	// TODO checker si on peut TOPIC sans être dedans : faut-il filtrer sur les channels de l'User ?
 	if (chan != NULL) { // channel does exist & the user can access it
 		// the user simply wants to view the channel topic
 		if (user->getArgs()[1].find(':') == std::string::npos) {
@@ -542,7 +543,7 @@ void	Server::_topicCmd(User *user)
 USER command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.3
 */
-void	Server::_userCmd(User *user)
+void	Server::_userHandler(User *user)
 {
 	if (user->hasBeenWelcomed())
 		return user->reply(ERR_ALREADYREGISTRED(getSrv()));
@@ -553,6 +554,8 @@ void	Server::_userCmd(User *user)
 	user->setUser(user->getArgs()[0]);
 	user->setHost(user->getArgs()[1]);
 	user->setReal(user->getArgs()[3]);
+	// TODO real name peut contenir des espaces
+	// TODO supprimer le : avant de setRealName
 	if (user->getNick().size() && user->isLoggedIn() && !user->hasBeenWelcomed())
 		user->welcome(getSrv(), false);
 }
@@ -562,7 +565,7 @@ void	Server::_userCmd(User *user)
 WHO command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.5.1
 */
-void	Server::_whoCmd(User *user)
+void	Server::_whoHandler(User *user)
 {
 	if (user->hasBeenWelcomed())
 		return ;

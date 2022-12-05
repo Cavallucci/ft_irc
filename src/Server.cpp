@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 16:52:11 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/06 00:05:30 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ _port(port), _host("localhost"), _pwd(pwd), _name("IRC")
 		std::cout << CYN DEBUG_IS_ON END << std::endl << std::endl;
 	}
 	_serverSetUp();
-	_initCommands();
+	_initHandlers();
 	_serverConnect();
 }
 
@@ -199,8 +199,8 @@ void	Server::_deleteUser(pfds_it &it)
 		close(it->fd);
 	}
 	_pfds.erase(it);
-	while (user->getChannels().size() != 0)
-		_joinCmd(user);
+	user->clearChannels();
+	// TODO supprimer le channel si plus d'utilisateurs dedans ?
 	delete user;
 }
 

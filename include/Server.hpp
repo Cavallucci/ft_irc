@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/02 12:04:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/06 00:01:40 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,24 +56,24 @@ class Server
 		bool								_parseInput(User *user);
 		void								_closeAll(void);
 		// Methods related to commands management
-		void								_initCommands(void);
-		void								_inviteCmd(User* user);
-		void								_joinCmd(User* user);
-		void								_kickCmd(User* user);
-		void								_listCmd(User* user);
-		void								_modeCmd(User* user);
-		void								_msgCmd(User* user, bool silently);
-		void								_namesCmd(User* user);
-		void								_nickCmd(User* user);
-		void								_noticeCmd(User* user);
-		void								_partCmd(User* user);
-		void								_passCmd(User* user);
-		void								_pingCmd(User* user);
-		void								_privMsgCmd(User *user);
-		void								_quitCmd(User* user);
-		void								_topicCmd(User* user);
-		void								_userCmd(User* user);
-		void								_whoCmd(User* user);
+		void								_initHandlers(void);
+		void								_inviteHandler(User* user);
+		void								_joinHandler(User* user);
+		void								_kickHandler(User* user);
+		void								_listHandler(User* user);
+		void								_modeHandler(User* user);
+		void								_msgHandler(User* user, bool silently);
+		void								_namesHandler(User* user);
+		void								_nickHandler(User* user);
+		void								_noticeHandler(User* user);
+		void								_partHandler(User* user);
+		void								_passHandler(User* user);
+		void								_pingHandler(User* user);
+		void								_privMsgHandler(User *user);
+		void								_quitHandler(User* user);
+		void								_topicHandler(User* user);
+		void								_userHandler(User* user);
+		void								_whoHandler(User* user);
 };
 
 std::ostream &	operator<<(std::ostream & o, Server const & e);
