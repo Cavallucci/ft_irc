@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/02 14:58:45 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/07 17:07:57 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,16 @@ class User
 		std::string							_hostname;
 		std::string							_username;
 		std::string							_realname;
-		std::string							_mode;
 		bool								_welcomed;
 		bool								_loggedIn;
 		int									_fd;
 		chan_map							_channels;
 		struct sockaddr_storage				*_addr;
+		/*
+		USERS MODES
+		'i' = invisible, will be hidden to other users in NAMES and WHO output
+		*/
+		std::string							_mode;
 };
 
 std::ostream &	operator<<(std::ostream & o, User const & e);

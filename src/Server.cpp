@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/06 00:05:30 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/07 17:56:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,6 +228,7 @@ bool	Server::_parseInput(User *user)
 			}
 		}
 		try {
+			// TODO vérifier que l'utilisateur est authentifié (PASS OK ?)
 			for (size_t i = 0; i < cmd_str.size(); i++) // CMD to lower case
 				cmd_str[i] = ascii_to_lower(cmd_str[i]);
 			CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
@@ -302,11 +303,10 @@ Channel			*Server::newChan(User *user, std::string name, size_t nth)
 	std::string		pw;
 	if (user->getArgs().size() == 2)
 		passwords = split_str(user->getArgs()[1], ",", true);
-	if (passwords.size() >= nth)
+	// empty passwords will be ignored, the channel won't have a password
+	if (passwords.size() >= nth && !passwords[nth].empty())
 		pw = passwords[nth];
-	// TODO checker s'il est possible de définir un password ""
 	Channel		*chan = new Channel(name, pw);
-
 	std::cout << GRN "Channel " << name << " created." END << std::endl;
 	chan->addUser(user);
 	chan->addOp(user);

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:20:15 by llalba            #+#    #+#             */
-/*   Updated: 2022/11/23 11:45:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/07 17:49:00 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,28 +24,24 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		if (argc != 3) {
+		if (argc != 3)
 			throw std::runtime_error(ERR_NB_ARG);
-		}
 		std::string		port_str = argv[1];
 		if (port_str.empty() || \
 			port_str.find_first_not_of("0123456789") != std::string::npos)
-		{
 			throw std::runtime_error(ERR_PORT_NB);
-		}
 		int				port = std::atoi(argv[1]);
 		if (port < 0 || port > 65535)
-		{
 			throw std::runtime_error(ERR_PORT_RANGE);
-		}
+		// the password cannot be blank
 		if (!argv[2][0])
-		{
 			throw std::runtime_error(ERR_EMPTY_PWD);
-		}
 		running = true;
-		signal(SIGINT, signHandler); // TODO a supprimer ?
 		std::string		password = argv[2];
-
+		// the password cannot contain spaces
+		if (password.find(' ') != std::string::npos)
+			throw std::runtime_error(ERR_INVALID_PWD);
+		signal(SIGINT, signHandler); // TODO a supprimer ?
 		Server	server(argv[1], password);
 
 		return (EXIT_SUCCESS);

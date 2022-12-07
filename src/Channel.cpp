@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/05 18:04:33 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/07 18:19:46 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ Channel &				Channel::operator=(Channel const & rhs)
 		this->setPassword(rhs._password);
 		this->_topic = rhs._topic;
 		this->_topicCtxt = rhs._topicCtxt;
-		
+
 		//maps
 		this->_users = rhs._users;
 		this->_ops = rhs._ops;
@@ -136,10 +136,32 @@ void			Channel::rpl_ban_list(User *user, std::string srv)
 }
 
 
-void			Channel::rpl_names(User *user, std::string srv)
+void			Channel::rpl_names(User *user, std::string srv, bool send_end)
 {
-	// TODO
-	user->reply(RPL_NAMREPLY(srv, user->getNick())); // TODO a completer
+	std::string		output;
+	std::string		mode_char;
+
+	for (user_it it = _users.begin(); it != _users.end(); ++it)
+	{
+		if (!it->second->hasMode('i'))
+		{
+			if (!output.empty())
+				output.append(" ");
+			if (isOp(it->second->getFd()))
+				output += "@";
+			if (isMod(it->second->getFd()))
+				output += "+";
+			output.append(it->second->getNick());
+		}
+	}
+	mode_char = "=";
+	if (hasMode('s'))
+		mode_char = "@";
+	else if (hasMode('p'))
+		mode_char = "*";
+	user->reply(RPL_NAMREPLY(srv, mode_char, getName(), output));
+	if (send_end)
+		user->reply(RPL_ENDOFNAMES(srv, getName()));
 }
 
 
@@ -192,7 +214,20 @@ std::string			Channel::getTopic(void) const { return _topic; }
 size_t				Channel::getMaxUsers(void) const { return _maxUsers; }
 bool				Channel::hasPassword() const { return _password != ""; }
 std::string			Channel::getTopicCtxt(void) const { return _topicCtxt; }
-size_t				Channel::getNbUsers(void) const { return _users.size(); }
+
+
+size_t				Channel::getNbUsers(bool with_invisible) const {
+	if (with_invisible)
+		return _users.size();
+	usr_map		users = getUsers();
+	size_t	nb = 0;
+	for (user_it it = users.begin(); it != users.end(); ++it)
+	{
+		if (!it->second->hasMode('i'))
+			nb++;
+	}
+	return (nb);
+}
 
 
 bool				Channel::hasMode(char c) const
@@ -261,7 +296,7 @@ bool				Channel::canJoin(std::string srv, User *user, size_t nth) const
 	bool	isInviteOnly = hasMode('i');
 	if (isInviteOnly && !isInvited(user->getFd()))
 		user->reply(ERR_INVITEONLYCHAN(srv, getName()));
-	else if (getNbUsers() + 1 > getMaxUsers())
+	else if (getNbUsers(true) + 1 > getMaxUsers())
 		user->reply(ERR_CHANNELISFULL(srv, getName()));
 	else if (isBanned(user->getFd()))
 		user->reply(ERR_BANNEDFROMCHAN(srv, getName()));

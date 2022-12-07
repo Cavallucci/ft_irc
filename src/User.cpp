@@ -6,26 +6,26 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/02 15:48:43 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/07 18:28:00 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 
-const std::string	User::_valid_modes = "abcde"; // TODO a mettre a jour
+const std::string	User::_valid_modes = "i";
 
 //-------------------------------- CONSTRUCTORS -------------------------------
 
 User::User() : _input(""), _rawArgs(""), _nickname(""), _hostname(""),
-_username(""), _realname(""), _mode(""), _welcomed(false), _loggedIn(false),
-_fd(-1), _addr(NULL)
+_username(""), _realname(""), _welcomed(false), _loggedIn(false),
+_fd(-1), _addr(NULL), _mode("")
 {
 }
 
 
 User::User(int fd, struct sockaddr_storage *addr) : _input(""), _rawArgs(""),
-_nickname(""), _hostname("localhost"), _username(""), _realname(""), _mode(""),
-_welcomed(false), _loggedIn(false), _fd(fd), _addr(addr)
+_nickname(""), _hostname("localhost"), _username(""), _realname(""),
+_welcomed(false), _loggedIn(false), _fd(fd), _addr(addr), _mode("")
 {
 }
 

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/06 00:02:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/07 17:35:14 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ class Channel
 		void			rpl_whoreply(User *user, std::string srv);
 		void			rpl_chan_mode(User *user, std::string srv);
 		void			rpl_ban_list(User *user, std::string srv);
-		void			rpl_names(User *user, std::string srv);
+		void			rpl_names(User *user, std::string srv, bool send_end);
 		void			msg(std::string srv, User *user, std::string content, bool silently);
 		// Getters & accessors
 		usr_map			getUsers(void) const;
 		std::string		getName(void) const;
 		std::string		getTopic(void) const;
-		size_t			getNbUsers(void) const;
+		size_t			getNbUsers(bool with_invisible) const;
 		bool			isIn(int fd) const;
 		bool			isOp(int fd) const;
 		bool			isBanned(int fd) const;
@@ -73,14 +73,14 @@ class Channel
 		/*
 		CHANNELS MODES
 		'o' = operator status
-		'm' = moderated channel, only moderators & operators may speak
-		'p' = private, channel not displayed in your WHOIS output
-		's' = secret, channel will not be displayed in the LIST output
-		'i' = invite-only channel
-		't' = ability to modify the topic
-		'n' = users not on the channel cannot send messages to it
 		'b' = channel ban mask
-		'v' = voice status
+		'm' = moderated channel, only moderators & operators may speak
+		'l' = maximum number of users in the channel
+		'p' = private, topic won't be fully displayed in the LIST and NAMES output
+		's' = secret, won't be displayed in the LIST and NAMES output
+		'i' = invite-only channel
+		't' = topic protection, ability to modify the topic
+		'n' = no external messages, users not on the channel cannot send messages to it
 		*/
 		std::string		_mode;
 };

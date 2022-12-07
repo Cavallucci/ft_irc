@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/06 00:01:44 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/07 18:18:01 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ void	Server::_inviteHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	// TODO tester comportement attendu si plus de 2 arguments sont fournis
 	if (user->getArgs().size() < 2)
 		user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "INVITE"));
+	// extra arguments are simply ignored
 	std::string		guest_nick = user->getArgs()[0];
 	std::string		target_chan = user->getArgs()[1];
 	User			*guest = getUser(guest_nick);
@@ -66,6 +66,7 @@ void	Server::_inviteHandler(User *user)
 		guest->reply(RPL_INVITE(guest_nick, user->getNick(), target_chan));
 		channel->addUser(guest);
 	}
+	// TODO vérifier : si channel invalide pas de retour d'erreur ?
 	// RPL_AWAY
 }
 
@@ -79,17 +80,18 @@ void	Server::_joinHandler(User *user)
 		return ;
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "JOIN"));
+	// extra arguments are simply ignored
 	str_vec		chans = split_str(user->getArgs()[0], ",", true);
 	size_t		nth = 0;
 	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++nth)
 	{
 		if (!is_valid_channel_name(*name, user, getSrv()))
-			continue ; // TODO vérifier que pas de message d'erreur, simplement ignoré
+			continue ; // invalid channel names are silently ignored
 		Channel		*chan = getChannel(*name);
 		if (chan == NULL) { // channel has to be created
 			chan = newChan(user, *name, nth);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
-			// TODO chan->rpl_namreply(user, true);
+			chan->rpl_names(user, getSrv(), true);
 		} else if (chan->canJoin(getSrv(), user, nth)) { // channel already exists
 			if (chan->isInvited(user->getFd()))
 				chan->rmInvite(user);
@@ -100,7 +102,7 @@ void	Server::_joinHandler(User *user)
 				user->reply(RPL_TOPIC(getSrv(), *name, chan->getTopic()));
 				user->reply(RPL_TOPICWHOTIME(getSrv(), *name, chan->getTopicCtxt()));
 			}
-			// TODO channel->rpl_namreply(user, true);
+			chan->rpl_names(user, getSrv(), true);
 		}
 	}
 	// ERR_NOSUCHCHANNEL
@@ -121,8 +123,8 @@ void	Server::_kickHandler(User *user)
 	std::string		target_user = user->getArgs()[1];
 	Channel			*channel = getChannel(channel_name);
 	User			*target = getUser(target_user);
-	// TODO verifier l'ordre de priorité des erreurs
-	// TODO on peut aussi gérer [KICK channel1,channel2 user1,user2]
+	// TODO vérifier l'ordre de priorité des erreurs
+	// TODO éventuellement on peut aussi gérer [KICK channel1,channel2 user1,user2]
 	if (channel == NULL)
 		return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), channel_name)));
 	// TODO tester qu'on renvoie bien ERR_NOTONCHANNEL si l'utilisateur n'existe pas du tout
@@ -130,14 +132,14 @@ void	Server::_kickHandler(User *user)
 		return (user->reply(ERR_NOTONCHANNEL(getSrv(), channel_name)));
 	if (!channel->isOp(user->getFd()))
 		return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), channel_name)));
-	// TODO verifier que target recoit bien le message de broadcast concernant son propre KICK
+	// TODO vérifier que target recoit bien le message de broadcast concernant son propre KICK
 	channel->broadcast(RPL_KICK(user->getNick(), target_user, channel_name));
 	target->rmChannel(channel_name);
 	// TODO et si target est moderator ? operator ? deja ban ? invite ? on le retire de toutes les listes ?
 	channel->delUser(target);
-	if (!channel->getNbUsers())
+	if (!channel->getNbUsers(true))
 		delChannel(channel);
-	// TODO possibilite d'ajouter un commentaire au KICK
+	// TODO possibilité d'ajouter un commentaire au KICK
 	// ERR_BADCHANMASK
 }
 
@@ -158,10 +160,9 @@ void	Server::_listHandler(User *user)
 		for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name) {
 			chan = getChannel(*name);
 			if (chan == NULL || (chan->hasMode('s') && !(chan->isIn(user->getFd()))))
-				continue ;
-			// TODO vérifier comportement attendu si channel introuvable ... on ignore le pbm et on continue ?
-			nb_visible = ft_to_string(chan->getNbUsers());
-			// TODO ne pas compter les utilisateurs en mode 'p' ou 's' ? à tester
+				continue ; // if the channel cannot be found, it will be skipped
+			// invisible users are not counted
+			nb_visible = ft_to_string(chan->getNbUsers(false));
 			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
 				user->reply(RPL_LIST(getSrv(), *name, nb_visible, PRV_TOPIC));
 			else
@@ -171,9 +172,9 @@ void	Server::_listHandler(User *user)
 		for (chan_it it = _channels.begin(); it != _channels.end(); ++it) {
 			chan = it->second;
 			if (chan->hasMode('s') && !(chan->isIn(user->getFd())))
-				continue ;
-			nb_visible = ft_to_string(chan->getNbUsers());
-			// TODO ne pas compter les utilisateurs en mode 'p' ou 's' ? 			// TODO ne pas compter les utilisateurs en mode 'p' ou 's' ? à testerà tester
+				continue ; // if the channel cannot be found, it will be skipped
+			// invisible users are not counted
+			nb_visible = ft_to_string(chan->getNbUsers(false));
 			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
 				user->reply(RPL_LIST(getSrv(), chan->getName(), nb_visible, PRV_TOPIC));
 			else
@@ -249,19 +250,21 @@ void	Server::_msgHandler(User *user, bool silently)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	// TODO verifier que les espaces sont indispensable, est-ce que [PRIVMSG nick:test] marche ?
 	// TODO verifier l'ordre de priorité des erreurs
 	if (user->getArgs().size() < 2 && silently)
 		return ;
 	else if (user->getArgs().size() < 2)
 		return (user->reply(ERR_NOTEXTTOSEND(getSrv())));
-	// TODO est-ce que les : sont indispensables ?
-	if (user->getArgs()[0][0] != ':' && silently)
+	if (user->getArgs()[0][0] == ':' && silently)
 		return ;
-	//else if (user->getArgs()[0][0] != ':')
-	//	return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
+	else if (user->getArgs()[0][0] == ':')
+		return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
 	str_vec			targets = split_str(user->getArgs()[0], ",", true);
-	std::string		message = user->getRawArgs(1);
+	std::string		message;
+	if (user->getArgs()[1][0] == ':')
+		message = user->getRawArgs(1).substr(1);
+	else
+		message = user->getArgs()[1];
 	for (str_vec::iterator it = targets.begin(); it != targets.end(); ++it)
 	{
 		if ((*it)[0] == '#' || (*it)[0] == '&') { // the target is a channel
@@ -278,19 +281,15 @@ void	Server::_msgHandler(User *user, bool silently)
 				// TODO bot ?
 				channel->msg(getSrv(), user, message, silently);
 			}
-		} else { // the target is a user or a group of users
-			User		*target = getUser(*it);
+		} else { // the receiver is a user
+			User		*receiver = getUser(*it);
 			// TODO bot ?
-			if (target == NULL && !silently)
+			if (receiver == NULL && !silently)
 				user->reply(ERR_NOSUCHNICK(getSrv(), *it));
-			// TODO verifier le fonctionnement attendu ici!! Pourquoi faudrait-il boucler sur les channels ?
-			if (target != NULL)
-				target->reply(RPL_MSG(user->getNick(), *it, message));
+			if (receiver != NULL)
+				receiver->reply(RPL_MSG(user->getNick(), *it, message));
 		}
 	}
-	// ERR_NORECIPIENT
-	// ERR_NOTEXTTOSEND
-
 	// ERR_NOTOPLEVEL
 	// ERR_WILDTOPLEVEL
 	// ERR_TOOMANYTARGETS
@@ -306,52 +305,46 @@ void	Server::_namesHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	// TODO tester le comportement quand il a plus que 2 arguments: que faire des espaces? les ignorer ?
 	Channel		*chan = NULL;
 	if (user->getArgs().size()) // ⏩ lists visible users on the specified channels
 	{
+		// only the first argument will be taken into account
 		str_vec		chans = split_str(user->getArgs()[0], ",", true);
-		for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name)
-		{
-			Channel		*chan = getChannel(*name);
+		for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name) {
+			chan = getChannel(*name);
+			// secret and invalid channels will simply be skipped
 			if (chan != NULL && (chan->isIn(user->getFd()) || \
-				(!chan->hasMode('p') && !chan->hasMode('s'))))
-				// TODO chan->rpl_namreply(user, true);
-			user->reply(RPL_ENDOFNAMES(getSrv(), *name));
-			// TODO est-ce qu'on arrête tout au 1er nom de channel invalide ? à tester
+			(!chan->hasMode('p') && !chan->hasMode('s'))))
+				chan->rpl_names(user, getSrv(), true);
 		}
 	} else { // ⏩ lists absolutely all visible channels and users
-		for (chan_it it = _channels.begin(); it != _channels.end(); ++it)
-		{
+		for (chan_it it = _channels.begin(); it != _channels.end(); ++it) {
 			chan = it->second;
-			if (chan->isIn(user->getFd()) || (!chan->hasMode('p') && !chan->hasMode('s')))
-				chan->rpl_names(user, getSrv());
+			if (chan->isIn(user->getFd()) || \
+			(!chan->hasMode('p') && !chan->hasMode('s')))
+				chan->rpl_names(user, getSrv(), true);
 		}
 		std::string		list;
 		bool			listed;
-		for (user_it it = _users.begin(); it != _users.end(); ++it)
-		{
-			if (!it->second->hasMode('i')) // checks that the target isn't in invisible mode
+		for (user_it it = _users.begin(); it != _users.end(); ++it) {
+			if (!it->second->hasMode('i')) // checks that the target is visible
 			{
 				listed = false; // checks that the target hasn't already been listed
-				// that is to say that either he's in hidden channels only...
 				chan_map const		its_channels = it->second->getChannels();
 				for (chan_it it = _channels.begin(); it != _channels.end() && !listed; ++it)
-				{
+				{ // if he has been listed, he must be in at least 1 visible channel
 					if (!it->second->hasMode('p') && !it->second->hasMode('s'))
 						listed = true;
-				} // or that he doesn't have any channel!
+				}
 				if (!list.empty())
 					list.append(" ");
 				if (!listed)
 					list.append(it->second->getNick());
 			}
 		}
-		user->reply(RPL_NAMREPLY(getSrv(), "*")); // TODO a completer, tester le format exact attendu
-		user->reply(RPL_ENDOFNAMES(getSrv(), "*")); // TODO a completer, tester le format exact attendu
+		user->reply(RPL_NAMREPLY(getSrv(), "=", "*", list));
+		user->reply(RPL_ENDOFNAMES(getSrv(), "*"));
 	}
-	// RPL_NAMREPLY
-	// RPL_ENDOFNAMES
 }
 
 
@@ -363,6 +356,7 @@ void	Server::_nickHandler(User *user)
 {
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NONICKNAMEGIVEN(getSrv()));
+	// we'll consider the first argument ony and ignore the others
 	std::string		nick = user->getArgs()[0];
 	if (nick.length() > 9)
 		return user->reply(ERR_ERRONEUSNICKNAME(getSrv(), nick));
@@ -406,7 +400,7 @@ void	Server::_partHandler(User *user)
 		} else if (chan->isIn(user->getFd())) {
 			chan->broadcast(RPL_PART(user->getNick(), *it));
 			(void)user->rmChannel(*it);
-			if (chan->getNbUsers() == 0)
+			if (chan->getNbUsers(true) == 0)
 				delChannel(chan);
 		} else {
 			user->reply(ERR_NOTONCHANNEL(getSrv(), *it));
@@ -425,15 +419,15 @@ void	Server::_passHandler(User *user)
 		return (user->reply(ERR_ALREADYREGISTRED(getSrv())));
 	if (user->getArgs().size() < 1)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PASS")));
-	// TODO un mot de passe peut il contenir un espace ? peut il être une chaîne vide ?
+	// we'll consider the first argument only and ignore the others
 	std::string		password = user->getArgs()[0];
+	// anyway, the password cannot contain spaces (cf. main.cpp)
 	if (password == getPwd())
 	{
 		user->logIn();
 		if (!user->getNick().empty() && !user->getUser().empty())
 			user->welcome(getSrv(), false);
 	} else {
-		// TODO est-ce que "PASS mauvais_mdp" déconnecte l'utilisateur ?
 		user->reply(ERR_PASSWDMISMATCH(getSrv()));
 	}
 }
@@ -447,8 +441,7 @@ void	Server::_pingHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	std::string		param = user->getRawArgs(0);
-	// TODO si plusieurs params fournis, seul le 1er est retenu ou est-ce que l'on compte les espaces ?
+	std::string		param = user->getRawArgs(0); // extra arguments are simply ignored
 	if (param.empty())
 		return (user->reply(ERR_NOORIGIN(getSrv())));
 	if (param != _host && param != getSrv())
@@ -471,13 +464,14 @@ void	Server::_quitHandler(User *user)
 	if (!user->hasBeenWelcomed())
 		return ;
 	std::string		quit_msg = user->getRawArgs(0);
+	if (quit_msg.empty()) // the default message is just the nick
+		quit_msg = user->getNick();
 	// gets the user out of every channel
 	chan_map	channels = user->getChannels();
 	for (chan_it it = channels.begin(); it != channels.end(); ++it)
 	{
-		// TODO checker quel est le quit_msg par défaut
 		it->second->delUser(user);
-		if (it->second->getNbUsers() > 0)
+		if (it->second->getNbUsers(true) > 0)
 			it->second->broadcast(RPL_QUIT(user->getNick(), quit_msg));
 		else
 			delChannel(it->second);
@@ -514,18 +508,20 @@ void	Server::_topicHandler(User *user)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "TOPIC")));
 	std::string		name = user->getArgs()[0];
 	Channel			*chan = getChannel(name);
-	// TODO checker si on peut TOPIC sans être dedans : faut-il filtrer sur les channels de l'User ?
+	// TODO on ne peut pas TOPIC sans être dedans : filtrer sur les channels de l'User
 	if (chan != NULL) { // channel does exist & the user can access it
 		// the user simply wants to view the channel topic
-		if (user->getArgs()[1].find(':') == std::string::npos) {
+		if (user->getArgs().size() == 1) {
 			if (chan->getTopic() == "")
 				return (user->reply(RPL_NOTOPIC(user->getNick(), name)));
 			return (user->reply(RPL_TOPIC(user->getNick(), name, chan->getTopic())));
 		}
 		// the topic for that channel will be changed if its modes permit it
 		std::string		topic = user->getRawArgs(1);
-		topic = topic.substr(topic.find(':') + 1);
-		// TODO tester comportement attendu si pas de ':' avant le topic
+		if (topic.find(':') == 0)
+			topic = topic.substr(1);
+		else
+			topic = user->getArgs()[1];
 		// TODO vérifier l'ordre de priorité des messages d'erreur suivants
 		if (chan->hasMode('t') && !chan->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
@@ -547,16 +543,17 @@ void	Server::_userHandler(User *user)
 {
 	if (user->hasBeenWelcomed())
 		return user->reply(ERR_ALREADYREGISTRED(getSrv()));
-	// TODO vérifier ce qu'il doit se passer si real_name ne commence pas avec ':'
-	if (user->getArgs().size() < 4 || user->getArgs()[3][0] != ':')
+	if (user->getArgs().size() < 4)
 		return user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "USER"));
-	// TODO vérifier ce qu'il doit se passer si Nick non encore défini
 	user->setUser(user->getArgs()[0]);
 	user->setHost(user->getArgs()[1]);
-	user->setReal(user->getArgs()[3]);
-	// TODO real name peut contenir des espaces
-	// TODO supprimer le : avant de setRealName
-	if (user->getNick().size() && user->isLoggedIn() && !user->hasBeenWelcomed())
+	std::string		real = user->getRawArgs(3);
+	if (real[0] != ':')
+		real = user->getArgs()[3];
+	else
+		real = real.substr(1);
+	user->setReal(real);
+	if (!user->getNick().empty() && user->isLoggedIn() && !user->hasBeenWelcomed())
 		user->welcome(getSrv(), false);
 }
 
@@ -567,7 +564,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.5.1
 */
 void	Server::_whoHandler(User *user)
 {
-	if (user->hasBeenWelcomed())
+	if (!user->hasBeenWelcomed())
 		return ;
 	// TODO tester comportement si pas d'arguments
 	std::string		name = user->getArgs()[0];
@@ -586,140 +583,3 @@ void	Server::_whoHandler(User *user)
 	user->reply(RPL_ENDOFWHO(getSrv(), user->getNick()));
 	// ERR_NOSUCHSERVER
 }
-
-/*
---------------------------- IRSSI official commands ---------------------------
-COLOR CODE		MEANING
-✅				done
-🔴				mandatory
-🔵				done by other students
-
-accept			-> specifies who you want to receive private messages
-action			-> sends an action emote to a nickname or a channel
-admin			-> displays the administrative details of a server
-alias			-> creates or updates an alias & the command to execute
-away			-> marks yourself as ‘away’
-ban				-> adds one or more bans to a channel
-beep			-> outputs the bell-character
-bind			-> adds or removes a binding (name & command to perform)
-cat				-> displays the contents of the specified file
-cd				-> changes the current active directory
-channel			-> adds, removes or displays the configuration of channels
-clear			-> scrolls up the text in the window and fills it with blank lines
-completion		-> replaces or completes words or letters
-connect			-> opens a new connexion to the specified network/server
-ctcp			-> sends a CTCP request towards the given target nickname or channel
-cycle			-> leaves and rejoins a channel
-dcc				-> initiates direct CTC chat connections and file transfers
-dehilight		-> removes the specified highlight from configuration
-deop			-> removes the channel operator privileges from the given nicknames
-devoice			-> removes the channel voice privilege from the given nicknames
-die				-> terminates the IRC server (reserved for IRC operators)
-disconnect		-> disconnect from an IRC server
-echo			-> displays the given text
-eval			-> evaluates the given commands and executes them
-exec			-> executes the specified command in the background
-flushbuffer		-> forces an immediate flush of the buffer
-format			-> reconfigures the way messages are displayed
-hash			-> (deprecated)
-help			-> displays the documentation for the given command
-hilight			-> highlight the keyword or pattern provided
-ignore			-> ignores nicknames or text that matches a pattern
-info			-> displays information about the IRC server software
-invite			-> 🔵 invites the specified nick to a channel
-ircnet			-> similar to `network`
-ison			-> displays whether the specified nicknames are online
-join			-> 🔴🔵 joins the given channels
-kick			-> 🔵 removes the given nicknames from the specified channel
-kickban			-> removes & bans the given nicknames from the specified channel
-kill			-> terminates a nickname’s connection from the network
-knock			-> sends an invitation request to the channel ops of the target
-knockout		-> removes & then bans the given nicknames from the channel,
-				the ban will be automatically lifted after the specified time.
-lastlog			-> searches the active window for a pattern
-layout			-> saves the layout of your window configuration
-links			-> displays the links between an IRC server and its connections
-list			-> 🔵 displays the channel names that match your request
-load			-> loads a plugin
-log				-> opens a log file and stores the targets messages into it
-lusers			-> displays the user statistics of the active or remote server
-map				-> displays the network map of an IRC network
-me				-> sends an action emote to the active nickname or channel
-mircdcc			-> enables mIRC compatibility mode
-mode			-> 🔵 modifies the user or channel modes
-motd			-> displays the welcome message of an IRC server
-msg				-> 🔴🔵 sends a message to a nickname or channel
-names			-> 🔵 displays the users who are in a channel
-nctcp			-> sends a CTCP reply to a nickname or channel
-netsplit		-> displays some information about users who are currently lost
-				in one or more net splits
-network			-> displays/adds/modifies/removes the configuration of networks
-nick			-> 🔴🔵 changes your nickname on the active server
-notice			-> 🔵 sends a notice to the target nickname or channel, often
-				used in automated bots or scripts
-notify			-> notifies you when a nickname/host comes online or offline
-op				-> grants the channel operator privileges to the given nicknames
-oper			-> grants you the IRC operator status
-part			-> 🔵 leaves the given channels
-ping			-> 🔵 sends a CTCP PING request to a nickname or a channel
-query			-> starts a private conversation with a nickname
-quit			-> 🔵 terminates the application and advertises the given
-				message on all the networks you are connected to.
-quote			-> sends raw data to the server without any parsing
-rawlog			-> saves all the raw data that is received from and transmitted
-				to the active server into a log file
-recode			-> recodes the data transmitted to and received from nicknames
-				and channels into a specific charset.
-reconnect		-> disconnect and reconnect from a network
-rehash			-> reloads the configuration of the IRC server
-reload			-> reloads the Irssi configuration file
-restart			-> restarts the active IRC server (restricted to admin)
-rmreconns		-> removes all active and pending reconnections.
-rmrejoins		-> removes all active and pending join requests
-save			-> saves the configuration file
-sconnect		-> connects a server to the IRC network (restricted to IRC ops)
-script			-> interact with the Perl engine to execute scripts
-scrollback		-> manipulates the text to go to a to the given line number
-server			-> displays/adds/modifies/removes the network configuration
-servlist		-> list the network services currently present on the network
-set				-> modifies the value of a setting
-silence			-> manages the server side ignore list; users or hostnames that
-				match an entry on the list are not able to send you any
-				messages or invites
-squery			-> sends a query to the specified service
-squit			-> disconnects a server from the IRC network (restricted to ops)
-stats			-> displays statistics from the IRC server
-statusbar		-> allows adjustment of the attributes and items of a statusbar
-time			-> displays the local time of the server
-toggle			-> modifies a setting to its counter value
-topic			-> 🔵 displays or modifies the topic of a channel
-trace			-> displays the list of servers that connects you to a server
-ts				-> displays a list of the channels you are on and their topics
-unalias			-> removes an alias
-unban			-> a channel & the nicknames, hostnames to unban
-unignore		-> removes an entry from the ignore list
-unload			-> removes a module from the memory
-unnotify		-> removes an entry from the notify list
-unquery			-> closes a query window for a nickname
-unsilence		-> removes an entry from the silence list
-upgrade			-> upgrades to a new version
-uptime			-> displays how long Irssi has been running
-userhost		-> displays the user@host for the given nicknames
-ver				-> queries a remote client about the version of the client they
-				are using
-version			-> displays the version and compatibility parameters of the
-				given server,
-voice			-> grants the channel voice privileges to the given nicknames
-wait			-> waits the specified amount of ms before sending the next command
-wall			-> sends a message to all channel operators
-wallops			-> sends a network wide message to all the users in the 'w' usermod
-who				-> 🔵 displays information about users in the specified channel
-whois			-> displays information about users in the specified channels
-whowas			-> displays historical user information
-window			-> manipulates the window layout and positioning attributes
-
------------------------------ IRC server commands -----------------------------
-
-PASS			-> 🔴🔵
-USER			-> 🔴🔵
-*/
