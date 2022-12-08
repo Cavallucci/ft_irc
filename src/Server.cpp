@@ -301,12 +301,15 @@ void			Server::addChannel(Channel *chan)
 Channel			*Server::newChan(User *user, std::string name, size_t nth)
 {
 	str_vec			passwords;
-	std::string		pw;
+	std::string		pw = "";
+
 	if (user->getArgs().size() == 2)
+	{
 		passwords = split_str(user->getArgs()[1], ",", true);
 	// empty passwords will be ignored, the channel won't have a password
-	if (passwords.size() >= nth && !passwords[nth].empty())
-		pw = passwords[nth];
+		if (passwords.size() >= nth && !passwords[nth].empty())
+			pw = passwords[nth];
+	}
 	Channel		*chan = new Channel(name, pw);
 	std::cout << GRN "Channel " << name << " created." END << std::endl;
 	chan->addUser(user);
