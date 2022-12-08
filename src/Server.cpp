@@ -105,6 +105,7 @@ void	Server::_serverSetUp(void)
 	if (bind(fd, servinfo->ai_addr, servinfo->ai_addrlen) < 0)
 	{
 		close(fd);
+		freeaddrinfo(servinfo);
 		throw std::runtime_error(ERR_BIND_SOCKET);
 	}
 	freeaddrinfo(servinfo); // free the linked-list

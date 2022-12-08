@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 		// the password cannot contain spaces
 		if (password.find(' ') != std::string::npos)
 			throw std::runtime_error(ERR_INVALID_PWD);
-		signal(SIGINT, signHandler); // TODO a supprimer ?
+		signal(SIGINT, signHandler);
 		Server	server(argv[1], password);
 
 		return (EXIT_SUCCESS);
