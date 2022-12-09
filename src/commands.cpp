@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/07 18:18:01 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/09 13:50:43 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,9 +213,13 @@ void	Server::_modeHandler(User *user)
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
 		if (!(action[0] == '+' || action[0] == '-'))
 			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
+		for (std::string::size_type i = 0; i < action.size(); i++) {
+			action[i]
+		}
 		// TODO verifier l'ordre des messages d'erreur
 		// TODO pour MAJ les options utiliser un std::string [possible_modes] et un vecteur de fonctions membres
 		// TODO l - set the user limit to channel
+		std::cout << YEL << CHANNEL_MODE << channel->getMode() << END << std::endl;
 	}
 	else // user modes
 	{

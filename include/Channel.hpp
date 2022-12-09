@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/07 17:35:14 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/09 13:47:54 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Channel
 		bool			pwMatches(User *user, size_t nth) const;
 		std::string		getTopicCtxt(void) const;
 		bool			hasMode(char c) const;
+		std::string		getMode(void) const;
 		// Setters & mutators
 		void			addUser(User *user);
 		void			delUser(User *user);

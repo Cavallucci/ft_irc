@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/07 18:19:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/09 13:48:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ std::string			Channel::getTopic(void) const { return _topic; }
 size_t				Channel::getMaxUsers(void) const { return _maxUsers; }
 bool				Channel::hasPassword() const { return _password != ""; }
 std::string			Channel::getTopicCtxt(void) const { return _topicCtxt; }
-
+std::string			Channel::getMode(void) const { return _mode; }
 
 size_t				Channel::getNbUsers(bool with_invisible) const {
 	if (with_invisible)

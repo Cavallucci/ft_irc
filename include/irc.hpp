@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/07 17:48:44 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/09 13:43:21 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef usr_map::iterator					user_it;
 # define ERR_RECV								"❌ Error while trying to read (recv) socket "
 # define RECV_ZERO								"🚫 A socket has hang up, socket"
 # define PRV_TOPIC								"Prv"
+# define CHANNEL_MODE							"Channel mode updated: "
 
 // list of official numeric replies sent by the server by alphabetical order
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
