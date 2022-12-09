@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/09 13:48:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/09 15:58:57 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 
 Channel::Channel()
 {
+	_initModeHandlers();
 }
 
 
 Channel::Channel(std::string name, std::string password) :
 _name(name), _password(password)
 {
+	_initModeHandlers();
 }
 
 
@@ -216,6 +218,19 @@ bool				Channel::hasPassword() const { return _password != ""; }
 std::string			Channel::getTopicCtxt(void) const { return _topicCtxt; }
 std::string			Channel::getMode(void) const { return _mode; }
 
+
+User				*Channel::getUser(std::string nick) const
+{
+	for (usr_map::const_iterator it = _users.begin(); it != _users.end(); it++)
+	{
+		if (it->second->getNick() == nick)
+			return it->second;
+	}
+	std::cerr << RED ERR_USER_NICK_NOT_FOUND << nick << END << std::endl;
+	return NULL;
+}
+
+
 size_t				Channel::getNbUsers(bool with_invisible) const {
 	if (with_invisible)
 		return _users.size();
@@ -309,16 +324,11 @@ bool				Channel::canJoin(std::string srv, User *user, size_t nth) const
 
 //----------------------------- MUTATORS / SETTERS ----------------------------
 
-void				Channel::setMode(std::string mode)
-{
-	_mode = mode;
-}
-
-
 void				Channel::setPassword(std::string password)
 {
 	_password = password;
 }
+
 
 void				Channel::addUser(User *user)
 {
@@ -368,6 +378,7 @@ void				Channel::addMod(User *user)
 		_moderators[user->getFd()] = user;
 }
 
+
 void				Channel::delMod(User *user)
 {
 	if (isMod(user->getFd()))
@@ -396,4 +407,165 @@ void				Channel::setTopic(std::string topic, std::string nick)
 	_topic = topic;
 	_topicCtxt = nick + " " + tmp.str();
 	tmp.clear();
+}
+
+
+void				Channel::addMode(char new_mode)
+{
+	if (_mode.find(new_mode) != std::string::npos)
+		_mode.append(1, new_mode);
+}
+
+
+void				Channel::rmMode(char old_mode)
+{
+	if (_mode.find(old_mode) != std::string::npos)
+		_mode.erase(_mode.find(old_mode), 1);
+}
+
+
+//----------------------------------- MODES -----------------------------------
+
+void				Channel::_initModeHandlers(void)
+{
+	_modeHandlers['o'] = &Channel::_updateModeO;
+	_modeHandlers['p'] = &Channel::_updateModeP;
+	_modeHandlers['s'] = &Channel::_updateModeS;
+	_modeHandlers['i'] = &Channel::_updateModeI;
+	_modeHandlers['b'] = &Channel::_updateModeB;
+	_modeHandlers['m'] = &Channel::_updateModeM;
+	_modeHandlers['l'] = &Channel::_updateModeL;
+	_modeHandlers['t'] = &Channel::_updateModeT;
+	_modeHandlers['n'] = &Channel::_updateModeN;
+}
+
+
+void				Channel::updateMode(std::string srv, User *user,
+bool adding, char letter)
+{
+	try {
+		CALL_MEMBER_FN(this, _modeHandlers.at(letter))(srv, user, adding);
+	} catch (const std::out_of_range &e) {
+		user->reply(ERR_UNKNOWNMODE(srv, letter));
+	}
+}
+
+
+void				Channel::_updateModeO(std::string srv, User *user, bool adding)
+{
+	std::string		cmd = "MODE -o";
+	if (adding)
+		cmd = "MODE +o";
+	if (user->getArgs().size() < 3)
+		return (user->reply(ERR_NEEDMOREPARAMS(srv, user->getNick(), cmd)));
+	std::string		target_nick = user->getArgs()[2];
+	User			*target = getUser(target_nick);
+	if (target == NULL)
+		return (user->reply(ERR_NOSUCHNICK(srv, target_nick)));
+	if (adding && !isOp(target->getFd())) {
+		addOp(target);
+		broadcast(RPL_CHANNELMODEIS(srv, getName(), "+o", target_nick));
+	} else if (!adding && isOp(target->getFd())) {
+		delOp(target);
+		broadcast(RPL_CHANNELMODEIS(srv, getName(), "-o", target_nick));
+	}
+}
+
+
+void				Channel::_updateModeP(std::string srv, User *user, bool adding)
+{
+	if (adding)
+		addMode('p');
+	else
+		rmMode('p');
+	(void)srv;
+	(void)user;
+}
+
+
+void				Channel::_updateModeS(std::string srv, User *user, bool adding)
+{
+	if (adding)
+		addMode('s');
+	else
+		rmMode('s');
+	(void)srv;
+	(void)user;
+}
+
+
+void				Channel::_updateModeI(std::string srv, User *user, bool adding)
+{
+	if (adding)
+		addMode('i');
+	else
+		rmMode('i');
+	(void)srv;
+	(void)user;
+}
+
+
+void				Channel::_updateModeB(std::string srv, User *user, bool adding)
+{
+	if (user->getArgs().size() < 3) { // the list of banned users has been requested
+		for (user_it it = _banned.begin(); it != _banned.end(); ++it)
+			user->reply(RPL_BANLIST(srv, getName(), it->second->getNick()));
+		return (user->reply(RPL_ENDOFBANLIST(srv, getName())));
+	}
+	// the user wants to ban or unban someone
+	std::string		target_nick = user->getArgs()[2];
+	User			*target = getUser(target_nick);
+	if (target == NULL)
+		return (user->reply(ERR_NOSUCHNICK(srv, target_nick)));
+	if (adding && !isOp(target->getFd())) {
+		ban(target);
+		if (isIn(target->getFd())) {
+			broadcast(RPL_KICK(user->getNick(), target_nick, getName()));
+			target->rmChannel(getName());
+		}
+	} else if (!adding) {
+		unban(target);
+	}
+}
+
+
+void				Channel::_updateModeM(std::string srv, User *user, bool adding)
+{
+	if (adding)
+		addMode('m');
+	else
+		rmMode('m');
+	(void)srv;
+	(void)user;
+}
+
+
+void				Channel::_updateModeL(std::string srv, User *user, bool adding)
+{
+	// TODO MARQUE-PAGE
+	(void) srv;
+	(void) user;
+	(void) adding;
+}
+
+
+void				Channel::_updateModeT(std::string srv, User *user, bool adding)
+{
+	if (adding)
+		addMode('t');
+	else
+		rmMode('t');
+	(void)srv;
+	(void)user;
+}
+
+
+void				Channel::_updateModeN(std::string srv, User *user, bool adding)
+{
+	if (adding)
+		addMode('n');
+	else
+		rmMode('n');
+	(void)srv;
+	(void)user;
 }

@@ -270,3 +270,6 @@ window			-> manipulates the window layout and positioning attributes
 PASS			-> 🔴🔵
 USER			-> 🔴🔵
 */
+
+
+https://stackoverflow.com/questions/12886573/implementing-irc-rfc-how-to-respond-to-mode

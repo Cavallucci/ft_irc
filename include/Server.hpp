@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/06 00:01:40 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/09 15:06:22 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ class Server
 		std::string							getSrv(void) const;
 		std::string							getPwd(void) const;
 		usr_map								getUsers() const;
-		User *								getUser(int fd) const;
-		User *								getUser(std::string nick) const;
+		User								*getUser(int fd) const;
+		User								*getUser(std::string nick) const;
 		chan_map							getChannels() const;
-		Channel *							getChannel(std::string chan_name) const;
+		Channel								*getChannel(std::string chan_name) const;
 		// Setters & mutators
 		void								addChannel(Channel *chan);
 		Channel								*newChan(User *user, std::string name, size_t nth);

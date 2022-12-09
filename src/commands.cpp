@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/09 13:50:43 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/09 15:52:09 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,10 +199,10 @@ void	Server::_modeHandler(User *user)
 	std::string		name = user->getArgs()[0];
 	std::string		action;
 	if (user->getArgs().size() >= 2)
-		action = user->getRawArgs(1);
-	if (name[0] == '#' || name[0] == '&') // channel modes
-	{
+		action = user->getArgs()[1];
+	if (name[0] == '#' || name[0] == '&') { // channel modes
 		Channel		*channel = getChannel(name);
+		// TODO verifier l'ordre des messages d'erreur
 		if (channel == NULL)
 			return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), name)));
 		if (action.empty()) // the user just wants to get the channel modes
@@ -213,16 +213,12 @@ void	Server::_modeHandler(User *user)
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
 		if (!(action[0] == '+' || action[0] == '-'))
 			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
-		for (std::string::size_type i = 0; i < action.size(); i++) {
-			action[i]
-		}
-		// TODO verifier l'ordre des messages d'erreur
-		// TODO pour MAJ les options utiliser un std::string [possible_modes] et un vecteur de fonctions membres
-		// TODO l - set the user limit to channel
+		for (std::string::size_type i = 1; i < action.size(); i++)
+			channel->updateMode(getSrv(), user, action[0] == '+', action[i]);
+		if (channel->getNbUsers(true) == 0)
+			delChannel(channel);
 		std::cout << YEL << CHANNEL_MODE << channel->getMode() << END << std::endl;
-	}
-	else // user modes
-	{
+	} else { // user modes
 		User		*target = getUser(name);
 		if (target == NULL)
 			return (user->reply(ERR_NOSUCHNICK(getSrv(), name)));
