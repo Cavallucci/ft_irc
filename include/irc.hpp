@@ -41,7 +41,7 @@ typedef std::map<std::string, Channel *>	chan_map;
 typedef std::map<int, User *>				usr_map;
 typedef std::vector<pollfd>::iterator		pfds_it;
 typedef chan_map::iterator					chan_it;
-typedef usr_map::iterator					user_it;
+typedef usr_map::const_iterator					user_it;
 
 # include "User.hpp"
 # include "Server.hpp"

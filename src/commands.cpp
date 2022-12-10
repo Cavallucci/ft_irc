@@ -393,17 +393,23 @@ void	Server::_partHandler(User *user)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PART")));
 	str_vec		names = split_str(user->getArgs()[0], ",", true);
 	Channel		*chan;
-	for (str_vec::iterator it = names.begin(); it != names.end(); ++it) {
-		chan = getChannel(*it);
-		if (chan != NULL) {
+	for (str_vec::iterator it = names.begin(); it != names.end(); ++it) 
+	{
+		try
+		{
+			chan = _channels.at(*it);
+			if (chan->isIn(user->getFd())) {
+				chan->broadcast(RPL_PART(user->getNick(), *it));
+				(void)user->rmChannel(*it);
+				if (chan->getNbUsers(true) == 0)
+					delChannel(chan);
+			} else {
+				user->reply(ERR_NOTONCHANNEL(getSrv(), *it));
+			}
+		}
+		catch (const std::out_of_range &e)
+		{
 			user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
-		} else if (chan->isIn(user->getFd())) {
-			chan->broadcast(RPL_PART(user->getNick(), *it));
-			(void)user->rmChannel(*it);
-			if (chan->getNbUsers(true) == 0)
-				delChannel(chan);
-		} else {
-			user->reply(ERR_NOTONCHANNEL(getSrv(), *it));
 		}
 	}
 }

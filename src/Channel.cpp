@@ -24,6 +24,7 @@ Channel::Channel(std::string name, std::string password) :
 _name(name), _password(password)
 {
 	_initModeHandlers();
+	_maxUsers = 1024;
 }
 
 

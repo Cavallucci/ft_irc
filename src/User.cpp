@@ -248,7 +248,7 @@ bool				User::setInput(void)
 	while (_input.length() < 2 || _input.rfind(IRC_DELIMITER) != _input.length() - 2)
 	{
 		memset(buf, 0, BUFFER_SIZE);
-		bytes = recv(fd, buf, BUFFER_SIZE, MSG_DONTWAIT);
+		bytes = recv(fd, buf, BUFFER_SIZE, 0);
 		if (bytes <= 0)
 		{
 			if (!bytes)
