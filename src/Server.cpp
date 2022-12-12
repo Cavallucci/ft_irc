@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:30:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 14:45:50 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void	Server::_serverConnect(void)
 		{
 			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
 			{
-				_deleteUser(iterator);
+				_deleteUser(iterator->fd);
 				std::cout << "User deleted" << std::endl;
 			}
 			if (iterator->revents & POLLIN) //returns && data is ready
@@ -148,9 +148,9 @@ void	Server::_serverConnect(void)
 					_addUser();
 					break ;
 				}
-				User		*user = _users.at(iterator->fd);
+				User		*user = getUser(iterator->fd);
 				if (_parseInput(user) == false)
-					_deleteUser(iterator);
+					_deleteUser(iterator->fd);
 			}
 			if (iterator == _pfds.end())
 				break ;
@@ -239,18 +239,13 @@ bool	Server::_parseInput(User *user)
 		if ((*it).length() != cmd_str.length()) // there are arguments but maybe just spaces
 		{
 			user->setRawArgs((*it).substr(pos + 1));
-			str_vec				args = split_str(user->getRawArgs(0), " ", false);
-			if (!user->setArgs(args))
-			{
-				std::cout << ERR_TOO_MANY_PARAM << user->getFd() << std::endl;
-				user->reply(ERR_15_PARAM);
-				return (true);
-			}
+			user->setArgs(split_str(user->getRawArgs(0), " ", false));
 		}
 		try {
-			// TODO vérifier que l'utilisateur est authentifié (PASS OK ?)
 			for (size_t i = 0; i < cmd_str.size(); i++) // CMD to lower case
 				cmd_str[i] = ascii_to_lower(cmd_str[i]);
+			if (!user->isLoggedIn() && cmd_str != "pass")
+				return (true); // unknown user: the command is silently ignored
 			CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 		} catch (const std::out_of_range &e) {
 			user->reply(ERR_UNKNOWNCOMMAND(getSrv(), user->getNick(), cmd_str));

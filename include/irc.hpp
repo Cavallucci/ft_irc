@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:09:24 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:54:19 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_BIND_SOCKET						"❌ Error while binding socket"
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_USER_FD							"❌ Error while accepting user fd"
-# define ERR_TOO_MANY_PARAM						"❌ More than 15 command parameters found on socket "
 # define RUNNING								"✅ The server is running, waiting for clients..."
 # define ERR_TOO_LONG							"📜 Message truncated to 512 bytes on socket "
 # define BYE									"👋 Someone left, socket "
@@ -137,7 +136,6 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_WHOREPLY(s, c, u, h, n, r)			":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" <H|G>[*][@|+] : "+r
 
 // List of custom, non official replies by alphabetical order
-# define ERR_15_PARAM							"There cannot be more than 15 parameters in your command"
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
 # define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT :" + msg
 # define RPL_PART(nick, channel)				":" + nick + "@IRC PART :" + channel

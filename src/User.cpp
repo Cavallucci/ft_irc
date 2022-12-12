@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/07 18:28:00 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:56:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,11 +280,8 @@ void				User::resetInput(void)
 }
 
 
-bool				User::setArgs(str_vec args)
+void				User::setArgs(str_vec args)
 {
-	// TODO message peut surement etre plus de 15 mots
-	// if (args.size() > 15)
-	// 	return (false);
 	_args = args;
 	if (DEBUG)
 		std::cout << YEL "5️⃣  Arguments:" END;
@@ -294,8 +291,8 @@ bool				User::setArgs(str_vec args)
 		if (DEBUG)
 			std::cout << YEL " [" END << *it << YEL "]" END;
 	}
-	std::cout << std::endl;
-	return (true);
+	if (DEBUG)
+		std::cout << std::endl;
 }
 
 

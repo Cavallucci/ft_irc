@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/07 17:07:57 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 14:09:19 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,8 @@ class User
 		Channel *							getChannel(std::string) const;
 		// Setters & mutators
 		bool								setInput(void);
-		str_vec								setCommands(std::string input);
 		void								setRawArgs(std::string content);
-		bool								setArgs(str_vec);
+		void								setArgs(str_vec args);
 		void								setNick(std::string name);
 		void								setHost(std::string name);
 		void								setUser(std::string name);

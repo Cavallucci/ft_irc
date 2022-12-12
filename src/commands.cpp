@@ -432,17 +432,13 @@ void	Server::_passHandler(User *user)
 		return (user->reply(ERR_ALREADYREGISTRED(getSrv())));
 	if (user->getArgs().size() < 1)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PASS")));
-	// we'll consider the first argument only and ignore the others
+	// we'll consider the first argument only and ignore the others...
+	// but anyway, the password cannot contain spaces (cf. main.cpp)
 	std::string		password = user->getArgs()[0];
-	// anyway, the password cannot contain spaces (cf. main.cpp)
 	if (password == getPwd())
-	{
 		user->logIn();
-		if (!user->getNick().empty() && !user->getUser().empty())
-			user->welcome(getSrv(), false);
-	} else {
+	else
 		user->reply(ERR_PASSWDMISMATCH(getSrv()));
-	}
 }
 
 
