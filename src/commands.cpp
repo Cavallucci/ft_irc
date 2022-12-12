@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:30:08 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 14:47:23 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	Server::_initHandlers(void)
 {
 	// by alphabetical order
+	_commands["cap"] = &Server::_capHandler;
 	_commands["invite"] = &Server::_inviteHandler;
 	_commands["join"] = &Server::_joinHandler;
 	_commands["kick"] = &Server::_kickHandler;
@@ -36,6 +37,18 @@ void	Server::_initHandlers(void)
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
 
 // TODO pour toutes les cmd: vérifier quel est le comportement attendu quand il y a trop d'arguments
+
+/*
+CAP command, not mandatory, nor defined in RFC1459
+It's empty just for the server to stay quiet when this command is sent by IRSSI
+*/
+void	Server::_capHandler(User *user)
+{
+	if (user->getArgs().size() >= 2 && user->getArgs()[1] == "LS")
+		return (user->reply(ERR_UNKNOWNCOMMAND(getSrv(), user->getNick(), "CAP")));
+}
+
+
 
 /*
 INVITE command as described here:

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/09 15:06:22 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 14:48:00 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Server
 		void								_closeAll(void);
 		// Methods related to commands management
 		void								_initHandlers(void);
+		void								_capHandler(User *user);
 		void								_inviteHandler(User* user);
 		void								_joinHandler(User* user);
 		void								_kickHandler(User* user);
