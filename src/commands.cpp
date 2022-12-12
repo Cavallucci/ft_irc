@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/09 15:52:09 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:09:32 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	Server::_listHandler(User *user)
 			if (chan == NULL || (chan->hasMode('s') && !(chan->isIn(user->getFd()))))
 				continue ; // if the channel cannot be found, it will be skipped
 			// invisible users are not counted
-			nb_visible = ft_to_string(chan->getNbUsers(false));
+			nb_visible = size_t_to_str(chan->getNbUsers(false));
 			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
 				user->reply(RPL_LIST(getSrv(), *name, nb_visible, PRV_TOPIC));
 			else
@@ -174,7 +174,7 @@ void	Server::_listHandler(User *user)
 			if (chan->hasMode('s') && !(chan->isIn(user->getFd())))
 				continue ; // if the channel cannot be found, it will be skipped
 			// invisible users are not counted
-			nb_visible = ft_to_string(chan->getNbUsers(false));
+			nb_visible = size_t_to_str(chan->getNbUsers(false));
 			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
 				user->reply(RPL_LIST(getSrv(), chan->getName(), nb_visible, PRV_TOPIC));
 			else
@@ -393,23 +393,17 @@ void	Server::_partHandler(User *user)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PART")));
 	str_vec		names = split_str(user->getArgs()[0], ",", true);
 	Channel		*chan;
-	for (str_vec::iterator it = names.begin(); it != names.end(); ++it) 
-	{
-		try
-		{
-			chan = _channels.at(*it);
-			if (chan->isIn(user->getFd())) {
-				chan->broadcast(RPL_PART(user->getNick(), *it));
-				(void)user->rmChannel(*it);
-				if (chan->getNbUsers(true) == 0)
-					delChannel(chan);
-			} else {
-				user->reply(ERR_NOTONCHANNEL(getSrv(), *it));
-			}
-		}
-		catch (const std::out_of_range &e)
-		{
+	for (str_vec::iterator it = names.begin(); it != names.end(); ++it) {
+		chan = getChannel(*it);
+		if (chan == NULL) {
 			user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
+		} else if (chan->isIn(user->getFd())) {
+			chan->broadcast(RPL_PART(user->getNick(), *it));
+			(void)user->rmChannel(*it);
+			if (chan->getNbUsers(true) == 0)
+				delChannel(chan);
+		} else {
+			user->reply(ERR_NOTONCHANNEL(getSrv(), *it));
 		}
 	}
 }

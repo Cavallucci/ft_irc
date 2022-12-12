@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/09 15:58:57 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:12:58 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ Channel::Channel(std::string name, std::string password) :
 _name(name), _password(password)
 {
 	_initModeHandlers();
-	_maxUsers = 1024;
+	size_t	max_size = (size_t) - 1;
+	setMaxUsers(max_size);
 }
 
 
@@ -331,6 +332,12 @@ void				Channel::setPassword(std::string password)
 }
 
 
+void				Channel::setMaxUsers(size_t maxUsers)
+{
+	_maxUsers = maxUsers;
+}
+
+
 void				Channel::addUser(User *user)
 {
 	if (!isIn(user->getFd()))
@@ -543,10 +550,18 @@ void				Channel::_updateModeM(std::string srv, User *user, bool adding)
 
 void				Channel::_updateModeL(std::string srv, User *user, bool adding)
 {
-	// TODO MARQUE-PAGE
-	(void) srv;
-	(void) user;
-	(void) adding;
+	if (adding)
+	{
+		if (user->getArgs().size() < 3)
+			return (user->reply(ERR_NEEDMOREPARAMS(srv, user->getNick(), "MODE +l")));
+		size_t		new_limit = str_to_size_t(user->getArgs()[2]);
+		setMaxUsers(new_limit);
+		addMode('l');
+	} else {
+		size_t max_size = (size_t) - 1;
+		setMaxUsers(max_size);
+		rmMode('l');
+	}
 }
 
 

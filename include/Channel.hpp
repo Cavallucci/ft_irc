@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/09 15:27:04 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 12:32:57 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class Channel
 		void			unban(User *user);
 		void			addMod(User *user);
 		void			delMod(User *user);
+		void			setMaxUsers(size_t maxUsers);
 		void			invite(User *user);
 		void			rmInvite(User *user);
 		void			setPassword(std::string password);

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:19:36 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/05 18:38:00 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:08:47 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,19 @@ bool		is_valid_channel_name(std::string chan, User *user, std::string srv)
 }
 
 
-std::string		ft_to_string(size_t	nb)
+std::string		size_t_to_str(size_t	nb)
 {
 	std::stringstream	ss;
 	ss << nb;
 	return (ss.str());
+}
+
+
+size_t			str_to_size_t(std::string my_str)
+{
+	std::stringstream	sstream(my_str);
+	size_t				result;
+	// result = 0 when the argument isn't a number
+	sstream >> result;
+	return (result);
 }

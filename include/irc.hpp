@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/09 13:43:21 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:09:24 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef std::map<std::string, Channel *>	chan_map;
 typedef std::map<int, User *>				usr_map;
 typedef std::vector<pollfd>::iterator		pfds_it;
 typedef chan_map::iterator					chan_it;
-typedef usr_map::const_iterator					user_it;
+typedef usr_map::const_iterator				user_it;
 
 # include "User.hpp"
 # include "Server.hpp"
@@ -150,6 +150,7 @@ typedef usr_map::const_iterator					user_it;
 char			ascii_to_lower(char in);
 str_vec			split_str(std::string initial, std::string separator, bool with_empty);
 bool			is_valid_channel_name(std::string chan, User *user, std::string srv);
-std::string		ft_to_string(size_t	nb);
+std::string		size_t_to_str(size_t	nb);
+size_t			str_to_size_t(std::string my_str);
 
 #endif
