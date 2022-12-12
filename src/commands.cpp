@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:09:32 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:30:08 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,17 +82,17 @@ void	Server::_joinHandler(User *user)
 		return user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "JOIN"));
 	// extra arguments are simply ignored
 	str_vec		chans = split_str(user->getArgs()[0], ",", true);
-	size_t		nth = 0;
-	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++nth)
+	size_t		index = 0;
+	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++index)
 	{
 		if (!is_valid_channel_name(*name, user, getSrv()))
 			continue ; // invalid channel names are silently ignored
 		Channel		*chan = getChannel(*name);
 		if (chan == NULL) { // channel has to be created
-			chan = newChan(user, *name, nth);
+			chan = newChan(user, *name, index);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			chan->rpl_names(user, getSrv(), true);
-		} else if (chan->canJoin(getSrv(), user, nth)) { // channel already exists
+		} else if (chan->canJoin(getSrv(), user, index)) { // channel already exists
 			if (chan->isInvited(user->getFd()))
 				chan->rmInvite(user);
 			chan->addUser(user);

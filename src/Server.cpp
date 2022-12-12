@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/07 17:56:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:30:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,7 +298,7 @@ void			Server::addChannel(Channel *chan)
 	_channels[chan->getName()] = chan;
 }
 
-Channel			*Server::newChan(User *user, std::string name, size_t nth)
+Channel			*Server::newChan(User *user, std::string name, size_t index)
 {
 	str_vec			passwords;
 	std::string		pw = "";
@@ -306,9 +306,9 @@ Channel			*Server::newChan(User *user, std::string name, size_t nth)
 	if (user->getArgs().size() == 2)
 	{
 		passwords = split_str(user->getArgs()[1], ",", true);
-	// empty passwords will be ignored, the channel won't have a password
-		if (passwords.size() >= nth && !passwords[nth].empty())
-			pw = passwords[nth];
+		// empty passwords will be ignored, the channel won't have a password
+		if ((passwords.size() >= index + 1) && !passwords[index].empty())
+			pw = passwords[index];
 	}
 	Channel		*chan = new Channel(name, pw);
 	std::cout << GRN "Channel " << name << " created." END << std::endl;

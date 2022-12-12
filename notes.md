@@ -273,3 +273,11 @@ USER			-> 🔴🔵
 
 
 https://stackoverflow.com/questions/12886573/implementing-irc-rfc-how-to-respond-to-mode
+
+
+
+
+
+TODO
+- tester rpl_chan_mode
+- strinstream faut-il les clear ?

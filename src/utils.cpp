@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 17:19:36 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:08:47 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:32:03 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,11 @@ bool		is_valid_channel_name(std::string chan, User *user, std::string srv)
 	// channels names are strings of length up to 200 characters
 	if (chan.size() > 200)
 	{
-		user->reply("TODO tester sur un vrai serveur IRC");
 		return (false);
 	}
 	// channels names cannot contain a control G (ASCII 7) character
 	if (chan.find(char(7)) != std::string::npos)
 	{
-		user->reply("TODO tester sur un vrai serveur IRC");
 		return (false);
 	}
 	return (true);
@@ -63,9 +61,9 @@ bool		is_valid_channel_name(std::string chan, User *user, std::string srv)
 
 std::string		size_t_to_str(size_t	nb)
 {
-	std::stringstream	ss;
-	ss << nb;
-	return (ss.str());
+	std::stringstream	sstream;
+	sstream << nb;
+	return (sstream.str());
 }
 
 

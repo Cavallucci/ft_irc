@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:12:58 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 13:31:52 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,8 +172,7 @@ void			Channel::rpl_names(User *user, std::string srv, bool send_end)
 void			Channel::rpl_chan_mode(User *user, std::string srv)
 {
 	std::string			modes;
-	std::string			params;
-	std::stringstream	ss;
+	std::string			parameters;
 
 	for (size_t i = 0; i < _mode.size(); ++i)
 	{
@@ -183,15 +182,11 @@ void			Channel::rpl_chan_mode(User *user, std::string srv)
 		modes += _mode[i];
 		if (_mode[i] == 'l')
 		{
-			params = "";
-			ss << _maxUsers;
-			ss >> params;
-			ss.clear();
-			modes += " " + params;
+			parameters = size_t_to_str(getMaxUsers()) ;
+			modes += " " + parameters;
 		}
-		// TODO a tester et a terminer
 	}
-	user->reply(RPL_CHANNELMODEIS(srv, getName(), modes, params));
+	user->reply(RPL_CHANNELMODEIS(srv, getName(), modes, parameters));
 }
 
 
@@ -255,16 +250,15 @@ bool				Channel::hasMode(char c) const
 }
 
 
-bool				Channel::pwMatches(User *user, size_t nth) const
+bool				Channel::pwMatches(User *user, size_t index) const
 {
 	str_vec		passwords;
 	if (user->getArgs().size() == 1)
 		return (false);
 	passwords = split_str(user->getArgs()[1], ",", true);
-	if (passwords.size() < nth)
+	if (passwords.size() < index + 1)
 		return (false);
-	// TODO checker s'il est possible de définir un password ""
-	return passwords[nth] == _password;
+	return (passwords[index] == _password);
 }
 
 
@@ -308,7 +302,7 @@ bool				Channel::isInvited(int fd) const
 }
 
 
-bool				Channel::canJoin(std::string srv, User *user, size_t nth) const
+bool				Channel::canJoin(std::string srv, User *user, size_t index) const
 {
 	bool	isInviteOnly = hasMode('i');
 	if (isInviteOnly && !isInvited(user->getFd()))
@@ -317,7 +311,7 @@ bool				Channel::canJoin(std::string srv, User *user, size_t nth) const
 		user->reply(ERR_CHANNELISFULL(srv, getName()));
 	else if (isBanned(user->getFd()))
 		user->reply(ERR_BANNEDFROMCHAN(srv, getName()));
-	else if (hasPassword() && !pwMatches(user, nth))
+	else if (hasPassword() && !pwMatches(user, index))
 		user->reply(ERR_BADCHANNELKEY(srv, getName()));
 	else
 		return (true);
@@ -414,7 +408,6 @@ void				Channel::setTopic(std::string topic, std::string nick)
 	tmp << time(NULL);
 	_topic = topic;
 	_topicCtxt = nick + " " + tmp.str();
-	tmp.clear();
 }
 
 
