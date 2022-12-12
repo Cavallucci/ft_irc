@@ -468,6 +468,7 @@ https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.1
 */
 void	Server::_privMsgHandler(User *user) { _msgHandler(user, false); }
 
+
 /*
 QUIT command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.6
@@ -479,32 +480,15 @@ void	Server::_quitHandler(User *user)
 	std::string		quit_msg = user->getRawArgs(0);
 	if (quit_msg.empty()) // the default message is just the nick
 		quit_msg = user->getNick();
-	// gets the user out of every channel
 	chan_map	channels = user->getChannels();
+	int				fd = user->getFd();
 	for (chan_it it = channels.begin(); it != channels.end(); ++it)
 	{
 		it->second->delUser(user);
-		if (it->second->getNbUsers(true) > 0)
+		if (it->second->getNbUsers(true))
 			it->second->broadcast(RPL_QUIT(user->getNick(), quit_msg));
-		else
-			delChannel(it->second);
 	}
-	// frees the chan_vec of the User instance
-	user->clearChannels();
-	// deletes the User instance itself
-	// TODO remplacer les lignes ci-dessous par Server::_deleteUser ?
-	int				fd = user->getFd();
-	close(fd);
-	_users.erase(fd);
-	delete user;
-	for (pfds_it it = _pfds.begin(); it != _pfds.end(); ++it)
-	{
-		if (it->fd == fd)
-		{
-			_pfds.erase(it);
-			break;
-		}
-	}
+	_deleteUser(fd); // deletes empty channels as well
 	std::cout << MAG BYE << fd << END << std::endl;
 }
 

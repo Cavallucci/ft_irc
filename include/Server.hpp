@@ -51,7 +51,7 @@ class Server
 		void								_serverSetUp(void);
 		void								_serverConnect(void);
 		void								_addUser(void);
-		void								_deleteUser(pfds_it &it);
+		void								_deleteUser(int fd);
 		//void								_clientHandle(pfds_it &iterator);
 		bool								_parseInput(User *user);
 		void								_closeAll(void);

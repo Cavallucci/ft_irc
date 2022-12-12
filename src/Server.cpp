@@ -188,20 +188,39 @@ void	Server::_addUser(void)
 	}
 }
 
-void	Server::_deleteUser(pfds_it &it)
-{
-	User	*user = _users.at(it->fd);
 
-	if (it->fd > 0)
+void	Server::_deleteUser(int fd)
+{
+	User	*user = getUser(fd);
+	if (fd > 0)
 	{
-		_users.erase(it->fd);
-		close(it->fd);
+		close(fd);
+		if (_users.count(fd))
+			_users.erase(fd);
 	}
-	_pfds.erase(it);
-	user->clearChannels();
-	// TODO supprimer le channel si plus d'utilisateurs dedans ?
-	delete user;
+	size_t	index = 0;
+	while (index < _pfds.size())
+	{
+		if (_pfds[index].fd == fd)
+			break ;
+		index++;
+	}
+	_pfds.erase(_pfds.begin() + index);
+	if (user != NULL)
+	{
+		chan_map	channels = user->getChannels();
+		for (chan_it it = channels.begin(); it != channels.end(); ++it)
+		{
+			it->second->delUser(user); // gets the user out of every channel
+			if (it->second->getNbUsers(true) == 0)
+				delChannel(it->second); // empty channels are deleted as well
+		}
+		user->clearChannels();
+		delete user;
+	}
+	// TODO rien a faire sur le pointeur sockaddr_storage ?
 }
+
 
 bool	Server::_parseInput(User *user)
 {
