@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 16:57:06 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 11:46:04 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	Server::_initHandlers(void)
 {
 	// by alphabetical order
 	_commands["cap"] = &Server::_capHandler;
+	_commands["print"] = &Server::_printHandler; //TODO a enlever apres tests
 	_commands["invite"] = &Server::_inviteHandler;
 	_commands["join"] = &Server::_joinHandler;
 	_commands["kick"] = &Server::_kickHandler;
@@ -37,6 +38,40 @@ void	Server::_initHandlers(void)
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
 
 // TODO pour toutes les cmd: vérifier quel est le comportement attendu quand il y a trop d'arguments
+
+void	Server::_printHandler(User *user)
+{
+	(void)user;
+	std::cout << MAG << "❓ INFORMATION ABOUT SERVER " << _name << END << std::endl;
+	std::cout << std::endl;
+	std::cout << GRN << "🚹 Users : " END;
+	for (user_it it = _users.begin(); it != _users.end(); it++)
+		std::cout << getUser(it->first)->getNick() << std::endl;
+	std::cout << std::endl;
+	std::cout << GRN << "📡 Channels : " << END << std::endl;
+	std::cout << "NAME	||	TOPIC	||	USERS	||	OPS	||	BANNED	||	MOD	||" << std::endl;
+	for (chan_it chan = _channels.begin(); chan != _channels.end(); chan++)
+	{
+		Channel	*channel = getChannel(chan->first);
+		std::cout << channel->getName() << "	||";
+		std::cout << channel->getTopic() << "	||";
+		usr_map	usr = channel->getUsers();
+		for (user_it user = usr.begin(); user != usr.end(); user++)
+			std::cout << getUser(user->first)->getNick() << ", ";
+		std::cout << "	||";
+		for (user_it ops = usr.begin(); ops != usr.end() && channel->isOp(ops->first); ops++)
+			std::cout << getUser(ops->first)->getNick() << ", ";
+		std::cout << "	||";
+		for (user_it ban = usr.begin(); ban != usr.end() && channel->isBanned(ban->first); ban++)
+			std::cout << getUser(ban->first)->getNick() << ", ";
+		std::cout << "	||";
+		for (user_it mod = usr.begin(); mod != usr.end() && channel->isMod(mod->first); mod++)
+			std::cout << getUser(mod->first)->getNick() << ", ";
+		std::cout << "	||";
+		std::cout << std::endl;
+	}
+}
+
 
 /*
 CAP command, not mandatory, nor defined in RFC1459
@@ -283,6 +318,8 @@ void	Server::_msgHandler(User *user, bool silently)
 			Channel		*channel = getChannel(*it);
 			if (channel == NULL && !silently)
 				user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
+			else if (!channel->isIn(user->getFd())) //TODO a enlever apres tests
+				user->reply(ERR_NOTONCHANNEL(getSrv(),*it));
 			else if (channel != NULL) {
 				if (!channel->isIn(user->getFd()) && channel->hasMode('n'))
 				{

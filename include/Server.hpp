@@ -55,6 +55,7 @@ class Server
 		bool								_parseInput(User *user);
 		void								_closeAll(void);
 		// Methods related to commands management
+		void								_printHandler(User* user);
 		void								_initHandlers(void);
 		void								_capHandler(User *user);
 		void								_inviteHandler(User* user);
