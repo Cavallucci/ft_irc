@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 13:00:06 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 15:24:46 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,21 +129,23 @@ void	Server::_joinHandler(User *user)
 	if (user->getArgs().size() < 1)
 		return user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "JOIN"));
 	// extra arguments are simply ignored
-	str_vec		chans = split_str(user->getArgs()[0], ",", true);
-	size_t		index = 0;
+	str_vec			chans = split_str(user->getArgs()[0], ",", true);
+	size_t			index = 0;
 	for (str_vec::iterator name = chans.begin(); name != chans.end(); ++name, ++index)
 	{
 		if (!is_valid_channel_name(*name, user, getSrv()))
 			continue ; // invalid channel names are silently ignored
 		Channel		*chan = getChannel(*name);
 		if (chan == NULL) { // channel has to be created
-			chan = newChan(user, *name, index);
+			chan = newChan(user, *name, index); // chan.addUser will be called here
+			user->registerChannel(chan);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			chan->rpl_names(user, getSrv(), true);
 		} else if (chan->canJoin(getSrv(), user, index)) { // channel already exists
 			if (chan->isInvited(user->getFd()))
 				chan->rmInvite(user);
 			chan->addUser(user);
+			user->registerChannel(chan);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			if (chan->getTopic() != "")
 			{
@@ -153,8 +155,6 @@ void	Server::_joinHandler(User *user)
 			chan->rpl_names(user, getSrv(), true);
 		}
 	}
-	// ERR_NOSUCHCHANNEL
-	// ERR_TOOMANYCHANNELS
 }
 
 /*
@@ -490,7 +490,7 @@ void	Server::_pingHandler(User *user)
 	std::string		param = user->getRawArgs(0); // extra arguments are simply ignored
 	if (param.empty())
 		return (user->reply(ERR_NOORIGIN(getSrv())));
-	if (param != _host && param != getSrv())
+	if ((param != _host) && (param != getSrv()))
 		return (user->reply(ERR_NOSUCHSERVER(getSrv(), param)));
 	user->reply(RPL_PING(user->getNick(), getSrv()));
 }
@@ -506,19 +506,18 @@ void	Server::_privMsgHandler(User *user) { _msgHandler(user, false); }
 QUIT command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.6
 */
-void	Server::_quitHandler(User *user)
+void	Server::_quitHandler(User *user) // TODO
 {
 	if (!user->hasBeenWelcomed())
 		return ;
 	std::string		quit_msg = user->getRawArgs(0);
 	if (quit_msg.empty()) // the default message is just the nick
 		quit_msg = user->getNick();
-	chan_map	channels = user->getChannels();
+	chan_map		channels = user->getChannels();
 	int				fd = user->getFd();
-	for (chan_it it = channels.begin(); it != channels.end(); ++it)
-	{
+	for (chan_it it = channels.begin(); it != channels.end(); ++it) {
 		it->second->delUser(user);
-		if (it->second->getNbUsers(true))
+		if (it->second->getNbUsers(true) > 0)
 			it->second->broadcast(RPL_QUIT(user->getNick(), quit_msg));
 	}
 	_deleteUser(fd); // deletes empty channels as well
@@ -536,14 +535,14 @@ void	Server::_topicHandler(User *user)
 		return;
 	if (user->getArgs().size() < 1)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "TOPIC")));
-	std::string		name = user->getArgs()[0];
-	Channel			*chan = getChannel(name);
+	std::string			name = user->getArgs()[0];
+	Channel				*chan = getChannel(name);
 	if (chan != NULL && chan->isIn(user->getFd())) { // channel does exist & the user can access it
 		// the user simply wants to view the channel topic
 		if (user->getArgs().size() == 1) {
 			if (chan->getTopic().empty())
-				return (user->reply(RPL_NOTOPIC(user->getNick(), name)));
-			return (user->reply(RPL_TOPIC(user->getNick(), name, chan->getTopic())));
+				return (user->reply(RPL_NOTOPIC(getSrv(), name)));
+			return (user->reply(RPL_TOPIC(getSrv(), name, chan->getTopic())));
 		}
 		// the topic for that channel will be changed if its modes permit it
 		std::string		topic = user->getRawArgs(1);
@@ -551,11 +550,13 @@ void	Server::_topicHandler(User *user)
 			topic = topic.substr(1);
 		else
 			topic = user->getArgs()[1];
+		// TODO Topic for :
+		// TODO Topic contexte avec l'heure
 		// TODO vérifier l'ordre de priorité des messages d'erreur suivants
 		if (chan->hasMode('t') && !chan->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
 		chan->setTopic(topic, user->getNick());
-		chan->broadcast(RPL_TOPIC(user->getNick(), name, topic));
+		chan->broadcast(RPL_TOPIC(getSrv(), name, topic));
 	} else { // channel not found
 		user->reply(ERR_NOTONCHANNEL(getSrv(), name));
 	}
@@ -603,24 +604,25 @@ void	Server::_whoHandler(User *user)
 			target = getUser(name); // <name> is matched against users' nicknames
 			if (target && (!target->hasMode('i') || user == target)) {
 				user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
-					target->getHost(), target->getNick(), target->getReal()));
+					target->getHost(), target->getNick(), "", target->getReal()));
 			}
 		}
 	} else { // in the absence of the <name> parameter, all visible users are listed
 		bool	skip;
-		for (user_it usr = _users.begin(); it != _users.end(); ++usr) {
+		for (user_it usr = _users.begin(); usr != _users.end(); ++usr) {
 			target = usr->second;
 			skip = false;
-			if (target->hasMode('i'))
+			if (target->hasMode('i') && user != target)
 				skip = true;
 			chan_map	channels = target->getChannels();
-			for (chan_it chan = channels.begin(); chan != channels.end(); ++chan, !skip) {
+			for (chan_it chan = channels.begin(); \
+			chan != channels.end() && (!skip); ++chan) {
 				if (chan->second->isIn(user->getFd()))
 					skip = true;
 			}
 			if (!skip) {
 				user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
-					target->getHost(), target->getNick(), target->getReal()));
+					target->getHost(), target->getNick(), "", target->getReal()));
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 13:01:55 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 15:24:57 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,7 @@ std::ostream &			operator<<(std::ostream & o, Channel const & e)
 
 void			Channel::broadcast(std::string msg)
 {
-	for (user_it it = _users.begin(); it != _users.end(); ++it)
-	{
+	for (user_it it = _users.begin(); it != _users.end(); ++it) {
 		it->second->reply(msg);
 	}
 }
@@ -125,6 +124,7 @@ void			Channel::rpl_whoreply(User *user, std::string srv)
 				it->second->getUser(),
 				it->second->getHost(),
 				it->second->getNick(),
+				((isOp(it->second->getFd())) ? "@" : ""), // is operator or not ?
 				it->second->getReal()
 			));
 		}
@@ -223,7 +223,8 @@ User				*Channel::getUser(std::string nick) const
 		if (it->second->getNick() == nick)
 			return it->second;
 	}
-	std::cerr << RED ERR_USER_NICK_NOT_FOUND << nick << END << std::endl;
+	if (DEBUG)
+		std::cerr << YEL ERR_USER_NICK_NOT_FOUND << nick << END << std::endl;
 	return NULL;
 }
 

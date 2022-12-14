@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 12:28:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 15:17:42 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,8 +231,6 @@ bool	Server::_parseInput(User *user)
 	{
 		std::string::size_type	pos = (*it).find(' '); // might be string::npos
 		std::string				cmd_str = (*it).substr(0, pos);
-		if (cmd_str == "PING") // FIXME
-			return (true);
 		if (DEBUG)
 		{
 			std::cout << WHT "(3) Command: [" END;
@@ -280,7 +278,8 @@ User			*Server::getUser(int fd) const
 		if (it->first == fd)
 			return it->second;
 	}
-	std::cerr << RED ERR_USER_FD_NOT_FOUND << fd << END << std::endl;
+	if (DEBUG)
+		std::cerr << YEL ERR_USER_FD_NOT_FOUND << fd << END << std::endl;
 	return NULL;
 }
 
@@ -291,7 +290,8 @@ User			*Server::getUser(std::string nick) const
 		if (it->second->getNick() == nick)
 			return it->second;
 	}
-	std::cerr << RED ERR_USER_NICK_NOT_FOUND << nick << END << std::endl;
+	if (DEBUG)
+		std::cerr << YEL ERR_USER_NICK_NOT_FOUND << nick << END << std::endl;
 	return NULL;
 }
 
@@ -303,7 +303,8 @@ Channel			*Server::getChannel(std::string chan_name) const
 		if (it->first == chan_name)
 			return it->second;
 	}
-	std::cerr << RED ERR_CHANNEL_NOT_FOUND << chan_name << END << std::endl;
+	if (DEBUG)
+		std::cerr << YEL ERR_CHANNEL_NOT_FOUND << chan_name << END << std::endl;
 	return NULL;
 }
 
@@ -312,16 +313,16 @@ Channel			*Server::getChannel(std::string chan_name) const
 Channel			*Server::newChan(User *user, std::string name, size_t index)
 {
 	str_vec			passwords;
-	std::string		pw = "";
+	std::string		pw;
 
 	if (user->getArgs().size() == 2)
 	{
 		passwords = split_str(user->getArgs()[1], ",", true);
-		// empty passwords will be FDignored, the channel won't have a password
+		// empty passwords will be ignored, the channel won't have a password
 		if ((passwords.size() >= index + 1) && !passwords[index].empty())
 			pw = passwords[index];
 	}
-	Channel		*chan = new Channel(name, pw);
+	Channel			*chan = new Channel(name, pw);
 	_channels[name] = chan;
 	std::cout << GRN "✅ Channel " << name << " created." END << std::endl;
 	chan->addUser(user);

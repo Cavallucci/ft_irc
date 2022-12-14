@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 12:29:21 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 15:22:58 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,13 @@ void				User::reply(std::string msg)
 	for (size_t i = 0; i < msg.length(); i += n)
 	{
 		n = send(_fd, &(msg[i]), msg.length() - i, 0);
-		if (n == -1) break;
+		if (n == -1)
+			break ;
 	}
-	std::cout << CYN << msg << END << std::endl;
+	if (DEBUG) {
+		std::cout << "📨" WHT << getNick() << ": ";
+		std::cout << END << CYN << msg << END << std::endl;
+	}
 }
 
 
@@ -169,7 +173,8 @@ Channel *			User::getChannel(std::string chan_name) const
 		if (it->first == chan_name)
 			return it->second;
 	}
-	std::cerr << RED ERR_CHANNEL_NOT_FOUND << chan_name << END << std::endl;
+	if (DEBUG)
+		std::cerr << YEL ERR_CHANNEL_NOT_FOUND << chan_name << END << std::endl;
 	return NULL;
 }
 

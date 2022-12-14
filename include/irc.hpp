@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 12:30:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 14:11:06 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ typedef usr_map::const_iterator				user_it;
 # define RUNNING								"✅ The server is running, waiting for clients..."
 # define ERR_TOO_LONG							"📜 Message truncated to 512 bytes on socket "
 # define BYE									"👋 Someone left, socket "
-# define ERR_CHANNEL_NOT_FOUND					"❓ There isn't any channel with this name: "
-# define ERR_USER_FD_NOT_FOUND					"❓ There isn't any user with this fd: "
-# define ERR_USER_NICK_NOT_FOUND				"❓ There isn't any user with this nickname: "
+# define ERR_CHANNEL_NOT_FOUND					"🤔 There isn't any channel with this name: "
+# define ERR_USER_FD_NOT_FOUND					"🤔 There isn't any user with this fd: "
+# define ERR_USER_NICK_NOT_FOUND				"🤔 There isn't any user with this nickname: "
 # define ERR_RECV								"❌ Error while trying to read (recv) socket "
 # define RECV_ZERO								"🚫 A socket has hang up, socket"
 # define PRV_TOPIC								"Prv"
@@ -133,7 +133,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
-# define RPL_WHOREPLY(s, c, u, h, n, r)			":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" <H|G>[*][@|+] : "+r
+# define RPL_WHOREPLY(s, c, u, h, n, op, r)		":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
 
 // List of custom, non official replies by alphabetical order
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
@@ -142,7 +142,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
 # define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE:" + by + " " + channel
 # define RPL_KICK(nick, who, channel)			":" + nick + "@IRC KICK:" + who + " " + channel
-# define RPL_MSG(nick, target, txt)			":" + nick + "@IRC PRIVMSG " + target + " :" + txt
+# define RPL_MSG(nick, target, txt)				":" + nick + "@IRC PRIVMSG " + target + " :" + txt
 
 // utils.cpp
 char			ascii_to_lower(char in);
