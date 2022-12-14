@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 16:10:55 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 18:48:02 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ void	Server::_joinHandler(User *user)
 KICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
-void	Server::_kickHandler(User *user) // TODO
+void	Server::_kickHandler(User *user) // TODO a tester
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -169,8 +169,6 @@ void	Server::_kickHandler(User *user) // TODO
 	std::string		target_user = user->getArgs()[1];
 	Channel			*channel = getChannel(channel_name);
 	User			*target = getUser(target_user);
-	// TODO vérifier l'ordre de priorité des erreurs
-	// TODO éventuellement on peut aussi gérer [KICK channel1,channel2 user1,user2]
 	if (channel == NULL)
 		return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), channel_name)));
 	// TODO tester qu'on renvoie bien ERR_NOTONCHANNEL si l'utilisateur n'existe pas du tout
@@ -192,7 +190,7 @@ void	Server::_kickHandler(User *user) // TODO
 LIST command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 */
-void	Server::_listHandler(User *user) // TODO
+void	Server::_listHandler(User *user) // TODO a tester
 {
 	if (!user->hasBeenWelcomed())
 		return;
@@ -234,7 +232,7 @@ void	Server::_listHandler(User *user) // TODO
 MODE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 */
-void	Server::_modeHandler(User *user) // TODO
+void	Server::_modeHandler(User *user) // TODO MODE channel a tester
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -248,19 +246,20 @@ void	Server::_modeHandler(User *user) // TODO
 		Channel		*channel = getChannel(name);
 		if (channel == NULL)
 			return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), name)));
+		if (!channel->isOp(user->getFd()))
+			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
 		if (action.empty()) // the user just wants to get the channel modes
 			return (channel->rpl_chan_mode(user, getSrv())); // RPL_CHANNELMODEIS
 		if (action[0] == 'b')
 			return (channel->rpl_ban_list(user, getSrv())); // RPL_BANLIST, RPL_ENDOFBANLIST
-		if (!channel->isOp(user->getFd()))
-			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
 		if (!(action[0] == '+' || action[0] == '-'))
 			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
 		for (std::string::size_type i = 1; i < action.size(); i++)
 			channel->updateMode(getSrv(), user, action[0] == '+', action[i]);
-		if (channel->getNbUsers(true) == 0)
+		if (!channel->getNbUsers(true))
 			delChannel(channel);
-		std::cout << YEL << CHANNEL_MODE << channel->getMode() << END << std::endl;
+		std::cout << GRN << CHANNEL_MODE << "[" END;
+		std::cout << channel->getMode() << GRN "]" END << std::endl;
 	} else { // user modes
 		User		*target = getUser(name);
 		if (target == NULL)
@@ -274,14 +273,16 @@ void	Server::_modeHandler(User *user) // TODO
 		for (size_t i = 1; i < action.size(); i++) { // ignores the starting '+' or '-'
 			if (!user->isValidMode(action[i]))
 				user->reply(ERR_UNKNOWNMODE(getSrv(), action[i]));
-			else if (action[0] == '+' && action[i] != 'o')
+			else if (action[0] == '+' && action[i] != 'o') // prevents [MODE myself +o]
 				user->addMode(action[i]);
 			else if (action[0] == '-')
 				user->rmMode(action[i]);
 		}
+		std::cout << GRN << USER_MODE << user->getNick() << " [" END;
+		std::cout << user->getMode() << GRN "]" END << std::endl;
 	}
-	// ERR_NOTONCHANNEL
-	// ERR_KEYSET
+	// TODO ERR_NOTONCHANNEL
+	// TODO ERR_KEYSET
 }
 
 /*
@@ -362,9 +363,9 @@ void	Server::_namesHandler(User *user)
 		bool			listed;
 		for (user_it it = _users.begin(); it != _users.end(); ++it) {
 			if (!it->second->hasMode('i')) // checks that the target is visible
+				chan_map const		its_channels = it->second->getChannels();
 			{
 				listed = false; // checks that the target hasn't already been listed
-				chan_map const		its_channels = it->second->getChannels();
 				for (chan_it it = _channels.begin(); it != _channels.end() && !listed; ++it)
 				{ // if he has been listed, he must be in at least 1 visible channel
 					if (!it->second->hasMode('p') && !it->second->hasMode('s'))

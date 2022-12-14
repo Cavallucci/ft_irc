@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 15:22:58 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 18:22:53 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,8 @@ void				User::reply(std::string msg)
 			break ;
 	}
 	if (DEBUG) {
-		std::cout << "📨" WHT << getNick() << ": ";
-		std::cout << END << CYN << msg << END << std::endl;
+		std::cout << "📨" WHT << getNick() << " " END;
+		std::cout << CYN << msg << END << std::endl;
 	}
 }
 
@@ -191,7 +191,7 @@ void				User::logIn(void) { _loggedIn = true; }
 
 void				User::addMode(char new_mode)
 {
-	if (_mode.find(new_mode) != std::string::npos)
+	if (_mode.find(new_mode) == std::string::npos)
 		_mode.append(1, new_mode);
 }
 

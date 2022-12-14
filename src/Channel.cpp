@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 15:24:57 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 18:34:44 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,7 +414,7 @@ void				Channel::setTopic(std::string topic, std::string nick)
 
 void				Channel::addMode(char new_mode)
 {
-	if (_mode.find(new_mode) != std::string::npos)
+	if (_mode.find(new_mode) == std::string::npos)
 		_mode.append(1, new_mode);
 }
 

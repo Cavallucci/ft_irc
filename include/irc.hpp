@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 14:11:06 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 18:30:52 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_RECV								"❌ Error while trying to read (recv) socket "
 # define RECV_ZERO								"🚫 A socket has hang up, socket"
 # define PRV_TOPIC								"Prv"
-# define CHANNEL_MODE							"Channel mode updated: "
+# define CHANNEL_MODE							"🔧 Channel mode "
+# define USER_MODE								"🔧 User mode "
 
 // list of official numeric replies sent by the server by alphabetical order
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
@@ -119,7 +120,7 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_WILDTOPLEVEL(srv, mask)			":" + srv + " 414 :" + mask + " :No toplevel domain specified"
 # define RPL_AWAY(srv, nick, msg)				":" + srv + " 301 :" + nick + " :" + msg
 # define RPL_BANLIST(srv, chan, ban_id)			":" + srv + " 367 :" + chan + " " + ban_id
-# define RPL_CHANNELMODEIS(srv, chan, mod, par)	":" + srv + " 324 :" + chan + mod + " " + par
+# define RPL_CHANNELMODEIS(srv, chan, mod, par)	":" + srv + " 324 :" + chan + " " + mod + " " + par
 # define RPL_ENDOFBANLIST(srv, chan)			":" + srv + " 368 :" + chan + " :End of channel ban list"
 # define RPL_ENDOFNAMES(srv, chan)				":" + srv + " 366 :" + chan + " :End of /NAMES list"
 # define RPL_ENDOFWHO(srv, name)				":" + srv + " 315 :" + name + " :End of /WHO list"
