@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 11:46:04 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 13:00:06 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -593,20 +593,36 @@ void	Server::_whoHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	// TODO tester comportement si pas d'arguments
-	std::string		name = user->getArgs()[0];
-	Channel			*chan = getChannel(name);
-	if (chan != NULL) { // channel found based on the name passed to WHO
-		chan->rpl_whoreply(user, getSrv());
-	} else { // channel not found
-		// TODO <name> is matched against users' host, server, realname & nickname
-		User		*target = getUser(name);
-		if (target && (!target->hasMode('i') || user == target))
-		{
-			user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
-				target->getHost(), target->getNick(), target->getReal()));
+	User				*target;
+	if (user->getArgs().size()) {
+		std::string		name = user->getArgs()[0]; // considers only the 1st argument
+		Channel			*chan = getChannel(name);
+		if (chan != NULL) { // channel found based on the name passed to WHO
+			chan->rpl_whoreply(user, getSrv());
+		} else { // channel not found, maybe that the user is looking for another user
+			target = getUser(name); // <name> is matched against users' nicknames
+			if (target && (!target->hasMode('i') || user == target)) {
+				user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
+					target->getHost(), target->getNick(), target->getReal()));
+			}
+		}
+	} else { // in the absence of the <name> parameter, all visible users are listed
+		bool	skip;
+		for (user_it usr = _users.begin(); it != _users.end(); ++usr) {
+			target = usr->second;
+			skip = false;
+			if (target->hasMode('i'))
+				skip = true;
+			chan_map	channels = target->getChannels();
+			for (chan_it chan = channels.begin(); chan != channels.end(); ++chan, !skip) {
+				if (chan->second->isIn(user->getFd()))
+					skip = true;
+			}
+			if (!skip) {
+				user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
+					target->getHost(), target->getNick(), target->getReal()));
+			}
 		}
 	}
 	user->reply(RPL_ENDOFWHO(getSrv(), user->getNick()));
-	// ERR_NOSUCHSERVER
 }
