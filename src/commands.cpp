@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 15:24:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 16:10:55 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	Server::_initHandlers(void)
 {
 	// by alphabetical order
 	_commands["cap"] = &Server::_capHandler;
-	_commands["print"] = &Server::_printHandler; //TODO a enlever apres tests
+	_commands["print"] = &Server::_printHandler; //TODO FIXME a enlever apres tests
 	_commands["invite"] = &Server::_inviteHandler;
 	_commands["join"] = &Server::_joinHandler;
 	_commands["kick"] = &Server::_kickHandler;
@@ -37,9 +37,8 @@ void	Server::_initHandlers(void)
 
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
 
-// TODO pour toutes les cmd: vérifier quel est le comportement attendu quand il y a trop d'arguments
 
-void	Server::_printHandler(User *user)
+void	Server::_printHandler(User *user) // TODO FIXME
 {
 	(void)user;
 	std::cout << MAG << "❓ INFORMATION ABOUT SERVER " << _name << END << std::endl;
@@ -89,7 +88,7 @@ void	Server::_capHandler(User *user)
 INVITE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
 */
-void	Server::_inviteHandler(User *user)
+void	Server::_inviteHandler(User *user) // TODO
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -114,8 +113,7 @@ void	Server::_inviteHandler(User *user)
 		guest->reply(RPL_INVITE(guest_nick, user->getNick(), target_chan));
 		channel->addUser(guest);
 	}
-	// TODO vérifier : si channel invalide pas de retour d'erreur ?
-	// RPL_AWAY
+	// the protocol does not mention any error message to return when the channel is invalid
 }
 
 /*
@@ -161,7 +159,7 @@ void	Server::_joinHandler(User *user)
 KICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
-void	Server::_kickHandler(User *user)
+void	Server::_kickHandler(User *user) // TODO
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -187,7 +185,6 @@ void	Server::_kickHandler(User *user)
 	if (!channel->getNbUsers(true))
 		delChannel(channel);
 	// TODO possibilité d'ajouter un commentaire au KICK
-	// ERR_BADCHANMASK
 }
 
 
@@ -195,7 +192,7 @@ void	Server::_kickHandler(User *user)
 LIST command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 */
-void	Server::_listHandler(User *user)
+void	Server::_listHandler(User *user) // TODO
 {
 	if (!user->hasBeenWelcomed())
 		return;
@@ -237,7 +234,7 @@ void	Server::_listHandler(User *user)
 MODE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 */
-void	Server::_modeHandler(User *user)
+void	Server::_modeHandler(User *user) // TODO
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -249,7 +246,6 @@ void	Server::_modeHandler(User *user)
 		action = user->getArgs()[1];
 	if (name[0] == '#' || name[0] == '&') { // channel modes
 		Channel		*channel = getChannel(name);
-		// TODO verifier l'ordre des messages d'erreur
 		if (channel == NULL)
 			return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), name)));
 		if (action.empty()) // the user just wants to get the channel modes
@@ -275,7 +271,6 @@ void	Server::_modeHandler(User *user)
 			return (user->reply(RPL_UMODEIS(getSrv(), user->getMode())));
 		if (action[0] != '+' && action[0] != '-')
 			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
-		// TODO tester le comportement quand il a plus que 2 arguments: que faire des espaces? les ignorer ?
 		for (size_t i = 1; i < action.size(); i++) { // ignores the starting '+' or '-'
 			if (!user->isValidMode(action[i]))
 				user->reply(ERR_UNKNOWNMODE(getSrv(), action[i]));
@@ -297,7 +292,6 @@ void	Server::_msgHandler(User *user, bool silently)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
-	// TODO verifier l'ordre de priorité des erreurs
 	if (user->getArgs().size() < 2 && silently)
 		return ;
 	else if (user->getArgs().size() < 2)
@@ -306,11 +300,11 @@ void	Server::_msgHandler(User *user, bool silently)
 		return ;
 	else if (user->getArgs()[0][0] == ':')
 		return (user->reply(ERR_NORECIPIENT(getSrv(), "PRIVMSG")));
-	str_vec			targets = split_str(user->getArgs()[0], ",", true);
-	std::string		message;
+	str_vec				targets = split_str(user->getArgs()[0], ",", true);
+	std::string			message;
 	if (user->getArgs()[1][0] == ':')
 		message = user->getRawArgs(1).substr(1);
-	else
+	else  // no colon -> we'll only keep the 1st word
 		message = user->getArgs()[1];
 	for (str_vec::iterator it = targets.begin(); it != targets.end(); ++it)
 	{
@@ -318,31 +312,22 @@ void	Server::_msgHandler(User *user, bool silently)
 			Channel		*channel = getChannel(*it);
 			if (channel == NULL && !silently)
 				user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
-			else if (!channel->isIn(user->getFd())) //TODO a enlever apres tests
-				user->reply(ERR_NOTONCHANNEL(getSrv(),*it));
 			else if (channel != NULL) {
-				if (!channel->isIn(user->getFd()) && channel->hasMode('n'))
-				{
+				if (!channel->isIn(user->getFd()) && channel->hasMode('n')) {
 					if (!silently)
 						user->reply(ERR_CANNOTSENDTOCHAN(getSrv(), *it));
 					continue ;
 				}
-				// TODO bot ?
 				channel->msg(getSrv(), user, message, silently);
 			}
-		} else { // the receiver is a user
+		} else { // the target is a user
 			User		*receiver = getUser(*it);
-			// TODO bot ?
 			if (receiver == NULL && !silently)
 				user->reply(ERR_NOSUCHNICK(getSrv(), *it));
 			if (receiver != NULL)
 				receiver->reply(RPL_MSG(user->getNick(), *it, message));
 		}
 	}
-	// ERR_NOTOPLEVEL
-	// ERR_WILDTOPLEVEL
-	// ERR_TOOMANYTARGETS
-	// RPL_AWAY
 }
 
 
@@ -420,6 +405,7 @@ void	Server::_nickHandler(User *user)
 	user->setNick(nick);
 	if (!user->getUser().empty() && user->isLoggedIn() && !user->hasBeenWelcomed())
 		user->welcome(getSrv(), false);
+	// no reply when the user just wants to update its nick
 }
 
 
@@ -427,7 +413,7 @@ void	Server::_nickHandler(User *user)
 NOTICE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2
 */
-void	Server::_noticeHandler(User *user) { _msgHandler(user, true); }
+void	Server::_noticeHandler(User *user) { _msgHandler(user, true); } // TODO
 
 
 /*
@@ -440,6 +426,7 @@ void	Server::_partHandler(User *user)
 		return ;
 	if (!user->getArgs().size())
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "PART")));
+	// we'll consider the first argument only and ignore the others
 	str_vec		names = split_str(user->getArgs()[0], ",", true);
 	Channel		*chan;
 	for (str_vec::iterator it = names.begin(); it != names.end(); ++it) {
@@ -506,7 +493,7 @@ void	Server::_privMsgHandler(User *user) { _msgHandler(user, false); }
 QUIT command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.1.6
 */
-void	Server::_quitHandler(User *user) // TODO
+void	Server::_quitHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -548,7 +535,7 @@ void	Server::_topicHandler(User *user)
 		std::string		topic = user->getRawArgs(1);
 		if (topic.find(':') == 0)
 			topic = topic.substr(1);
-		else
+		else // no colon -> we'll only keep the 1st word
 			topic = user->getArgs()[1];
 		// TODO Topic for :
 		// TODO Topic contexte avec l'heure
@@ -578,7 +565,7 @@ void	Server::_userHandler(User *user)
 	std::string		real = user->getRawArgs(3);
 	if (real[0] != ':')
 		real = user->getArgs()[3];
-	else
+	else // no colon -> we'll only keep the 1st word
 		real = real.substr(1);
 	user->setReal(real);
 	if (!user->getNick().empty() && user->isLoggedIn() && !user->hasBeenWelcomed())
