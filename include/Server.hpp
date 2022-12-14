@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 14:48:00 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 15:15:32 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ class Server
 		chan_map							getChannels() const;
 		Channel								*getChannel(std::string chan_name) const;
 		// Setters & mutators
-		void								addChannel(Channel *chan);
 		Channel								*newChan(User *user, std::string name, size_t nth);
 		void								delChannel(Channel *chan);
 	private:

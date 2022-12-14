@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 14:47:23 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 16:57:06 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,6 @@ void	Server::_kickHandler(User *user)
 	// TODO vérifier que target recoit bien le message de broadcast concernant son propre KICK
 	channel->broadcast(RPL_KICK(user->getNick(), target_user, channel_name));
 	target->rmChannel(channel_name);
-	// TODO et si target est moderator ? operator ? deja ban ? invite ? on le retire de toutes les listes ?
 	channel->delUser(target);
 	if (!channel->getNbUsers(true))
 		delChannel(channel);
@@ -413,6 +412,7 @@ void	Server::_partHandler(User *user)
 		} else if (chan->isIn(user->getFd())) {
 			chan->broadcast(RPL_PART(user->getNick(), *it));
 			(void)user->rmChannel(*it);
+			chan->delUser(user);
 			if (chan->getNbUsers(true) == 0)
 				delChannel(chan);
 		} else {
@@ -501,11 +501,10 @@ void	Server::_topicHandler(User *user)
 		return (user->reply(ERR_NEEDMOREPARAMS(getSrv(), user->getNick(), "TOPIC")));
 	std::string		name = user->getArgs()[0];
 	Channel			*chan = getChannel(name);
-	// TODO on ne peut pas TOPIC sans être dedans : filtrer sur les channels de l'User
-	if (chan != NULL) { // channel does exist & the user can access it
+	if (chan != NULL && chan->isIn(user->getFd())) { // channel does exist & the user can access it
 		// the user simply wants to view the channel topic
 		if (user->getArgs().size() == 1) {
-			if (chan->getTopic() == "")
+			if (chan->getTopic().empty())
 				return (user->reply(RPL_NOTOPIC(user->getNick(), name)));
 			return (user->reply(RPL_TOPIC(user->getNick(), name, chan->getTopic())));
 		}
@@ -518,8 +517,6 @@ void	Server::_topicHandler(User *user)
 		// TODO vérifier l'ordre de priorité des messages d'erreur suivants
 		if (chan->hasMode('t') && !chan->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
-		if (!chan->isIn(user->getFd()))
-			return (user->reply(ERR_NOTONCHANNEL(getSrv(), name)));
 		chan->setTopic(topic, user->getNick());
 		chan->broadcast(RPL_TOPIC(user->getNick(), name, topic));
 	} else { // channel not found

@@ -281,3 +281,4 @@ https://stackoverflow.com/questions/12886573/implementing-irc-rfc-how-to-respond
 TODO
 - tester rpl_chan_mode
 - strinstream faut-il les clear ?
+- supprimer tmp.cpp

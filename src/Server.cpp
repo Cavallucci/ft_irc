@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 14:45:50 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 16:38:56 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ void	Server::_deleteUser(int fd)
 			if (it->second->getNbUsers(true) == 0)
 				delChannel(it->second); // empty channels are deleted as well
 		}
-		user->clearChannels();
+		user->clear();
 		delete user;
 	}
 	// TODO rien a faire sur le pointeur sockaddr_storage ?
@@ -231,6 +231,8 @@ bool	Server::_parseInput(User *user)
 	{
 		std::string::size_type	pos = (*it).find(' '); // might be string::npos
 		std::string				cmd_str = (*it).substr(0, pos);
+		if (cmd_str == "PING") // FIXME
+			return (true);
 		if (DEBUG)
 		{
 			std::cout << std::endl << YEL "3️⃣  Command: [" END;
@@ -244,7 +246,7 @@ bool	Server::_parseInput(User *user)
 		try {
 			for (size_t i = 0; i < cmd_str.size(); i++) // CMD to lower case
 				cmd_str[i] = ascii_to_lower(cmd_str[i]);
-			if (!user->isLoggedIn() && cmd_str != "pass")
+			if (!user->isLoggedIn() && cmd_str != "pass" && cmd_str != "cap")
 				return (true); // unknown user: the command is silently ignored
 			CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
 		} catch (const std::out_of_range &e) {
@@ -307,11 +309,6 @@ Channel			*Server::getChannel(std::string chan_name) const
 
 //----------------------------- MUTATORS / SETTERS ----------------------------
 
-void			Server::addChannel(Channel *chan)
-{
-	_channels[chan->getName()] = chan;
-}
-
 Channel			*Server::newChan(User *user, std::string name, size_t index)
 {
 	str_vec			passwords;
@@ -320,20 +317,27 @@ Channel			*Server::newChan(User *user, std::string name, size_t index)
 	if (user->getArgs().size() == 2)
 	{
 		passwords = split_str(user->getArgs()[1], ",", true);
-		// empty passwords will be ignored, the channel won't have a password
+		// empty passwords will be FDignored, the channel won't have a password
 		if ((passwords.size() >= index + 1) && !passwords[index].empty())
 			pw = passwords[index];
 	}
 	Channel		*chan = new Channel(name, pw);
-	std::cout << GRN "Channel " << name << " created." END << std::endl;
+	_channels[name] = chan;
+	std::cout << GRN "✅ Channel " << name << " created." END << std::endl;
 	chan->addUser(user);
 	chan->addOp(user);
-	addChannel(chan);
+	user->registerChannel(chan);
 	return (chan);
 }
 
 void			Server::delChannel(Channel *chan)
 {
-	// TODO sûrement des leaks ici
+	// TODO sûrement des leaks ici concernant :
+	// _users
+	// _ops
+	// _banned
+	// _moderators
+	// _invited
+	// _modeHandlers
 	_channels.erase(chan->getName());
 }

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:56:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 15:56:19 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,39 +39,9 @@ User::User(User const & src)
 
 User::~User()
 {
-	_args.clear();
-	clearChannels();
 }
 
 //--------------------------------- OVERLOAD ----------------------------------
-
-User &				User::operator=(User const & rhs)
-{
-	// TODO verifier qu'on a oublie aucun membre dans la copie meme si a priori elle ne sert pas
-	if (this != &rhs)
-	{
-		this->_rawArgs = rhs._rawArgs;
-		this->_mode = rhs._mode;
-		this->_loggedIn = rhs._loggedIn;
-		this->_fd = rhs._fd;
-		this->_addr = rhs._addr;
-		this->setArgs(rhs.getArgs());
-
-		this->setNick(rhs.getNick());
-		this->setHost(rhs.getHost());
-		this->setUser(rhs.getUser());
-		this->setReal(rhs.getReal());
-		if (rhs.hasBeenWelcomed())
-			this->welcome("", true);
-		this->setFd(rhs.getFd());
-		this->clearChannels();
-		chan_map	chan = rhs.getChannels();
-		for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
-			this->addChannel(it->first);
-	}
-	return *this;
-}
-
 
 std::ostream &		operator<<(std::ostream & o, User const & e)
 {
@@ -296,16 +266,10 @@ void				User::setArgs(str_vec args)
 }
 
 
-bool				User::addChannel(std::string chan_name)
+void				User::registerChannel(Channel *chan)
 {
-	if (_channels.find(chan_name) == _channels.end()) {
-		Channel		*channel_ptr = NULL;
-		// TODO constructeur etc.
-		_channels[chan_name] = channel_ptr;
-		return (true);
-	} else { // already joined
-		return (false);
-	}
+	if (_channels.find(chan->getName()) == _channels.end())
+		_channels[chan->getName()] = chan;
 }
 
 
@@ -320,7 +284,8 @@ bool				User::rmChannel(std::string chan_name)
 }
 
 
-void				User::clearChannels()
+void				User::clear()
 {
+	_args.clear();
 	_channels.clear();
 }

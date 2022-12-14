@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 14:09:19 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/12 15:14:28 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ class User
 		User(int fd, struct sockaddr_storage *addr);
 		User(const User & src);
 		~User();
-		User &	operator=(User const & rhs);
 		// Methods
 		void								reply(std::string msg);
 		void								welcome(std::string srv, bool silently);
@@ -56,9 +55,9 @@ class User
 		void								logIn(void);
 		void								resetInput(void);
 		void								setFd(int fd);
-		bool								addChannel(std::string);
+		void								registerChannel(Channel *chan);
 		bool								rmChannel(std::string);
-		void								clearChannels();
+		void								clear(void);
 		void								setAddr(struct sockaddr_storage *addr);
 	private:
 		static const std::string			_valid_modes;
