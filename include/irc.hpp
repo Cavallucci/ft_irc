@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:54:19 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 12:30:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_INVALID_PWD						"❌ Error: invalid characters in your password (it cannot contain spaces)"
 # define ERR_GETADDR_INFO						"❌ Error get address informations"
 # define ERR_OPEN_SOCKET						"❌ Error while opening socket"
-# define ERR_BIND_SOCKET						"❌ Error while binding socket"
+# define ERR_BIND_SOCKET						"❌ Error while binding socket: this port seems to be already taken!"
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_USER_FD							"❌ Error while accepting user fd"
 # define RUNNING								"✅ The server is running, waiting for clients..."

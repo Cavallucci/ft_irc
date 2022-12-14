@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 13:31:52 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 13:01:55 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,9 @@ void			Channel::broadcast(std::string msg)
 
 void			Channel::rpl_whoreply(User *user, std::string srv)
 {
-	if (hasMode('p') && !isIn(user->getFd()))
+	// if the channel is private or secret, it will be silently ignored
+	if ((hasMode('p') || hasMode('s')) && !isIn(user->getFd()))
 		return ;
-	// TODO checker si le mode 's' doit changer quelque chose ou pas ici
 	for (user_it it = _users.begin(); it != _users.end(); ++it)
 	{
 		if (!it->second->hasMode('i')) {

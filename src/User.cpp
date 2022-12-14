@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 15:56:19 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 12:29:21 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ str_vec				User::getCommands(std::string input) const
 {
 	str_vec		commands = split_str(input, IRC_DELIMITER, false);
 	if (DEBUG)
-		std::cout << YEL "2️⃣  Commands:" END << std::endl;
+		std::cout << YEL "(2) Commands: " END;
 	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it)
 	{
 		(*it).erase(0, (*it).find_first_not_of(' ')); // removes prefixing spaces
@@ -203,8 +203,8 @@ void				User::setRawArgs(std::string content) {
 	_rawArgs = content;
 	if (DEBUG)
 	{
-		std::cout << YEL "4️⃣  Raw arguments: [" END;
-		std::cout << content << YEL "]" END << std::endl;
+		std::cout << WHT "(4) Raw arguments: [" END;
+		std::cout << content << WHT "]" END << std::endl;
 	}
 }
 
@@ -238,7 +238,7 @@ bool				User::setInput(void)
 	}
 	_input.erase(_input.length() - 2); // removes the final "\r\n"
 	if (DEBUG)
-		std::cout << YEL "1️⃣  Input : [" END << _input << YEL "]" << END << std::endl;
+		std::cout << YEL "(1) Input : [" END << _input << YEL "]" << END << std::endl;
 	return (true);
 }
 
@@ -254,12 +254,12 @@ void				User::setArgs(str_vec args)
 {
 	_args = args;
 	if (DEBUG)
-		std::cout << YEL "5️⃣  Arguments:" END;
+		std::cout << WHT "(5) Arguments:" END;
 	for (str_vec::iterator it = _args.begin(); it != _args.end(); ++it)
 	{
 		(*it).erase(0, (*it).find_first_not_of(' ')); // removes prefixing spaces
 		if (DEBUG)
-			std::cout << YEL " [" END << *it << YEL "]" END;
+			std::cout << WHT " [" END << *it << WHT "]" END;
 	}
 	if (DEBUG)
 		std::cout << std::endl;

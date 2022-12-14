@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 12:32:57 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/14 12:39:40 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ class Channel
 		/*
 		CHANNELS MODES
 		'o' = operator status
-		'p' = private, topic won't be fully displayed in the LIST and NAMES output
-		's' = secret, won't be displayed in the LIST and NAMES output
+		'p' = private, topic won't be fully displayed in the LIST, NAMES and WHO output
+		's' = secret, won't be displayed in the LIST, NAMES and WHO output
 		'i' = invite-only channel
 		'b' = channel ban mask
 		'm' = moderated channel, only moderators & operators may speak
