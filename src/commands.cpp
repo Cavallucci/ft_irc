@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 16:07:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 19:29:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,8 @@ void	Server::_joinHandler(User *user)
 		} else if (chan->canJoin(getSrv(), user, index)) { // channel already exists
 			if (chan->isInvited(user->getFd()))
 				chan->rmInvite(user);
+			if (chan->isIn(user->getFd()))
+				continue ;
 			chan->addUser(user);
 			user->registerChannel(chan);
 			chan->broadcast(RPL_JOIN(user->getNick(), *name), NON_FD);
