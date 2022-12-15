@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:06:13 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:37:22 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Channel
 		void			rpl_ban_list(User *user, std::string srv);
 		void			rpl_names(User *user, std::string srv, bool send_end);
 		void			msg(std::string srv, User *user, std::string content, bool silently);
+		void			clearAll(void);
 		// Getters & accessors
 		usr_map			getUsers(void) const;
 		User			*getUser(std::string nick) const;

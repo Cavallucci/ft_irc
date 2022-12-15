@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 18:22:53 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:42:26 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,18 @@ void				User::reply(std::string msg)
 	msg.append("\r\n");
 	int		n = 0;
 
+	if (DEBUG) {
+		if (getNick().empty())
+			std::cout << "📨" WHT << "FD " << getFd() << " " END;
+		else
+			std::cout << "📨" WHT << getNick() << " " END;
+		std::cout << CYN << msg << END << std::endl;
+	}
 	for (size_t i = 0; i < msg.length(); i += n)
 	{
-		n = send(_fd, &(msg[i]), msg.length() - i, 0);
+		n = send(getFd(), &(msg[i]), msg.length() - i, 0);
 		if (n == -1)
 			break ;
-	}
-	if (DEBUG) {
-		std::cout << "📨" WHT << getNick() << " " END;
-		std::cout << CYN << msg << END << std::endl;
 	}
 }
 
@@ -289,7 +292,7 @@ bool				User::rmChannel(std::string chan_name)
 }
 
 
-void				User::clear()
+void				User::clearAll()
 {
 	_args.clear();
 	_channels.clear();

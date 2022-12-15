@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 15:17:42 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:46:40 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ void	Server::_deleteUser(int fd)
 			if (it->second->getNbUsers(true) == 0)
 				delChannel(it->second); // empty channels are deleted as well
 		}
-		user->clear();
+		user->clearAll();
 		delete user;
 	}
 	// TODO rien a faire sur le pointeur sockaddr_storage ?
@@ -333,12 +333,6 @@ Channel			*Server::newChan(User *user, std::string name, size_t index)
 
 void			Server::delChannel(Channel *chan)
 {
-	// TODO sûrement des leaks ici concernant :
-	// _users
-	// _ops
-	// _banned
-	// _moderators
-	// _invited
-	// _modeHandlers
+	chan->clearAll();
 	_channels.erase(chan->getName());
 }

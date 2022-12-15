@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:06:47 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:51:20 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,18 @@ void			Channel::msg(std::string srv, User *user, std::string txt, bool silently)
 		if (it->second != user) // the user doesn't want to write to himself
 			it->second->reply(RPL_MSG(user->getNick(), getName(), txt));
 	}
+}
+
+void			Channel::clearAll(void)
+{
+	for (usr_map::iterator it = _users.begin(); it != _users.end(); it++)
+		it->second->clearAll();
+	_users.clear();
+	_ops.clear();
+	_banned.clear();
+	_moderators.clear();
+	_invited.clear();
+	_modeHandlers.clear();
 }
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------

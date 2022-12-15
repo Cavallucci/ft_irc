@@ -77,8 +77,6 @@ int main(int argc, char **argv)
 
 
 /*
-
-
 ==894697== Invalid read of size 4
 ==894697==    at 0x42AE0A: User::reply(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (in /mnt/nfs/homes/llalba/irc/ircserv)
 ==894697==    by 0x411E7E: Channel::broadcast(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (in /mnt/nfs/homes/llalba/irc/ircserv)
@@ -93,15 +91,6 @@ int main(int argc, char **argv)
 ==894697==    by 0x404F59: Server::_serverConnect() (in /mnt/nfs/homes/llalba/irc/ircserv)
 ==894697==    by 0x40476F: Server::Server(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (in /mnt/nfs/homes/llalba/irc/ircserv)
 ==894697==    by 0x40411C: main (in /mnt/nfs/homes/llalba/irc/ircserv)
-==894697==  Block was alloc'd at
-==894697==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==894697==    by 0x405E03: Server::_addUser() (in /mnt/nfs/homes/llalba/irc/ircserv)
-==894697==    by 0x404F0D: Server::_serverConnect() (in /mnt/nfs/homes/llalba/irc/ircserv)
-==894697==    by 0x40476F: Server::Server(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (in /mnt/nfs/homes/llalba/irc/ircserv)
-==894697==    by 0x40411C: main (in /mnt/nfs/homes/llalba/irc/ircserv)
-==894697==
-
-
 
 
 */

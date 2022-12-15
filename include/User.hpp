@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/12 15:14:28 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:42:33 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class User
 		void								setFd(int fd);
 		void								registerChannel(Channel *chan);
 		bool								rmChannel(std::string);
-		void								clear(void);
+		void								clearAll(void);
 		void								setAddr(struct sockaddr_storage *addr);
 	private:
 		static const std::string			_valid_modes;
