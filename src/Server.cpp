@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:46:40 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 16:11:04 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,4 +335,5 @@ void			Server::delChannel(Channel *chan)
 {
 	chan->clearAll();
 	_channels.erase(chan->getName());
+	delete chan;
 }

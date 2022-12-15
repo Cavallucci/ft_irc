@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:03:06 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 16:07:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,6 @@ void	Server::_kickHandler(User *user) // TODO a tester
 	channel->delUser(target);
 	if (!channel->getNbUsers(true))
 		delChannel(channel);
-	// TODO possibilité d'ajouter un commentaire au KICK
 }
 
 
@@ -436,7 +435,7 @@ void	Server::_partHandler(User *user)
 			user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
 		} else if (chan->isIn(user->getFd())) {
 			chan->broadcast(RPL_PART(user->getNick(), *it), NON_FD);
-			(void)user->rmChannel(*it);
+			user->rmChannel(*it);
 			chan->delUser(user);
 			if (chan->getNbUsers(true) == 0)
 				delChannel(chan);
