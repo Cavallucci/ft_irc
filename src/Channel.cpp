@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 18:34:44 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:06:47 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,11 @@ std::ostream &			operator<<(std::ostream & o, Channel const & e)
 
 //------------------------------- REPLY METHODS -------------------------------
 
-void			Channel::broadcast(std::string msg)
+void			Channel::broadcast(std::string msg, int ignore_fd)
 {
 	for (user_it it = _users.begin(); it != _users.end(); ++it) {
-		it->second->reply(msg);
+		if (it->second->getFd() != ignore_fd)
+			it->second->reply(msg);
 	}
 }
 
@@ -403,12 +404,13 @@ void				Channel::rmInvite(User *user)
 }
 
 
-void				Channel::setTopic(std::string topic, std::string nick)
+void				Channel::setTopic(User *user, std::string topic)
 {
 	std::stringstream	tmp;
 	tmp << time(NULL);
 	_topic = topic;
-	_topicCtxt = nick + " " + tmp.str();
+	_topicCtxt = user->getNick() + " " + tmp.str();
+	user->reply(RPL_TOPIC_SET(user->getNick(), getName(), topic));
 }
 
 
@@ -466,10 +468,10 @@ void				Channel::_updateModeO(std::string srv, User *user, bool adding)
 		return (user->reply(ERR_NOSUCHNICK(srv, target_nick)));
 	if (adding && !isOp(target->getFd())) {
 		addOp(target);
-		broadcast(RPL_CHANNELMODEIS(srv, getName(), "+o", target_nick));
+		broadcast(RPL_CHANNELMODEIS(srv, getName(), "+o", target_nick), NON_FD);
 	} else if (!adding && isOp(target->getFd())) {
 		delOp(target);
-		broadcast(RPL_CHANNELMODEIS(srv, getName(), "-o", target_nick));
+		broadcast(RPL_CHANNELMODEIS(srv, getName(), "-o", target_nick), NON_FD);
 	}
 }
 
@@ -522,7 +524,7 @@ void				Channel::_updateModeB(std::string srv, User *user, bool adding)
 	if (adding && !isOp(target->getFd())) {
 		ban(target);
 		if (isIn(target->getFd())) {
-			broadcast(RPL_KICK(user->getNick(), target_nick, getName()));
+			broadcast(RPL_KICK(user->getNick(), target_nick, getName()), NON_FD);
 			target->rmChannel(getName());
 		}
 	} else if (!adding) {

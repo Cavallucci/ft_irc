@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 12:39:40 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:06:13 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class Channel
 		Channel(const Channel & src);
 		~Channel();
 		Channel &		operator=(Channel const & rhs);
-		void			broadcast(std::string msg);
+		void			broadcast(std::string msg, int ignore_fd);
 		void			rpl_whoreply(User *user, std::string srv);
 		void			rpl_chan_mode(User *user, std::string srv);
 		void			rpl_ban_list(User *user, std::string srv);
@@ -61,6 +61,7 @@ class Channel
 		void			invite(User *user);
 		void			rmInvite(User *user);
 		void			setPassword(std::string password);
+		void			setTopic(User *user, std::string topic);
 		void			setTopic(std::string topic, std::string nick);
 		void			updateMode(std::string srv, User *user, bool adding, char letter);
 		void			addMode(char new_mode);

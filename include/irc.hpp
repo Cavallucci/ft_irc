@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/14 18:30:52 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 15:18:42 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef usr_map::const_iterator				user_it;
 # define END									"\033[0m"
 
 # define DEBUG									1
+# define NON_FD									-1
 # define IRC_DELIMITER							"\r\n"
 
 // custom error messages
@@ -122,7 +123,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_BANLIST(srv, chan, ban_id)			":" + srv + " 367 :" + chan + " " + ban_id
 # define RPL_CHANNELMODEIS(srv, chan, mod, par)	":" + srv + " 324 :" + chan + " " + mod + " " + par
 # define RPL_ENDOFBANLIST(srv, chan)			":" + srv + " 368 :" + chan + " :End of channel ban list"
-# define RPL_ENDOFNAMES(srv, chan)				":" + srv + " 366 :" + chan + " :End of /NAMES list"
+# define RPL_ENDOFNAMES(srv, chan)				":" + srv + " 366 " + chan + " :End of /NAMES list"
 # define RPL_ENDOFWHO(srv, name)				":" + srv + " 315 :" + name + " :End of /WHO list"
 # define RPL_INVITING(srv, chan, nick)			":" + srv + " 341 :" + chan + " " + nick
 # define RPL_LIST(srv, chan, nb, topic)			":" + srv + " 322 :" + chan + " " + nb + " :" + topic
@@ -130,7 +131,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_LISTSTART(srv)						":" + srv + " 321 :Channel :Users  Name"
 # define RPL_NAMREPLY(srv, mode, chan, nicks)	":" + srv + " 353 " + mode + " " + chan + " :" + nicks
 # define RPL_NOTOPIC(srv, chan)					":" + srv + " 331 :" + chan + " :No topic is set"
-# define RPL_TOPIC(srv, chan, topic)			":" + srv + " 332 :" + chan + " :" + topic
+# define RPL_TOPIC(srv, chan, topic)			":" + srv + " 332 " + chan + " :" + topic
 # define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
@@ -138,6 +139,7 @@ typedef usr_map::const_iterator				user_it;
 
 // List of custom, non official replies by alphabetical order
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
+# define RPL_TOPIC_SET(nick, channel, topic)	":" + nick + "@IRC TOPIC " + channel + " :" + topic
 # define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT :" + msg
 # define RPL_PART(nick, channel)				":" + nick + "@IRC PART :" + channel
 # define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
