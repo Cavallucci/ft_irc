@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 19:36:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 19:50:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -535,7 +535,7 @@ void				Channel::_updateModeB(std::string srv, User *user, bool adding)
 	if (adding && !isOp(target->getFd())) {
 		ban(target);
 		if (isIn(target->getFd())) {
-			broadcast(RPL_KICK(user->getNick(), target_nick, getName()), NON_FD);
+			broadcast(RPL_KICK(user->getNick(), getName(), target_nick), NON_FD);
 			target->rmChannel(getName());
 		}
 	} else if (!adding) {

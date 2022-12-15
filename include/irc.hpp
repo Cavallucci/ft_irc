@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 19:32:19 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 19:53:08 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,14 +138,16 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_WHOREPLY(s, c, u, h, n, op, r)		":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
 
 // List of custom, non official replies by alphabetical order
-# define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN :" + channel
+# define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN " + channel
 # define RPL_TOPIC_SET(nick, channel, topic)	":" + nick + "@IRC TOPIC " + channel + " :" + topic
-# define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT :" + msg
-# define RPL_PART(nick, channel)				":" + nick + "@IRC PART :" + channel
-# define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
-# define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE:" + by + " " + channel
-# define RPL_KICK(nick, who, channel)			":" + nick + "@IRC KICK:" + who + " " + channel
+# define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE " + by + " " + channel
+# define RPL_KICK(by, channel, kicked)			":" + by + "@IRC KICK " + channel + " " + kicked + " " + by
+# define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT " + msg
+# define RPL_PART(nick, channel)				":" + nick + "@IRC PART " + channel
+
 # define RPL_MSG(nick, target, txt)				":" + nick + "@IRC PRIVMSG " + target + " :" + txt
+# define RPL_NICK(nick)							":" + nick + "@IRC NICK :" + channel
+# define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
 
 // utils.cpp
 char			ascii_to_lower(char in);

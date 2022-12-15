@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 19:37:12 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 20:01:05 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ void	Server::_kickHandler(User *user) // TODO a tester
 	if (!channel->isOp(user->getFd()))
 		return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), channel_name)));
 	// TODO vérifier que target recoit bien le message de broadcast concernant son propre KICK
-	channel->broadcast(RPL_KICK(user->getNick(), target_user, channel_name), NON_FD);
+	channel->broadcast(RPL_KICK(user->getNick(), channel_name, target_user), NON_FD);
 	target->rmChannel(channel_name);
 	channel->delUser(target);
 	if (!channel->getNbUsers(true))
@@ -407,7 +407,8 @@ void	Server::_nickHandler(User *user)
 	user->setNick(nick);
 	if (!user->getUser().empty() && user->isLoggedIn() && !user->hasBeenWelcomed())
 		user->welcome(getSrv(), false);
-	// no reply when the user just wants to update its nick
+	// else
+	// 	user->reply(); // the user just wants to update its nick
 }
 
 
