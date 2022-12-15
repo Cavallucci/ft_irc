@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 19:29:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 19:37:12 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -530,7 +530,7 @@ void	Server::_topicHandler(User *user)
 		// the user simply wants to view the channel topic
 		if (user->getArgs().size() == 1) {
 			if (chan->getTopic().empty())
-				return (user->reply(RPL_NOTOPIC(getSrv(), name)));
+				return (user->reply(RPL_NOTOPIC(getSrv(), user->getNick(), name)));
 			return (user->reply(RPL_TOPIC(getSrv(), name, chan->getTopic())));
 		}
 		// the topic for that channel will be changed if its modes permit it
@@ -541,8 +541,7 @@ void	Server::_topicHandler(User *user)
 			topic = user->getArgs()[1];
 		if (chan->hasMode('t') && !chan->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
-		chan->setTopic(user, topic);
-		chan->broadcast(RPL_TOPIC(getSrv(), name, topic), user->getFd());
+		chan->broadcast(RPL_TOPIC_SET(user->getNick(), name, topic), NON_FD);
 	} else { // channel not found
 		user->reply(ERR_NOTONCHANNEL(getSrv(), name));
 	}

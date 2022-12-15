@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:18:42 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 19:32:19 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_LISTEND(srv)						":" + srv + " 323 :End of /LIST"
 # define RPL_LISTSTART(srv)						":" + srv + " 321 :Channel :Users  Name"
 # define RPL_NAMREPLY(srv, mode, chan, nicks)	":" + srv + " 353 " + mode + " " + chan + " :" + nicks
-# define RPL_NOTOPIC(srv, chan)					":" + srv + " 331 :" + chan + " :No topic is set"
+# define RPL_NOTOPIC(srv, nick, chan)			":" + srv + " 331 :" + nick + " " + chan + " :No topic is set"
 # define RPL_TOPIC(srv, chan, topic)			":" + srv + " 332 " + chan + " :" + topic
 # define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode

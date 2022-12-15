@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:59:11 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/15 19:36:37 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,7 +422,6 @@ void				Channel::setTopic(User *user, std::string topic)
 	tmp << time(NULL);
 	_topic = topic;
 	_topicCtxt = user->getNick() + " " + tmp.str();
-	user->reply(RPL_TOPIC_SET(user->getNick(), getName(), topic));
 }
 
 
