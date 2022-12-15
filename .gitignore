@@ -31,3 +31,6 @@ settings.json
 *.la
 *.a
 *.lib
+
+# 42Paris temporary files
+.nfs*
