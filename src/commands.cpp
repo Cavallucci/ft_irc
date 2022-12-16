@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 11:12:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 12:26:43 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,23 @@ void	Server::_printHandler(User *user) // TODO FIXME
 		std::cout << channel->getName() << "	||";
 		std::cout << channel->getTopic() << "	||";
 		usr_map	usr = channel->getUsers();
-		for (user_it user = usr.begin(); user != usr.end(); user++)
-			std::cout << getUser(user->first)->getNick() << ", ";
+		for (user_it ops = usr.begin(); ops != usr.end(); ops++)
+		{
+			if (channel->isOp(ops->first))
+				std::cout << getUser(ops->first)->getNick() << ", ";
+		}
 		std::cout << "	||";
-		for (user_it ops = usr.begin(); ops != usr.end() && channel->isOp(ops->first); ops++)
-			std::cout << getUser(ops->first)->getNick() << ", ";
+		for (user_it ban = usr.begin(); ban != usr.end(); ban++)
+		{
+			if (channel->isBanned(ban->first))
+				std::cout << getUser(ban->first)->getNick() << ", ";
+		}
 		std::cout << "	||";
-		for (user_it ban = usr.begin(); ban != usr.end() && channel->isBanned(ban->first); ban++)
-			std::cout << getUser(ban->first)->getNick() << ", ";
-		std::cout << "	||";
-		for (user_it mod = usr.begin(); mod != usr.end() && channel->isMod(mod->first); mod++)
-			std::cout << getUser(mod->first)->getNick() << ", ";
+		for (user_it mod = usr.begin(); mod != usr.end(); mod++)
+		{
+			if (channel->isMod(mod->first))
+				std::cout << getUser(mod->first)->getNick() << ", ";
+		}
 		std::cout << "	||";
 		std::cout << std::endl;
 	}
@@ -88,7 +94,7 @@ void	Server::_capHandler(User *user)
 INVITE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.7
 */
-void	Server::_inviteHandler(User *user) // TODO
+void	Server::_inviteHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -111,7 +117,6 @@ void	Server::_inviteHandler(User *user) // TODO
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), target_chan)));
 		user->reply(RPL_INVITING(getSrv(), target_chan, guest_nick));
 		guest->reply(RPL_INVITE(guest_nick, user->getNick(), target_chan));
-		channel->addUser(guest);
 	}
 	// the protocol does not mention any error message to return when the channel is invalid
 }
