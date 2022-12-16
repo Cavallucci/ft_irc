@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 10:29:09 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 11:12:46 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,7 +326,9 @@ void	Server::_msgHandler(User *user, bool silently)
 			User		*receiver = getUser(*it);
 			if (receiver == NULL && !silently)
 				user->reply(ERR_NOSUCHNICK(getSrv(), *it));
-			if (receiver != NULL)
+			if (receiver != NULL && silently)
+				receiver->reply(RPL_NOTICE(user->getNick(), *it, message));
+			else if (receiver != NULL && !silently)
 				receiver->reply(RPL_MSG(user->getNick(), *it, message));
 		}
 	}

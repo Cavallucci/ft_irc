@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 10:28:20 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 11:12:56 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT " + msg
 # define RPL_PART(nick, channel)				":" + nick + "@IRC PART " + channel
 # define RPL_NICK(nick)							":" + nick + "@IRC NICK " + nick
+# define RPL_NOTICE(nick, target, txt)			":" + nick + "@IRC NOTICE " + target + " :" + txt
 # define RPL_MSG(nick, target, txt)				":" + nick + "@IRC PRIVMSG " + target + " :" + txt
 # define RPL_PING(nick, server)					":" + nick + "@IRC PONG " + server
 

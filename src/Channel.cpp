@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 10:29:49 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 11:14:49 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,8 +203,11 @@ void			Channel::msg(std::string srv, User *user, std::string txt, bool silently)
 	}
 	for (user_it it = _users.begin(); it != _users.end(); ++it)
 	{
-		if (it->second != user) // the user doesn't want to write to himself
+		// the user doesn't want to write to himself
+		if (it->second != user && !silently)
 			it->second->reply(RPL_MSG(user->getNick(), getName(), txt));
+		else if (it->second != user && silently)
+			it->second->reply(RPL_NOTICE(user->getNick(), getName(), txt));
 	}
 }
 
