@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 19:53:08 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 10:10:11 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,10 +144,9 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_KICK(by, channel, kicked)			":" + by + "@IRC KICK " + channel + " " + kicked + " " + by
 # define RPL_QUIT(nick, msg)					":" + nick + "@IRC QUIT " + msg
 # define RPL_PART(nick, channel)				":" + nick + "@IRC PART " + channel
-
+# define RPL_NICK(nick)							":" + nick + "@IRC NICK " + nick
 # define RPL_MSG(nick, target, txt)				":" + nick + "@IRC PRIVMSG " + target + " :" + txt
-# define RPL_NICK(nick)							":" + nick + "@IRC NICK :" + channel
-# define RPL_PING(nick, server)					":" + nick + "@IRC PONG :" + server
+# define RPL_PING(nick, server)					":" + nick + "@IRC PONG " + server
 
 // utils.cpp
 char			ascii_to_lower(char in);

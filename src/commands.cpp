@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 20:01:05 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 10:06:50 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -407,8 +407,8 @@ void	Server::_nickHandler(User *user)
 	user->setNick(nick);
 	if (!user->getUser().empty() && user->isLoggedIn() && !user->hasBeenWelcomed())
 		user->welcome(getSrv(), false);
-	// else
-	// 	user->reply(); // the user just wants to update its nick
+	else
+		user->reply(RPL_NICK(nick)); // the user just wants to update its nick
 }
 
 
