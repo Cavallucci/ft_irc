@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:54:12 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:57:21 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ void	Server::_joinHandler(User *user)
 KICK command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.8
 */
-void	Server::_kickHandler(User *user) // TODO a tester
+void	Server::_kickHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -178,12 +178,10 @@ void	Server::_kickHandler(User *user) // TODO a tester
 	User			*target = getUser(target_user);
 	if (channel == NULL)
 		return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), channel_name)));
-	// TODO tester qu'on renvoie bien ERR_NOTONCHANNEL si l'utilisateur n'existe pas du tout
 	if (target == NULL || !channel->isIn(user->getFd()) || !channel->isIn(target->getFd()))
 		return (user->reply(ERR_NOTONCHANNEL(getSrv(), channel_name)));
 	if (!channel->isOp(user->getFd()))
 		return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), channel_name)));
-	// TODO vérifier que target recoit bien le message de broadcast concernant son propre KICK
 	channel->broadcast(RPL_KICK(user->getNick(), channel_name, target_user), NON_FD);
 	target->rmChannel(channel_name);
 	channel->delUser(target);
@@ -196,7 +194,7 @@ void	Server::_kickHandler(User *user) // TODO a tester
 LIST command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.6
 */
-void	Server::_listHandler(User *user) // TODO a tester
+void	Server::_listHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return;
@@ -237,7 +235,7 @@ void	Server::_listHandler(User *user) // TODO a tester
 MODE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.2.3
 */
-void	Server::_modeHandler(User *user) // TODO MODE channel a tester
+void	Server::_modeHandler(User *user)
 {
 	if (!user->hasBeenWelcomed())
 		return ;
@@ -253,6 +251,8 @@ void	Server::_modeHandler(User *user) // TODO MODE channel a tester
 			return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), name)));
 		if (!channel->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
+		if (!channel->isIn(user->getFd()))
+			return (user->reply(ERR_NOTONCHANNEL(getSrv(), name)));
 		if (action.empty()) // the user just wants to get the channel modes
 			return (channel->rpl_chan_mode(user, getSrv())); // RPL_CHANNELMODEIS
 		if (action[0] == 'b')
@@ -286,8 +286,6 @@ void	Server::_modeHandler(User *user) // TODO MODE channel a tester
 		std::cout << GRN << USER_MODE << user->getNick() << " [" END;
 		std::cout << user->getMode() << GRN "]" END << std::endl;
 	}
-	// TODO ERR_NOTONCHANNEL
-	// TODO ERR_KEYSET
 }
 
 /*
