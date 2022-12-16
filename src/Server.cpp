@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:53:26 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:59:30 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,44 +41,6 @@ Server::Server(Server const & src)
 
 Server::~Server()
 {
-}
-
-//--------------------------------- OVERLOAD ----------------------------------
-
-Server &				Server::operator=(Server const & rhs)
-{
-	// TODO verifier qu'on a oublie aucun membre
-	if (this != &rhs)
-	{
-		this->_port = rhs._port;
-		this->_host = rhs._host;
-		this->_pwd = rhs._pwd;
-		this->_name = rhs._name;
-		this->_listener = rhs._listener;
-		this->_commands = rhs._commands;
-		this->_pfds = rhs._pfds;
-
-		this->_users = rhs.getUsers();
-	}
-	return *this;
-}
-
-std::ostream &			operator<<(std::ostream & o, Server const & e)
-{
-	// TODO verifier qu'on a oublie aucun membre dans l'affichage meme si a priori il ne sert pas
-	o << YEL "Server(" << &e << ") 🔶" END << std::endl;
-	o << "🔸Users:			";
-	usr_map	usr = e.getUsers();
-	for (usr_map::const_iterator it = usr.begin(); it != usr.end(); it++)
-		o << "[" << it->first << "] ";
-	o << std::endl;
-
-	o << "🔸Channels:			";
-	chan_map	chan = e.getChannels();
-	for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
-		o << "[" << it->first << "] ";
-	o << std::endl;
-	return o;
 }
 
 //--------------------------- SERVER SET UP METHODS ---------------------------
@@ -166,7 +128,7 @@ void	Server::_addUser(void)
 	socklen_t				addr_size;
 	struct pollfd			pfd;
 	char					host[INET6_ADDRSTRLEN];
-	char					serv[INET6_ADDRSTRLEN]; // TODO a voir si 1000
+	char					serv[INET6_ADDRSTRLEN];
 
 	addr_size = sizeof(their_addr);
 	new_fd = accept(_listener, (struct sockaddr *)&their_addr, &addr_size);
@@ -218,7 +180,6 @@ void	Server::_deleteUser(int fd)
 		user->clearAll();
 		delete user;
 	}
-	// TODO rien a faire sur le pointeur sockaddr_storage ?
 }
 
 

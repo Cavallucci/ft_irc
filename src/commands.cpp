@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:57:21 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 14:01:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	Server::_initHandlers(void)
 {
 	// by alphabetical order
 	_commands["cap"] = &Server::_capHandler;
-	_commands["print"] = &Server::_printHandler; //TODO FIXME a enlever apres tests
 	_commands["invite"] = &Server::_inviteHandler;
 	_commands["join"] = &Server::_joinHandler;
 	_commands["kick"] = &Server::_kickHandler;
@@ -36,46 +35,6 @@ void	Server::_initHandlers(void)
 }
 
 //------------------- SERVER COMMANDS BY ALPHABETICAL ORDER -------------------
-
-
-void	Server::_printHandler(User *user) // TODO FIXME
-{
-	(void)user;
-	std::cout << MAG << "❓ INFORMATION ABOUT SERVER " << _name << END << std::endl;
-	std::cout << std::endl;
-	std::cout << GRN << "🚹 Users : " END;
-	for (user_it it = _users.begin(); it != _users.end(); it++)
-		std::cout << getUser(it->first)->getNick() << std::endl;
-	std::cout << std::endl;
-	std::cout << GRN << "📡 Channels : " << END << std::endl;
-	std::cout << "NAME	||	TOPIC	||	USERS	||	OPS	||	BANNED	||	MOD	||" << std::endl;
-	for (chan_it chan = _channels.begin(); chan != _channels.end(); chan++)
-	{
-		Channel	*channel = getChannel(chan->first);
-		std::cout << channel->getName() << "	||";
-		std::cout << channel->getTopic() << "	||";
-		usr_map	usr = channel->getUsers();
-		for (user_it ops = usr.begin(); ops != usr.end(); ops++)
-		{
-			if (channel->isOp(ops->first))
-				std::cout << getUser(ops->first)->getNick() << ", ";
-		}
-		std::cout << "	||";
-		for (user_it ban = usr.begin(); ban != usr.end(); ban++)
-		{
-			if (channel->isBanned(ban->first))
-				std::cout << getUser(ban->first)->getNick() << ", ";
-		}
-		std::cout << "	||";
-		for (user_it mod = usr.begin(); mod != usr.end(); mod++)
-		{
-			if (channel->isMod(mod->first))
-				std::cout << getUser(mod->first)->getNick() << ", ";
-		}
-		std::cout << "	||";
-		std::cout << std::endl;
-	}
-}
 
 
 /*
@@ -420,7 +379,7 @@ void	Server::_nickHandler(User *user)
 NOTICE command as described here:
 https://www.rfc-editor.org/rfc/rfc1459.html#section-4.4.2
 */
-void	Server::_noticeHandler(User *user) { _msgHandler(user, true); } // TODO
+void	Server::_noticeHandler(User *user) { _msgHandler(user, true); }
 
 
 /*

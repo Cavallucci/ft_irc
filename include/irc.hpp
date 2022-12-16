@@ -6,15 +6,15 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:51:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:59:38 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_HPP
 # define IRC_HPP
 
-# include <cstdlib>			// EXIT_SUCCESS & EXIT_FAILURE
-# include <iostream>		// std::cout
+# include <cstdlib>
+# include <iostream>
 # include <string>
 # include <sys/types.h>
 # include <sys/socket.h>

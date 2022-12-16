@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:44:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:59:31 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ class Server
 		Server(std::string port, std::string pwd);
 		Server(const Server & src);
 		~Server();
-		Server &	operator=(Server const & rhs);
 		// Getters & accessors
 		std::string							getSrv(void) const;
 		std::string							getPwd(void) const;
@@ -76,7 +75,5 @@ class Server
 		void								_userHandler(User* user);
 		void								_whoHandler(User* user);
 };
-
-std::ostream &	operator<<(std::ostream & o, Server const & e);
 
 #endif

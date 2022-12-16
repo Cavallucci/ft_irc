@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:42:26 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 14:00:07 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,31 +39,6 @@ User::User(User const & src)
 
 User::~User()
 {
-}
-
-//--------------------------------- OVERLOAD ----------------------------------
-
-std::ostream &		operator<<(std::ostream & o, User const & e)
-{
-	// TODO verifier qu'on a oublie aucun membre dans l'affichage meme si a priori il ne sert pas
-	o << YEL "User(" << &e << ") 🔶" END << std::endl;
-	o << "🔸Nickname:			" << e.getNick() << std::endl;
-	o << "🔸Hostname:			" << e.getHost() << std::endl;
-	o << "🔸Username:			" << e.getUser() << std::endl;
-	o << "🔸Realname:			" << e.getReal() << std::endl;
-	o << "🔸Has been welcomed:	" << e.hasBeenWelcomed() << std::endl;
-	o << "🔸File descriptor:	" << e.getFd() << std::endl;
-	o << "🔸Command parameters:	";
-	str_vec		args = e.getArgs();
-	for (str_vec::const_iterator it = args.begin(); it != args.end(); it++)
-		o << "[" << *it << "] ";
-	o << std::endl;
-	o << "🔸Channels:			";
-	chan_map	chan = e.getChannels();
-	for (chan_map::const_iterator it = chan.begin(); it != chan.end(); it++)
-		o << "[" << it->first << "] ";
-	o << std::endl;
-	return o;
 }
 
 //---------------------------------- METHODS ----------------------------------

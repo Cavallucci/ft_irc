@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:37:22 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 14:00:21 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ class Channel
 		Channel(std::string name, std::string password);
 		Channel(const Channel & src);
 		~Channel();
-		Channel &		operator=(Channel const & rhs);
 		void			broadcast(std::string msg, int ignore_fd);
 		void			rpl_whoreply(User *user, std::string srv);
 		void			rpl_chan_mode(User *user, std::string srv);
@@ -105,6 +104,5 @@ class Channel
 		void									_updateModeN(std::string srv, User *user, bool adding);
 };
 
-std::ostream &	operator<<(std::ostream & o, Channel const & e);
 
 #endif

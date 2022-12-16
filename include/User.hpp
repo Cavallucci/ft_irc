@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 15:42:33 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:59:57 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,5 @@ class User
 		*/
 		std::string							_mode;
 };
-
-std::ostream &	operator<<(std::ostream & o, User const & e);
 
 #endif
