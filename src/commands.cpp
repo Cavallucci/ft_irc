@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 10:06:50 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 10:29:09 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -589,9 +589,10 @@ void	Server::_whoHandler(User *user)
 		} else { // channel not found, maybe that the user is looking for another user
 			target = getUser(name); // <name> is matched against users' nicknames
 			if (target && (!target->hasMode('i') || user == target)) {
-				user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
+				user->reply(RPL_WHOREPLY(getSrv(), user->getNick(), "*", target->getUser(), \
 					target->getHost(), target->getNick(), "", target->getReal()));
 			}
+			user->reply(RPL_ENDOFWHO(getSrv(), user->getNick(), "*"));
 		}
 	} else { // in the absence of the <name> parameter, all visible users are listed
 		bool	skip;
@@ -607,10 +608,10 @@ void	Server::_whoHandler(User *user)
 					skip = true;
 			}
 			if (!skip) {
-				user->reply(RPL_WHOREPLY(getSrv(), "*", target->getUser(), \
+				user->reply(RPL_WHOREPLY(getSrv(), user->getNick(), "*", target->getUser(), \
 					target->getHost(), target->getNick(), "", target->getReal()));
 			}
 		}
+		user->reply(RPL_ENDOFWHO(getSrv(), user->getNick(), "*"));
 	}
-	user->reply(RPL_ENDOFWHO(getSrv(), user->getNick()));
 }

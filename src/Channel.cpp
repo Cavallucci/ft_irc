@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 19:50:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 10:29:49 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ void			Channel::rpl_whoreply(User *user, std::string srv)
 		if (!it->second->hasMode('i')) {
 			user->reply(RPL_WHOREPLY(
 				srv,
+				user->getNick(),
 				getName(), // channel
 				it->second->getUser(),
 				it->second->getHost(),
@@ -130,6 +131,7 @@ void			Channel::rpl_whoreply(User *user, std::string srv)
 			));
 		}
 	}
+	user->reply(RPL_ENDOFWHO(srv, user->getNick(), getName()));
 }
 
 

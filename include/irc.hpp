@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 10:10:11 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 10:28:20 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_CHANNELMODEIS(srv, chan, mod, par)	":" + srv + " 324 :" + chan + " " + mod + " " + par
 # define RPL_ENDOFBANLIST(srv, chan)			":" + srv + " 368 :" + chan + " :End of channel ban list"
 # define RPL_ENDOFNAMES(srv, chan)				":" + srv + " 366 " + chan + " :End of /NAMES list"
-# define RPL_ENDOFWHO(srv, name)				":" + srv + " 315 :" + name + " :End of /WHO list"
+# define RPL_ENDOFWHO(srv, nick, channel)		":" + srv + " 315 "+nick+" "+channel+" :End of /WHO list"
 # define RPL_INVITING(srv, chan, nick)			":" + srv + " 341 :" + chan + " " + nick
 # define RPL_LIST(srv, chan, nb, topic)			":" + srv + " 322 :" + chan + " " + nb + " :" + topic
 # define RPL_LISTEND(srv)						":" + srv + " 323 :End of /LIST"
@@ -135,7 +135,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
-# define RPL_WHOREPLY(s, c, u, h, n, op, r)		":"+s+" 352 :"+c+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
+# define RPL_WHOREPLY(s, mon_nick, channel, u, h, n, op, r)		":"+s+" 352 "+mon_nick+" "+channel+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
 
 // List of custom, non official replies by alphabetical order
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN " + channel
