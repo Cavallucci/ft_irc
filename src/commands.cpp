@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 12:26:43 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:28:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -385,8 +385,8 @@ void	Server::_namesHandler(User *user)
 					list.append(it->second->getNick());
 			}
 		}
-		user->reply(RPL_NAMREPLY(getSrv(), "=", "*", list));
-		user->reply(RPL_ENDOFNAMES(getSrv(), "*"));
+		user->reply(RPL_NAMREPLY(getSrv(), user->getNick(), "=", "*", list));
+		user->reply(RPL_ENDOFNAMES(getSrv(), user->getNick(), "*"));
 	}
 }
 

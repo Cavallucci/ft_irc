@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 11:12:56 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:39:22 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,13 +123,13 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_BANLIST(srv, chan, ban_id)			":" + srv + " 367 :" + chan + " " + ban_id
 # define RPL_CHANNELMODEIS(srv, chan, mod, par)	":" + srv + " 324 :" + chan + " " + mod + " " + par
 # define RPL_ENDOFBANLIST(srv, chan)			":" + srv + " 368 :" + chan + " :End of channel ban list"
-# define RPL_ENDOFNAMES(srv, chan)				":" + srv + " 366 " + chan + " :End of /NAMES list"
-# define RPL_ENDOFWHO(srv, nick, channel)		":" + srv + " 315 "+nick+" "+channel+" :End of /WHO list"
+# define RPL_ENDOFNAMES(srv, nick, chan)		":" + srv + " 366 " + nick + " " + chan + " :End of /NAMES list"
+# define RPL_ENDOFWHO(srv, nick, channel)		":" + srv + " 315 "+ nick + " " + channel + " :End of /WHO list"
 # define RPL_INVITING(srv, chan, nick)			":" + srv + " 341 :" + chan + " " + nick
 # define RPL_LIST(srv, chan, nb, topic)			":" + srv + " 322 :" + chan + " " + nb + " :" + topic
 # define RPL_LISTEND(srv)						":" + srv + " 323 :End of /LIST"
 # define RPL_LISTSTART(srv)						":" + srv + " 321 :Channel :Users  Name"
-# define RPL_NAMREPLY(srv, mode, chan, nicks)	":" + srv + " 353 " + mode + " " + chan + " :" + nicks
+# define RPL_NAMREPLY(srv, nick, m, c, nicks)	":" + srv + " 353 " + nick + " " + m + " " + c + " :" + nicks
 # define RPL_NOTOPIC(srv, nick, chan)			":" + srv + " 331 :" + nick + " " + chan + " :No topic is set"
 # define RPL_TOPIC(srv, chan, topic)			":" + srv + " 332 " + chan + " :" + topic
 # define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context

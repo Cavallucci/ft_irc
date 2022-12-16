@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 11:14:49 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:28:43 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,9 +166,9 @@ void			Channel::rpl_names(User *user, std::string srv, bool send_end)
 		mode_char = "@";
 	else if (hasMode('p'))
 		mode_char = "*";
-	user->reply(RPL_NAMREPLY(srv, mode_char, getName(), output));
+	user->reply(RPL_NAMREPLY(srv, user->getNick(), mode_char, getName(), output));
 	if (send_end)
-		user->reply(RPL_ENDOFNAMES(srv, getName()));
+		user->reply(RPL_ENDOFNAMES(srv, user->getNick(), getName()));
 }
 
 
