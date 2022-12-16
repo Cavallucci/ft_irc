@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:28:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:54:12 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,8 +229,7 @@ void	Server::_listHandler(User *user) // TODO a tester
 				user->reply(RPL_LIST(getSrv(), chan->getName(), nb_visible, chan->getTopic()));
 		}
 	}
-	user->reply(RPL_LISTEND(getSrv()));
-	// ERR_NOSUCHSERVER
+	user->reply(RPL_LISTEND(getSrv(), user->getNick()));
 }
 
 

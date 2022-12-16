@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/15 16:11:04 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/16 13:53:26 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,6 +235,8 @@ bool	Server::_parseInput(User *user)
 		{
 			std::cout << WHT "(3) Command: [" END;
 			std::cout << cmd_str << WHT "]" END << std::endl;
+		} else {
+			std::cout << WHT "Command: [" END << cmd_str << WHT "]" END << std::endl;
 		}
 		if ((*it).length() != cmd_str.length()) // there are arguments but maybe just spaces
 		{
