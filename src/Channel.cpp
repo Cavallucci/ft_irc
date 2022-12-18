@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 21:29:01 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:39:12 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,10 @@ Channel::~Channel()
 
 //------------------------------- REPLY METHODS -------------------------------
 
-void			Channel::broadcast(std::string msg, int ignore_fd)
+void			Channel::broadcast(std::string msg)
 {
 	for (user_it it = _users.begin(); it != _users.end(); ++it) {
-		if (it->second->getFd() != ignore_fd)
-			it->second->reply(msg);
+		it->second->reply(msg);
 	}
 }
 
@@ -414,21 +413,23 @@ bool adding, char letter)
 
 void				Channel::_updateModeO(std::string srv, User *user, bool adding)
 {
-	std::string		cmd = "MODE -o";
+	std::string		my_str = "MODE -o";
 	if (adding)
-		cmd = "MODE +o";
+		my_str = "MODE +o";
 	if (user->getArgs().size() < 3)
-		return (user->reply(ERR_NEEDMOREPARAMS(srv, user->getNick(), cmd)));
+		return (user->reply(ERR_NEEDMOREPARAMS(srv, user->getNick(), my_str)));
 	std::string		target_nick = user->getArgs()[2];
 	User			*target = getUser(target_nick);
 	if (target == NULL)
 		return (user->reply(ERR_NOSUCHNICK(srv, target_nick)));
 	if (adding && !isOp(target->getFd())) {
+		my_str = "+o " + target_nick;
 		addOp(target);
-		broadcast(RPL_CHANNELMODEIS(srv, getName(), "+o", target_nick), NON_FD);
+		broadcast(RPL_MODE(user->getNick(), getName(), my_str));
 	} else if (!adding && isOp(target->getFd())) {
+		my_str = "-o " + target_nick;
 		delOp(target);
-		broadcast(RPL_CHANNELMODEIS(srv, getName(), "-o", target_nick), NON_FD);
+		broadcast(RPL_MODE(user->getNick(), getName(), my_str));
 	}
 }
 
@@ -481,7 +482,7 @@ void				Channel::_updateModeB(std::string srv, User *user, bool adding)
 	if (adding && !isOp(target->getFd())) {
 		ban(target);
 		if (isIn(target->getFd())) {
-			broadcast(RPL_KICK(user->getNick(), getName(), target_nick), NON_FD);
+			broadcast(RPL_KICK(user->getNick(), getName(), target_nick));
 			target->rmChannel(getName());
 		}
 	} else if (!adding) {

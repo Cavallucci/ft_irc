@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 14:00:21 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:38:53 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class Channel
 		Channel(std::string name, std::string password);
 		Channel(const Channel & src);
 		~Channel();
-		void			broadcast(std::string msg, int ignore_fd);
+		void			broadcast(std::string msg);
 		void			rpl_whoreply(User *user, std::string srv);
 		void			rpl_chan_mode(User *user, std::string srv);
 		void			rpl_ban_list(User *user, std::string srv);

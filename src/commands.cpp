@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 21:28:36 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:39:37 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	Server::_joinHandler(User *user)
 		if (chan == NULL) { // channel has to be created
 			chan = newChan(user, *name, index); // chan.addUser will be called here
 			user->registerChannel(chan);
-			chan->broadcast(RPL_JOIN(user->getNick(), *name), NON_FD);
+			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			chan->rpl_names(user, getSrv(), true);
 		} else if (chan->canJoin(getSrv(), user, index)) { // channel already exists
 			if (chan->isInvited(user->getFd()))
@@ -110,7 +110,7 @@ void	Server::_joinHandler(User *user)
 				continue ;
 			chan->addUser(user);
 			user->registerChannel(chan);
-			chan->broadcast(RPL_JOIN(user->getNick(), *name), NON_FD);
+			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			if (chan->getTopic() != "")
 			{
 				user->reply(RPL_TOPIC(getSrv(), *name, chan->getTopic()));
@@ -141,7 +141,7 @@ void	Server::_kickHandler(User *user)
 		return (user->reply(ERR_NOTONCHANNEL(getSrv(), channel_name)));
 	if (!channel->isOp(user->getFd()))
 		return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), channel_name)));
-	channel->broadcast(RPL_KICK(user->getNick(), channel_name, target_user), NON_FD);
+	channel->broadcast(RPL_KICK(user->getNick(), channel_name, target_user));
 	target->rmChannel(channel_name);
 	channel->delUser(target);
 	if (!channel->getNbUsers(true))
@@ -400,7 +400,7 @@ void	Server::_partHandler(User *user)
 		if (chan == NULL) {
 			user->reply(ERR_NOSUCHCHANNEL(getSrv(), *it));
 		} else if (chan->isIn(user->getFd())) {
-			chan->broadcast(RPL_PART(user->getNick(), *it), NON_FD);
+			chan->broadcast(RPL_PART(user->getNick(), *it));
 			user->rmChannel(*it);
 			chan->delUser(user);
 			if (chan->getNbUsers(true) == 0)
@@ -471,7 +471,7 @@ void	Server::_quitHandler(User *user)
 	for (chan_it it = channels.begin(); it != channels.end(); ++it) {
 		it->second->delUser(user);
 		if (it->second->getNbUsers(true) > 0)
-			it->second->broadcast(RPL_QUIT(user->getNick(), quit_msg), NON_FD);
+			it->second->broadcast(RPL_QUIT(user->getNick(), quit_msg));
 	}
 	_deleteUser(fd); // deletes empty channels as well
 	std::cout << MAG BYE << fd << END << std::endl;
@@ -505,7 +505,7 @@ void	Server::_topicHandler(User *user)
 			topic = user->getArgs()[1];
 		if (chan->hasMode('t') && !chan->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
-		chan->broadcast(RPL_TOPIC_SET(user->getNick(), name, topic), NON_FD);
+		chan->broadcast(RPL_TOPIC_SET(user->getNick(), name, topic));
 	} else { // channel not found
 		user->reply(ERR_NOTONCHANNEL(getSrv(), name));
 	}
