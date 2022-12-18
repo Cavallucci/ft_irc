@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 21:55:05 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 22:16:59 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	Server::_inviteHandler(User *user)
 			return (user->reply(ERR_USERONCHANNEL(getSrv(), guest->getUser(), target_chan)));
 		if (!channel->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), target_chan)));
-		user->reply(RPL_INVITING(getSrv(), target_chan, guest_nick));
+		user->reply(RPL_INVITING(getSrv(), user->getNick(), guest_nick, target_chan));
 		guest->reply(RPL_INVITE(guest_nick, user->getNick(), target_chan));
 	}
 	// the protocol does not mention any error message to return when the channel is invalid
