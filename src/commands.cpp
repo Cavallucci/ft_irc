@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 14:01:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:28:36 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ void	Server::_msgHandler(User *user, bool silently)
 			else if (channel != NULL) {
 				if (!channel->isIn(user->getFd()) && channel->hasMode('n')) {
 					if (!silently)
-						user->reply(ERR_CANNOTSENDTOCHAN(getSrv(), *it));
+						user->reply(ERR_CANNOTSENDTOCHAN(getSrv(), user->getNick(), *it) " (+n)");
 					continue ;
 				}
 				channel->msg(getSrv(), user, message, silently);

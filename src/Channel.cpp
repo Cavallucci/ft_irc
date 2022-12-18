@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 14:00:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:29:01 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void			Channel::msg(std::string srv, User *user, std::string txt, bool silently)
 	if (hasMode('m') && !(isOp(user->getFd()) || isMod(user->getFd())))
 	{
 		if (!silently)
-			user->reply(ERR_CANNOTSENDTOCHAN(srv, getName()));
+			user->reply(ERR_CANNOTSENDTOCHAN(srv, user->getNick(), getName()) " (+m)");
 		return ;
 	}
 	for (user_it it = _users.begin(); it != _users.end(); ++it)

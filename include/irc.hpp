@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:59:38 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:29:27 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_BADCHANMASK(srv, chan)				":" + srv + " 476 :" + chan + " :Bad Channel Mask"
 # define ERR_BADCHANNELKEY(srv, chan)			":" + srv + " 475 :" + chan + " :Cannot join channel (+k)"
 # define ERR_BANNEDFROMCHAN(srv, chan)			":" + srv + " 474 :" + chan + " :Cannot join channel (+b)"
-# define ERR_CANNOTSENDTOCHAN(srv, chan)		":" + srv + " 404 :" + chan + " :Cannot send to channel"
+# define ERR_CANNOTSENDTOCHAN(srv, nick, chan)	":" + srv + " 404 " + nick + " " + chan + " :Cannot send to channel"
 # define ERR_CHANNELISFULL(srv, chan)			":" + srv + " 471 :" + chan + " :Cannot join channel (+l)"
 # define ERR_CHANOPRIVSNEEDED(srv, chan)		":" + srv + " 482 :" + chan + " :You're not channel operator"
 # define ERR_ERRONEUSNICKNAME(srv, nick)		":" + srv + " 432 :" + nick + " :Erroneus nickname"
@@ -137,8 +137,8 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
 # define RPL_WHOREPLY(s, mon_nick, channel, u, h, n, op, r)		":"+s+" 352 "+mon_nick+" "+channel+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
 
-// List of custom, non official replies by alphabetical order
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN " + channel
+# define RPL_MODE(nick, channel, change)		":" + nick + "@IRC MODE " + channel + " " + change
 # define RPL_TOPIC_SET(nick, channel, topic)	":" + nick + "@IRC TOPIC " + channel + " :" + topic
 # define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE " + by + " " + channel
 # define RPL_KICK(by, channel, kicked)			":" + by + "@IRC KICK " + channel + " " + kicked + " " + by
