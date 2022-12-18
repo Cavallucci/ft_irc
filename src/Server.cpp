@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:59:30 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 13:45:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,6 +287,8 @@ Channel			*Server::newChan(User *user, std::string name, size_t index)
 	}
 	Channel			*chan = new Channel(name, pw);
 	_channels[name] = chan;
+	chan->addMode('n');
+	chan->addMode('t');
 	std::cout << GRN "✅ Channel " << name << " created." END << std::endl;
 	chan->addUser(user);
 	chan->addOp(user);
