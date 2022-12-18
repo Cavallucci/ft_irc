@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 21:39:12 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:48:30 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -436,34 +436,46 @@ void				Channel::_updateModeO(std::string srv, User *user, bool adding)
 
 void				Channel::_updateModeP(std::string srv, User *user, bool adding)
 {
-	if (adding)
+	std::string		mode;
+	if (adding) {
+		mode = "+p";
 		addMode('p');
-	else
+	} else {
+		mode = "-p";
 		rmMode('p');
+	}
+	broadcast(RPL_MODE(user->getNick(), getName(), mode));
 	(void)srv;
-	(void)user;
 }
 
 
 void				Channel::_updateModeS(std::string srv, User *user, bool adding)
 {
-	if (adding)
+	std::string		mode;
+	if (adding) {
+		mode = "+s";
 		addMode('s');
-	else
+	} else {
+		mode = "-s";
 		rmMode('s');
+	}
+	broadcast(RPL_MODE(user->getNick(), getName(), mode));
 	(void)srv;
-	(void)user;
 }
 
 
 void				Channel::_updateModeI(std::string srv, User *user, bool adding)
 {
-	if (adding)
+	std::string		mode;
+	if (adding) {
+		mode = "+i";
 		addMode('i');
-	else
+	} else {
+		mode = "-i";
 		rmMode('i');
+	}
+	broadcast(RPL_MODE(user->getNick(), getName(), mode));
 	(void)srv;
-	(void)user;
 }
 
 
@@ -493,17 +505,22 @@ void				Channel::_updateModeB(std::string srv, User *user, bool adding)
 
 void				Channel::_updateModeM(std::string srv, User *user, bool adding)
 {
-	if (adding)
+	std::string		mode;
+	if (adding) {
+		mode = "+m";
 		addMode('m');
-	else
+	} else {
+		mode = "-m";
 		rmMode('m');
+	}
+	broadcast(RPL_MODE(user->getNick(), getName(), mode));
 	(void)srv;
-	(void)user;
 }
 
 
 void				Channel::_updateModeL(std::string srv, User *user, bool adding)
 {
+	std::string		mode;
 	if (adding)
 	{
 		if (user->getArgs().size() < 3)
@@ -511,31 +528,42 @@ void				Channel::_updateModeL(std::string srv, User *user, bool adding)
 		size_t		new_limit = str_to_size_t(user->getArgs()[2]);
 		setMaxUsers(new_limit);
 		addMode('l');
+		mode = "+l " + size_t_to_str(new_limit);
 	} else {
 		size_t max_size = (size_t) - 1;
 		setMaxUsers(max_size);
 		rmMode('l');
+		mode = "-l";
 	}
+	broadcast(RPL_MODE(user->getNick(), getName(), mode));
 }
 
 
 void				Channel::_updateModeT(std::string srv, User *user, bool adding)
 {
-	if (adding)
+	std::string		mode;
+	if (adding) {
+		mode = "+t";
 		addMode('t');
-	else
+	} else {
+		mode = "-t";
 		rmMode('t');
+	}
+	broadcast(RPL_MODE(user->getNick(), getName(), mode));
 	(void)srv;
-	(void)user;
 }
 
 
 void				Channel::_updateModeN(std::string srv, User *user, bool adding)
 {
-	if (adding)
+	std::string		mode;
+	if (adding) {
+		mode = "+n";
 		addMode('n');
-	else
+	} else {
+		mode = "-n";
 		rmMode('n');
+	}
+	broadcast(RPL_MODE(user->getNick(), getName(), mode));
 	(void)srv;
-	(void)user;
 }
