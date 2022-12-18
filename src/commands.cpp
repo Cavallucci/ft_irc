@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 21:39:37 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 21:55:05 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,9 +169,9 @@ void	Server::_listHandler(User *user)
 			// invisible users are not counted
 			nb_visible = size_t_to_str(chan->getNbUsers(false));
 			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
-				user->reply(RPL_LIST(getSrv(), *name, nb_visible, PRV_TOPIC));
+				user->reply(RPL_LIST(getSrv(), user->getNick(), *name, nb_visible, PRV_TOPIC));
 			else
-				user->reply(RPL_LIST(getSrv(), *name, nb_visible, chan->getTopic()));
+				user->reply(RPL_LIST(getSrv(), user->getNick(), *name, nb_visible, chan->getTopic()));
 		}
 	} else { // ⏩ lists all visible channels and their topics
 		for (chan_it it = _channels.begin(); it != _channels.end(); ++it) {
@@ -181,9 +181,9 @@ void	Server::_listHandler(User *user)
 			// invisible users are not counted
 			nb_visible = size_t_to_str(chan->getNbUsers(false));
 			if (chan->hasMode('p') && !(chan->isIn(user->getFd())))
-				user->reply(RPL_LIST(getSrv(), chan->getName(), nb_visible, PRV_TOPIC));
+				user->reply(RPL_LIST(getSrv(), user->getNick(), chan->getName(), nb_visible, PRV_TOPIC));
 			else
-				user->reply(RPL_LIST(getSrv(), chan->getName(), nb_visible, chan->getTopic()));
+				user->reply(RPL_LIST(getSrv(), user->getNick(), chan->getName(), nb_visible, chan->getTopic()));
 		}
 	}
 	user->reply(RPL_LISTEND(getSrv(), user->getNick()));
