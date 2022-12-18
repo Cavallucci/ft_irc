@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 21:48:30 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/18 22:09:46 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,22 +114,12 @@ void			Channel::rpl_names(User *user, std::string srv, bool send_end)
 
 void			Channel::rpl_chan_mode(User *user, std::string srv)
 {
-	std::string			modes;
-	std::string			parameters;
+	std::string			mode_str = "+" + _mode;
+	std::string			limit;
 
-	for (size_t i = 0; i < _mode.size(); ++i)
-	{
-		if (i > 0)
-			modes.append(" ");
-		modes.append("+");
-		modes += _mode[i];
-		if (_mode[i] == 'l')
-		{
-			parameters = size_t_to_str(getMaxUsers()) ;
-			modes += " " + parameters;
-		}
-	}
-	user->reply(RPL_CHANNELMODEIS(srv, getName(), modes, parameters));
+	if (hasMode('l'))
+		mode_str += " " + size_t_to_str(getMaxUsers());
+	user->reply(RPL_CHANNELMODEIS(srv, user->getNick(), getName(), mode_str));
 }
 
 
