@@ -267,7 +267,7 @@ bool				Channel::canJoin(std::string srv, User *user, size_t index) const
 	if (isInviteOnly && !isInvited(user->getFd()))
 		user->reply(ERR_INVITEONLYCHAN(srv, getName()));
 	else if (getNbUsers(true) + 1 > getMaxUsers())
-		user->reply(ERR_CHANNELISFULL(srv, getName()));
+		user->reply(ERR_CHANNELISFULL(srv, user->getNick(), getName()));
 	else if (isBanned(user->getFd()))
 		user->reply(ERR_BANNEDFROMCHAN(srv, getName()));
 	else if (hasPassword() && !pwMatches(user, index))

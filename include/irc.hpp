@@ -93,7 +93,7 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_BADCHANNELKEY(srv, chan)			":" + srv + " 475 :" + chan + " :Cannot join channel (+k)"
 # define ERR_BANNEDFROMCHAN(srv, chan)			":" + srv + " 474 :" + chan + " :Cannot join channel (+b)"
 # define ERR_CANNOTSENDTOCHAN(srv, nick, chan)	":" + srv + " 404 " + nick + " " + chan + " :Cannot send to channel"
-# define ERR_CHANNELISFULL(srv, chan)			":" + srv + " 471 :" + chan + " :Cannot join channel (+l)"
+# define ERR_CHANNELISFULL(srv, nick, chan)		":" + srv + " 471 " + nick + " " + chan + " :Cannot join channel (+l)"
 # define ERR_CHANOPRIVSNEEDED(srv, chan)		":" + srv + " 482 :" + chan + " :You're not channel operator"
 # define ERR_ERRONEUSNICKNAME(srv, nick)		":" + srv + " 432 :" + nick + " :Erroneus nickname"
 # define ERR_INVITEONLYCHAN(srv, chan)			":" + srv + " 473 :" + chan + " :Cannot join channel (+i)"
