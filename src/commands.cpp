@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 10:12:59 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 15:14:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,7 +219,7 @@ void	Server::_modeHandler(User *user)
 		if (!(action[0] == '+' || action[0] == '-'))
 			return (user->reply(ERR_UMODEUNKNOWNFLAG(getSrv())));
 		for (std::string::size_type i = 1; i < action.size(); i++)
-			channel->updateMode(getSrv(), user, action[0] == '+', action[i]);
+				channel->updateMode(this, user, action[0] == '+', action[i]);
 		if (!channel->getNbUsers(true))
 			delChannel(channel);
 		std::cout << GRN << CHANNEL_MODE << "[" END;

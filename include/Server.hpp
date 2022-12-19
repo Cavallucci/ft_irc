@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:59:31 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 15:12:18 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class Server
 		// Getters & accessors
 		std::string							getSrv(void) const;
 		std::string							getPwd(void) const;
-		usr_map								getUsers() const;
+		usr_map								getUsers(void) const;
 		User								*getUser(int fd) const;
 		User								*getUser(std::string nick) const;
 		chan_map							getChannels() const;

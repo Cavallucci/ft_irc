@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 10:05:22 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 15:16:15 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,20 @@ class Channel
 		void			rmInvite(User *user);
 		void			setPassword(std::string password);
 		void			setTopic(User *user, std::string topic);
-		void			updateMode(std::string srv, User *user, bool adding, char letter);
+		void			updateMode(Server *srv, User *user, bool adding, char letter);
 		void			addMode(char new_mode);
 		void			rmMode(char old_mode);
 	private:
-		std::string								_name;
-		std::string								_topic;
-		usr_map									_users;
-		usr_map									_ops;
-		usr_map									_banned;
-		usr_map									_moderators;
-		usr_map									_invited;
-		size_t									_maxUsers;
-		std::string								_password;
-		std::string								_topicCtxt; // topic setter & timestamp
+		std::string		_name;
+		std::string		_topic;
+		usr_map			_users;
+		usr_map			_ops;
+		usr_map			_banned;
+		usr_map			_moderators;
+		usr_map			_invited;
+		size_t			_maxUsers;
+		std::string		_password;
+		std::string		_topicCtxt; // topic setter & timestamp
 		/*
 		CHANNELS MODES
 		'o' = operator status
@@ -88,19 +88,10 @@ class Channel
 		't' = topic protection, ability to modify the topic
 		'n' = no external messages, users not on the channel cannot send messages to it
 		*/
-		std::string								_mode;
-		// Handlers to update channel modes
-		std::map<char, ChannelFnPtr>			_modeHandlers;
-		void									_initModeHandlers(void);
-		void									_updateModeO(std::string srv, User *user, bool adding);
-		void									_updateModeP(std::string srv, User *user, bool adding);
-		void									_updateModeS(std::string srv, User *user, bool adding);
-		void									_updateModeI(std::string srv, User *user, bool adding);
-		void									_updateModeB(std::string srv, User *user, bool adding);
-		void									_updateModeM(std::string srv, User *user, bool adding);
-		void									_updateModeL(std::string srv, User *user, bool adding);
-		void									_updateModeT(std::string srv, User *user, bool adding);
-		void									_updateModeN(std::string srv, User *user, bool adding);
+		std::string		_mode;
+		void			_updateModeB(Server *srv, User *user, bool adding);
+		void			_updateModeO(std::string srv, User *user, bool adding);
+		void			_updateModeL(std::string srv, User *user, bool adding);
 };
 
 

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 09:40:42 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 15:23:32 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,12 @@
 
 Channel::Channel()
 {
-	_initModeHandlers();
 }
 
 
 Channel::Channel(std::string name, std::string password) :
 _name(name), _password(password)
 {
-	_initModeHandlers();
 	size_t	max_size = (size_t) - 1;
 	setMaxUsers(max_size);
 }
@@ -150,7 +148,6 @@ void			Channel::clearAll(void)
 	_banned.clear();
 	_moderators.clear();
 	_invited.clear();
-	_modeHandlers.clear();
 }
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------
@@ -376,27 +373,56 @@ void				Channel::rmMode(char old_mode)
 
 //----------------------------------- MODES -----------------------------------
 
-void				Channel::_initModeHandlers(void)
+
+void				Channel::updateMode(Server *srv, User *user, bool adding, char letter)
 {
-	_modeHandlers['o'] = &Channel::_updateModeO;
-	_modeHandlers['p'] = &Channel::_updateModeP;
-	_modeHandlers['s'] = &Channel::_updateModeS;
-	_modeHandlers['i'] = &Channel::_updateModeI;
-	_modeHandlers['b'] = &Channel::_updateModeB;
-	_modeHandlers['m'] = &Channel::_updateModeM;
-	_modeHandlers['l'] = &Channel::_updateModeL;
-	_modeHandlers['t'] = &Channel::_updateModeT;
-	_modeHandlers['n'] = &Channel::_updateModeN;
+	std::string		basic_modes = "psimtn";
+	if (basic_modes.find(letter) != std::string::npos) {
+		std::string		mode;
+		if (adding) {
+			mode = "+" + letter;
+			addMode(letter);
+		} else {
+			mode = "-" + letter;
+			rmMode(letter);
+		}
+		broadcast(RPL_MODE(user->getNick(), getName(), mode));
+	} else if (letter == 'b') {
+		_updateModeB(srv, user, adding);
+	} else if (letter == 'o') {
+		_updateModeO(srv->getSrv(), user, adding);
+	} else if (letter == 'l') {
+		_updateModeL(srv->getSrv(), user, adding);
+	} else {
+		user->reply(ERR_UNKNOWNMODE(srv->getSrv(), letter));
+	}
 }
 
 
-void				Channel::updateMode(std::string srv, User *user,
-bool adding, char letter)
+void				Channel::_updateModeB(Server *srv, User *user, bool adding)
 {
-	try {
-		CALL_MEMBER_FN(this, _modeHandlers.at(letter))(srv, user, adding);
-	} catch (const std::out_of_range &e) {
-		user->reply(ERR_UNKNOWNMODE(srv, letter));
+	std::string		my_str = "MODE -b";
+	if (adding)
+		my_str = "MODE +b";
+	if (user->getArgs().size() < 3)
+		return (user->reply(ERR_NEEDMOREPARAMS(srv->getSrv(), user->getNick(), my_str)));
+	std::string		target_nick = user->getArgs()[2];
+	User			*target = srv->getUser(target_nick);
+	if (target == NULL)
+		return (user->reply(ERR_NOSUCHNICK(srv->getSrv(), target_nick)));
+	if (adding && !isOp(target->getFd())) {
+		ban(target);
+		broadcast(RPL_MODE(user->getNick(), getName(), "+b " + target_nick));
+		if (isIn(target->getFd())) {
+			broadcast(RPL_KICK(user->getNick(), getName(), target_nick));
+			target->rmChannel(getName());
+			delUser(target);
+		}
+	} else if (adding && isOp(target->getFd())) {
+		std::cout << YEL << ERR_BAN_OP << user->getNick() << END << std::endl;
+	} else if (!adding && isBanned(target->getFd())) {
+		unban(target);
+		broadcast(RPL_MODE(user->getNick(), getName(), "-b " + target_nick));
 	}
 }
 
@@ -424,90 +450,6 @@ void				Channel::_updateModeO(std::string srv, User *user, bool adding)
 }
 
 
-void				Channel::_updateModeP(std::string srv, User *user, bool adding)
-{
-	std::string		mode;
-	if (adding) {
-		mode = "+p";
-		addMode('p');
-	} else {
-		mode = "-p";
-		rmMode('p');
-	}
-	broadcast(RPL_MODE(user->getNick(), getName(), mode));
-	(void)srv;
-}
-
-
-void				Channel::_updateModeS(std::string srv, User *user, bool adding)
-{
-	std::string		mode;
-	if (adding) {
-		mode = "+s";
-		addMode('s');
-	} else {
-		mode = "-s";
-		rmMode('s');
-	}
-	broadcast(RPL_MODE(user->getNick(), getName(), mode));
-	(void)srv;
-}
-
-
-void				Channel::_updateModeI(std::string srv, User *user, bool adding)
-{
-	std::string		mode;
-	if (adding) {
-		mode = "+i";
-		addMode('i');
-	} else {
-		mode = "-i";
-		rmMode('i');
-	}
-	broadcast(RPL_MODE(user->getNick(), getName(), mode));
-	(void)srv;
-}
-
-
-void				Channel::_updateModeB(std::string srv, User *user, bool adding)
-{
-	if (user->getArgs().size() < 3) { // the list of banned users has been requested
-		for (user_it it = _banned.begin(); it != _banned.end(); ++it)
-			user->reply(RPL_BANLIST(srv, user->getNick(), getName(), it->second->getNick()));
-		return (user->reply(RPL_ENDOFBANLIST(srv, user->getNick(), getName())));
-	}
-	// the user wants to ban or unban someone
-	std::string		target_nick = user->getArgs()[2];
-	User			*target = getUser(target_nick);
-	if (target == NULL)
-		return (user->reply(ERR_NOSUCHNICK(srv, target_nick)));
-	if (adding && !isOp(target->getFd())) {
-		ban(target);
-		if (isIn(target->getFd())) {
-			broadcast(RPL_KICK(user->getNick(), getName(), target_nick));
-			target->rmChannel(getName());
-		}
-	} else if (!adding) {
-		unban(target);
-	}
-}
-
-
-void				Channel::_updateModeM(std::string srv, User *user, bool adding)
-{
-	std::string		mode;
-	if (adding) {
-		mode = "+m";
-		addMode('m');
-	} else {
-		mode = "-m";
-		rmMode('m');
-	}
-	broadcast(RPL_MODE(user->getNick(), getName(), mode));
-	(void)srv;
-}
-
-
 void				Channel::_updateModeL(std::string srv, User *user, bool adding)
 {
 	std::string		mode;
@@ -526,34 +468,4 @@ void				Channel::_updateModeL(std::string srv, User *user, bool adding)
 		mode = "-l";
 	}
 	broadcast(RPL_MODE(user->getNick(), getName(), mode));
-}
-
-
-void				Channel::_updateModeT(std::string srv, User *user, bool adding)
-{
-	std::string		mode;
-	if (adding) {
-		mode = "+t";
-		addMode('t');
-	} else {
-		mode = "-t";
-		rmMode('t');
-	}
-	broadcast(RPL_MODE(user->getNick(), getName(), mode));
-	(void)srv;
-}
-
-
-void				Channel::_updateModeN(std::string srv, User *user, bool adding)
-{
-	std::string		mode;
-	if (adding) {
-		mode = "+n";
-		addMode('n');
-	} else {
-		mode = "-n";
-		rmMode('n');
-	}
-	broadcast(RPL_MODE(user->getNick(), getName(), mode));
-	(void)srv;
 }

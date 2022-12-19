@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 10:13:20 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 14:24:27 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_CHANNEL_NOT_FOUND					"🤔 There isn't any channel with this name: "
 # define ERR_USER_FD_NOT_FOUND					"🤔 There isn't any user with this fd: "
 # define ERR_USER_NICK_NOT_FOUND				"🤔 There isn't any user with this nickname: "
+# define ERR_BAN_OP								"😱 This user tried to ban a channel operator: "
 # define ERR_RECV								"❌ Error while trying to read (recv) socket "
 # define RECV_ZERO								"🚫 A socket has hang up, socket"
 # define PRV_TOPIC								"Prv"
