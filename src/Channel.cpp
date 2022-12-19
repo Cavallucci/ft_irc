@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 15:23:32 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 17:59:29 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -376,17 +376,19 @@ void				Channel::rmMode(char old_mode)
 
 void				Channel::updateMode(Server *srv, User *user, bool adding, char letter)
 {
+	std::string		mode_str = "";
 	std::string		basic_modes = "psimtn";
+
 	if (basic_modes.find(letter) != std::string::npos) {
-		std::string		mode;
 		if (adding) {
-			mode = "+" + letter;
+			mode_str = "+";
 			addMode(letter);
 		} else {
-			mode = "-" + letter;
+			mode_str = "-";
 			rmMode(letter);
 		}
-		broadcast(RPL_MODE(user->getNick(), getName(), mode));
+		mode_str += letter;
+		broadcast(RPL_MODE(user->getNick(), getName(), mode_str));
 	} else if (letter == 'b') {
 		_updateModeB(srv, user, adding);
 	} else if (letter == 'o') {

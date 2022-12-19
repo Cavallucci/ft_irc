@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 14:24:27 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 17:44:08 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ typedef usr_map::const_iterator				user_it;
 # define CHANNEL_MODE							"🔧 Channel mode "
 # define USER_MODE								"🔧 User mode "
 
-// list of official numeric replies sent by the server by alphabetical order
+// list of official numeric replies
 // cf. https://datatracker.ietf.org/doc/html/rfc2812#section-5
 # define ERR_ALREADYREGISTRED(srv)				":" + srv + " 462 :You may not reregister"
 # define ERR_BADCHANMASK(srv, chan)				":" + srv + " 476 :" + chan + " :Bad Channel Mask"
@@ -107,10 +107,11 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_NORECIPIENT(srv, cmd)				":" + srv + " 411 :No recipient given (" + cmd + ")"
 # define ERR_NOSUCHCHANNEL(srv, chan)			":" + srv + " 403 :" + chan + " :No such channel"
 # define ERR_NOSUCHNICK(srv, nick)				":" + srv + " 401 :" + nick + " :No such nick/channel"
+# define ERR_NOSUCHNICK_CHAN(srv, nick, chan)	":" + srv + " 401 " + nick + " " + chan + " :No such nick"
 # define ERR_NOSUCHSERVER(srv, target)			":" + srv + " 402 :" + target + " :No such server"
 # define ERR_NOTEXTTOSEND(srv)					":" + srv + " 412 :No text to send"
-# define ERR_NOTONCHANNEL(srv, chan)			":" + srv + " 442 :" + chan + " :You're not on that channel"
-# define ERR_NOTOPLEVEL(srv, mask)				":" + srv + " 413 :" + mask + " :No toplevel domain specified"
+# define ERR_NOTONCHANNEL_41(srv, nick, chan)	":" + srv + " 441 " + nick + " " + chan + " :They aren't on that channel"
+# define ERR_NOTONCHANNEL_42(srv, chan)			":" + srv + " 442 :" + chan + " :You're not on that channel"
 # define ERR_PASSWDMISMATCH(srv)				":" + srv + " 464 :Password incorrect"
 # define ERR_TOOMANYCHANNELS(srv, chan)			":" + srv + " 405 :" + chan + " :You have joined too many channels"
 # define ERR_TOOMANYTARGETS(srv, target)		":" + srv + " 407 :" + target + " :Duplicate recipients. No message delivered"

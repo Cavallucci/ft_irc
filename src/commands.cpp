@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 15:14:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 19:22:01 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,12 @@ void	Server::_inviteHandler(User *user)
 	if (channel)
 	{
 		if (!channel->isIn(user->getFd()))
-			return (user->reply(ERR_NOTONCHANNEL(getSrv(), target_chan)));
+			return (user->reply(ERR_NOTONCHANNEL_42(getSrv(), target_chan)));
 		if (channel->isIn(guest->getFd()))
 			return (user->reply(ERR_USERONCHANNEL(getSrv(), guest->getUser(), target_chan)));
 		if (!channel->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), target_chan)));
+		channel->invite(guest);
 		user->reply(RPL_INVITING(getSrv(), user->getNick(), guest_nick, target_chan));
 		guest->reply(RPL_INVITE(guest_nick, user->getNick(), target_chan));
 	}
@@ -137,8 +138,12 @@ void	Server::_kickHandler(User *user)
 	User			*target = getUser(target_user);
 	if (channel == NULL)
 		return (user->reply(ERR_NOSUCHCHANNEL(getSrv(), channel_name)));
-	if (target == NULL || !channel->isIn(user->getFd()) || !channel->isIn(target->getFd()))
-		return (user->reply(ERR_NOTONCHANNEL(getSrv(), channel_name)));
+	if (target == NULL)
+		return (user->reply(ERR_NOSUCHNICK_CHAN(getSrv(), user->getNick(), channel_name)));
+	if (!channel->isIn(target->getFd()))
+		return (user->reply(ERR_NOTONCHANNEL_41(getSrv(), user->getNick(), channel_name)));
+	if (!channel->isIn(user->getFd()))
+		return (user->reply(ERR_NOTONCHANNEL_42(getSrv(), channel_name)));
 	if (!channel->isOp(user->getFd()))
 		return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), channel_name)));
 	channel->broadcast(RPL_KICK(user->getNick(), channel_name, target_user));
@@ -211,7 +216,7 @@ void	Server::_modeHandler(User *user)
 		if (!channel->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
 		if (!channel->isIn(user->getFd()))
-			return (user->reply(ERR_NOTONCHANNEL(getSrv(), name)));
+			return (user->reply(ERR_NOTONCHANNEL_42(getSrv(), name)));
 		if (action.empty()) // the user just wants to get the channel modes
 			return (channel->rpl_chan_mode(user, getSrv())); // RPL_CHANNELMODEIS
 		if (action[0] == 'b')
@@ -409,7 +414,7 @@ void	Server::_partHandler(User *user)
 			if (chan->getNbUsers(true) == 0)
 				delChannel(chan);
 		} else {
-			user->reply(ERR_NOTONCHANNEL(getSrv(), *it));
+			user->reply(ERR_NOTONCHANNEL_42(getSrv(), *it));
 		}
 	}
 }
@@ -511,7 +516,7 @@ void	Server::_topicHandler(User *user)
 		chan->setTopic(user, topic);
 		chan->broadcast(RPL_TOPIC_SET(user->getNick(), name, topic));
 	} else { // channel not found
-		user->reply(ERR_NOTONCHANNEL(getSrv(), name));
+		user->reply(ERR_NOTONCHANNEL_42(getSrv(), name));
 	}
 }
 
