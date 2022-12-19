@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 22:16:59 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 09:49:29 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,10 +237,13 @@ void	Server::_modeHandler(User *user)
 		for (size_t i = 1; i < action.size(); i++) { // ignores the starting '+' or '-'
 			if (!user->isValidMode(action[i]))
 				user->reply(ERR_UNKNOWNMODE(getSrv(), action[i]));
-			else if (action[0] == '+' && action[i] != 'o') // prevents [MODE myself +o]
+			else if (action[0] == '+' && action[i] != 'o') { // prevents [MODE myself +o]
 				user->addMode(action[i]);
-			else if (action[0] == '-')
+				user->reply(RPL_MODE(user->getNick(), user->getNick(), "+" + action[i]));
+			} else if (action[0] == '-') {
 				user->rmMode(action[i]);
+				user->reply(RPL_MODE(user->getNick(), user->getNick(), "-" + action[i]));
+			}
 		}
 		std::cout << GRN << USER_MODE << user->getNick() << " [" END;
 		std::cout << user->getMode() << GRN "]" END << std::endl;

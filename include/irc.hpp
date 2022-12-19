@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 09:42:16 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 09:48:54 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_WHOREPLY(s, mon_nick, channel, u, h, n, op, r)		":"+s+" 352 "+mon_nick+" "+channel+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
 
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN " + channel
-# define RPL_MODE(nick, channel, mode)			":" + nick + "@IRC MODE " + channel + " " + mode
+# define RPL_MODE(nick, target, mode)			":" + nick + "@IRC MODE " + target + " " + mode
 # define RPL_TOPIC_SET(nick, channel, topic)	":" + nick + "@IRC TOPIC " + channel + " :" + topic
 # define RPL_INVITE(nick, by, channel)			":" + nick + "@IRC INVITE " + by + " " + channel
 # define RPL_KICK(by, channel, kicked)			":" + by + "@IRC KICK " + channel + " " + kicked + " " + by
