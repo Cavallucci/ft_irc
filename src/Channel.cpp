@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 17:59:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 20:33:43 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ bool				Channel::isMod(int fd) const
 
 bool				Channel::isInvited(int fd) const
 {
-	if (_ops.count(fd))
+	if (_invited.count(fd))
 		return (true);
 	return (false);
 }
