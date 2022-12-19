@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 09:49:29 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 10:05:27 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -508,6 +508,7 @@ void	Server::_topicHandler(User *user)
 			topic = user->getArgs()[1];
 		if (chan->hasMode('t') && !chan->isOp(user->getFd()))
 			return (user->reply(ERR_CHANOPRIVSNEEDED(getSrv(), name)));
+		chan->setTopic(user, topic);
 		chan->broadcast(RPL_TOPIC_SET(user->getNick(), name, topic));
 	} else { // channel not found
 		user->reply(ERR_NOTONCHANNEL(getSrv(), name));

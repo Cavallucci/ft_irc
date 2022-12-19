@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 21:38:53 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 10:05:22 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ class Channel
 		void			rmInvite(User *user);
 		void			setPassword(std::string password);
 		void			setTopic(User *user, std::string topic);
-		void			setTopic(std::string topic, std::string nick);
 		void			updateMode(std::string srv, User *user, bool adding, char letter);
 		void			addMode(char new_mode);
 		void			rmMode(char old_mode);
