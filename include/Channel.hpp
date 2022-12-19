@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:54:58 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 15:16:15 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 21:56:11 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ class Channel
 		std::string		_mode;
 		void			_updateModeB(Server *srv, User *user, bool adding);
 		void			_updateModeO(std::string srv, User *user, bool adding);
+		void			_updateModeV(std::string srv, User *user, bool adding);
 		void			_updateModeL(std::string srv, User *user, bool adding);
 };
 

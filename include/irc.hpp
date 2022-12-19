@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 17:44:08 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 22:16:28 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_USER_FD_NOT_FOUND					"🤔 There isn't any user with this fd: "
 # define ERR_USER_NICK_NOT_FOUND				"🤔 There isn't any user with this nickname: "
 # define ERR_BAN_OP								"😱 This user tried to ban a channel operator: "
+# define WARNING_MAX_CHANNEL					"🔶 Warning, the maximum number of users is lower than the current number of users for this channel: "
 # define ERR_RECV								"❌ Error while trying to read (recv) socket "
 # define RECV_ZERO								"🚫 A socket has hang up, socket"
 # define PRV_TOPIC								"Prv"
@@ -139,6 +140,9 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
 # define RPL_WHOREPLY(s, mon_nick, channel, u, h, n, op, r)		":"+s+" 352 "+mon_nick+" "+channel+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
 
+
+# define ERR_TOOMANYMODES(srv, nick, cmd)		":" + srv + " 461 :" + nick + " " + cmd + " :Cannot update the mode with both +l and +b/+m/+o in one command"
+# define ERR_INVALID_MAX(srv, nick, cmd)		":" + srv + " 461 :" + nick + " " + cmd + " :The maximum number of guests must be positive"
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN " + channel
 # define RPL_MODE(nick, target, mode)			":" + nick + "@IRC MODE " + target + " " + mode
 # define RPL_TOPIC_SET(nick, channel, topic)	":" + nick + "@IRC TOPIC " + channel + " :" + topic

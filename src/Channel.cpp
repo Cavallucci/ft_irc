@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 20:33:43 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 22:16:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,8 @@ Channel::~Channel()
 
 void			Channel::broadcast(std::string msg)
 {
-	for (user_it it = _users.begin(); it != _users.end(); ++it) {
+	for (user_it it = _users.begin(); it != _users.end(); ++it)
 		it->second->reply(msg);
-	}
 }
 
 
@@ -64,7 +63,7 @@ void			Channel::rpl_whoreply(User *user, std::string srv)
 				it->second->getUser(),
 				it->second->getHost(),
 				it->second->getNick(),
-				((isOp(it->second->getFd())) ? "@" : ""), // is operator or not ?
+				((isOp(it->second->getFd())) ? "@" : ""), // operator or not ?
 				it->second->getReal()
 			));
 		}
@@ -113,7 +112,6 @@ void			Channel::rpl_names(User *user, std::string srv, bool send_end)
 void			Channel::rpl_chan_mode(User *user, std::string srv)
 {
 	std::string			mode_str = "+" + _mode;
-	std::string			limit;
 
 	if (hasMode('l'))
 		mode_str += " " + size_t_to_str(getMaxUsers());
@@ -274,6 +272,8 @@ void				Channel::setPassword(std::string password)
 
 void				Channel::setMaxUsers(size_t maxUsers)
 {
+	if (maxUsers < getNbUsers(true))
+		std::cout << YEL << WARNING_MAX_CHANNEL << getName() << END << std::endl;
 	_maxUsers = maxUsers;
 }
 
@@ -377,7 +377,7 @@ void				Channel::rmMode(char old_mode)
 void				Channel::updateMode(Server *srv, User *user, bool adding, char letter)
 {
 	std::string		mode_str = "";
-	std::string		basic_modes = "psimtn";
+	std::string		basic_modes = "psitnm";
 
 	if (basic_modes.find(letter) != std::string::npos) {
 		if (adding) {
@@ -389,23 +389,22 @@ void				Channel::updateMode(Server *srv, User *user, bool adding, char letter)
 		}
 		mode_str += letter;
 		broadcast(RPL_MODE(user->getNick(), getName(), mode_str));
-	} else if (letter == 'b') {
+	} else if (letter == 'b')
 		_updateModeB(srv, user, adding);
-	} else if (letter == 'o') {
+	else if (letter == 'v')
 		_updateModeO(srv->getSrv(), user, adding);
-	} else if (letter == 'l') {
+	else if (letter == 'o')
+		_updateModeO(srv->getSrv(), user, adding);
+	else if (letter == 'l')
 		_updateModeL(srv->getSrv(), user, adding);
-	} else {
+	else
 		user->reply(ERR_UNKNOWNMODE(srv->getSrv(), letter));
-	}
 }
 
 
 void				Channel::_updateModeB(Server *srv, User *user, bool adding)
 {
-	std::string		my_str = "MODE -b";
-	if (adding)
-		my_str = "MODE +b";
+	std::string		my_str = adding ? "MODE +b" : "MODE -b";
 	if (user->getArgs().size() < 3)
 		return (user->reply(ERR_NEEDMOREPARAMS(srv->getSrv(), user->getNick(), my_str)));
 	std::string		target_nick = user->getArgs()[2];
@@ -431,9 +430,7 @@ void				Channel::_updateModeB(Server *srv, User *user, bool adding)
 
 void				Channel::_updateModeO(std::string srv, User *user, bool adding)
 {
-	std::string		my_str = "MODE -o";
-	if (adding)
-		my_str = "MODE +o";
+	std::string		my_str = adding ? "MODE +o" : "MODE -o";
 	if (user->getArgs().size() < 3)
 		return (user->reply(ERR_NEEDMOREPARAMS(srv, user->getNick(), my_str)));
 	std::string		target_nick = user->getArgs()[2];
@@ -452,22 +449,49 @@ void				Channel::_updateModeO(std::string srv, User *user, bool adding)
 }
 
 
+void				Channel::_updateModeV(std::string srv, User *user, bool adding)
+{
+	std::string		my_str = adding ? "MODE +v" : "MODE -v";
+	if (user->getArgs().size() < 3)
+		return (user->reply(ERR_NEEDMOREPARAMS(srv, user->getNick(), my_str)));
+	std::string		target_nick = user->getArgs()[2];
+	User			*target = getUser(target_nick);
+	if (target == NULL)
+		return (user->reply(ERR_NOSUCHNICK(srv, target_nick)));
+	if (adding && !isMod(target->getFd())) {
+		my_str = "+v " + target_nick;
+		addMod(target);
+		broadcast(RPL_MODE(user->getNick(), getName(), my_str));
+	} else if (!adding && isMod(target->getFd())) {
+		my_str = "-v " + target_nick;
+		delMod(target);
+		broadcast(RPL_MODE(user->getNick(), getName(), my_str));
+	}
+}
+
+
 void				Channel::_updateModeL(std::string srv, User *user, bool adding)
 {
-	std::string		mode;
+	std::string		mode_str = "-l";
+
 	if (adding)
 	{
+		if (user->getArgs()[1].find_first_of("bmo") != std::string::npos)
+			return (user->reply(ERR_TOOMANYMODES(srv, user->getNick(), "MODE +l")));
 		if (user->getArgs().size() < 3)
 			return (user->reply(ERR_NEEDMOREPARAMS(srv, user->getNick(), "MODE +l")));
+		if (user->getArgs()[2][0] == '-')
+			return (user->reply(ERR_INVALID_MAX(srv, user->getNick(), "MODE +l")));
 		size_t		new_limit = str_to_size_t(user->getArgs()[2]);
+		if (new_limit == 0)
+			return (user->reply(ERR_INVALID_MAX(srv, user->getNick(), "MODE +l")));
 		setMaxUsers(new_limit);
 		addMode('l');
-		mode = "+l " + size_t_to_str(new_limit);
+		mode_str = "+l " + size_t_to_str(new_limit);
 	} else {
 		size_t max_size = (size_t) - 1;
 		setMaxUsers(max_size);
 		rmMode('l');
-		mode = "-l";
 	}
-	broadcast(RPL_MODE(user->getNick(), getName(), mode));
+	broadcast(RPL_MODE(user->getNick(), getName(), mode_str));
 }
