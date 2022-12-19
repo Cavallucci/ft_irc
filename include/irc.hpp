@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 22:16:32 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 09:25:01 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,11 +123,11 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_BANLIST(srv, chan, ban_id)			":" + srv + " 367 :" + chan + " " + ban_id
 # define RPL_CHANNELMODEIS(srv, nick, ch, mo)	":" + srv + " 324 " + nick + " " + ch + " " + mo
 # define RPL_ENDOFBANLIST(srv, chan)			":" + srv + " 368 :" + chan + " :End of channel ban list"
-# define RPL_ENDOFNAMES(srv, nick, chan)		":" + srv + " 366 " + nick + " " + chan + " :End of /NAMES list"
-# define RPL_ENDOFWHO(srv, nick, channel)		":" + srv + " 315 "+ nick + " " + channel + " :End of /WHO list"
+# define RPL_ENDOFNAMES(srv, nick, chan)		":" + srv + " 366 " + nick + " " + chan + " :End of NAMES list"
+# define RPL_ENDOFWHO(srv, nick, channel)		":" + srv + " 315 "+ nick + " " + channel + " :End of WHO list"
 # define RPL_INVITING(srv, nick, invited, chan)	":" + srv + " 341 " + nick + " " + invited + " " + chan
 # define RPL_LIST(srv, nick, chan, nb, topic)	":" + srv + " 322 " + nick + " " + chan + " " + nb + " :" + topic
-# define RPL_LISTEND(srv, nick)					":" + srv + " 323 " + nick + " :End of /LIST"
+# define RPL_LISTEND(srv, nick)					":" + srv + " 323 " + nick + " :End of LIST"
 # define RPL_LISTSTART(srv)						":" + srv + " 321 Channel :Users  Name"
 # define RPL_NAMREPLY(srv, nick, m, c, nicks)	":" + srv + " 353 " + nick + " " + m + " " + c + " :" + nicks
 # define RPL_NOTOPIC(srv, nick, chan)			":" + srv + " 331 :" + nick + " " + chan + " :No topic is set"
