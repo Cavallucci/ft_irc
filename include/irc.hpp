@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 09:48:54 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 10:13:20 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,8 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_LISTSTART(srv)						":" + srv + " 321 Channel :Users  Name"
 # define RPL_NAMREPLY(srv, nick, m, c, nicks)	":" + srv + " 353 " + nick + " " + m + " " + c + " :" + nicks
 # define RPL_NOTOPIC(srv, nick, chan)			":" + srv + " 331 :" + nick + " " + chan + " :No topic is set"
-# define RPL_TOPIC(srv, chan, topic)			":" + srv + " 332 " + chan + " :" + topic
-# define RPL_TOPICWHOTIME(srv, chan, context)	":" + srv + " 333 :" + chan + " " + context
+# define RPL_TOPIC(srv, nick, chan, topic)		":" + srv + " 332 " + nick + " " + chan + " :" + topic
+# define RPL_TOPICWHOTIME(srv, nick, chan, ctx)	":" + srv + " 333 " + nick + " " + chan + " " + ctx
 # define RPL_UMODEIS(srv, mode)					":" + srv + " 221 :" + mode
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
 # define RPL_WHOREPLY(s, mon_nick, channel, u, h, n, op, r)		":"+s+" 352 "+mon_nick+" "+channel+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r

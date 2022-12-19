@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 10:05:27 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 10:12:59 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,8 @@ void	Server::_joinHandler(User *user)
 			chan->broadcast(RPL_JOIN(user->getNick(), *name));
 			if (chan->getTopic() != "")
 			{
-				user->reply(RPL_TOPIC(getSrv(), *name, chan->getTopic()));
-				user->reply(RPL_TOPICWHOTIME(getSrv(), *name, chan->getTopicCtxt()));
+				user->reply(RPL_TOPIC(getSrv(), user->getNick(), *name, chan->getTopic()));
+				user->reply(RPL_TOPICWHOTIME(getSrv(), user->getNick(), *name, chan->getTopicCtxt()));
 			}
 			chan->rpl_names(user, getSrv(), true);
 		}
@@ -498,7 +498,7 @@ void	Server::_topicHandler(User *user)
 		if (user->getArgs().size() == 1) {
 			if (chan->getTopic().empty())
 				return (user->reply(RPL_NOTOPIC(getSrv(), user->getNick(), name)));
-			return (user->reply(RPL_TOPIC(getSrv(), name, chan->getTopic())));
+			return (user->reply(RPL_TOPIC(getSrv(), user->getNick(), name, chan->getTopic())));
 		}
 		// the topic for that channel will be changed if its modes permit it
 		std::string		topic = user->getRawArgs(1);
