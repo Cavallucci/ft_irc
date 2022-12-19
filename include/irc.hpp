@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 09:25:01 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 09:42:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,9 +120,9 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_USERSDONTMATCH(srv)				":" + srv + " 502 :Cant change mode for other users"
 # define ERR_WILDTOPLEVEL(srv, mask)			":" + srv + " 414 :" + mask + " :No toplevel domain specified"
 # define RPL_AWAY(srv, nick, msg)				":" + srv + " 301 :" + nick + " :" + msg
-# define RPL_BANLIST(srv, chan, ban_id)			":" + srv + " 367 :" + chan + " " + ban_id
+# define RPL_BANLIST(srv, nick, chan, banned)	":" + srv + " 367 " + nick + " " + chan + " " + banned
 # define RPL_CHANNELMODEIS(srv, nick, ch, mo)	":" + srv + " 324 " + nick + " " + ch + " " + mo
-# define RPL_ENDOFBANLIST(srv, chan)			":" + srv + " 368 :" + chan + " :End of channel ban list"
+# define RPL_ENDOFBANLIST(srv, nick, chan)		":" + srv + " 368 " + nick + " " + chan + " :End of channel ban list"
 # define RPL_ENDOFNAMES(srv, nick, chan)		":" + srv + " 366 " + nick + " " + chan + " :End of NAMES list"
 # define RPL_ENDOFWHO(srv, nick, channel)		":" + srv + " 315 "+ nick + " " + channel + " :End of WHO list"
 # define RPL_INVITING(srv, nick, invited, chan)	":" + srv + " 341 " + nick + " " + invited + " " + chan

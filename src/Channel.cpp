@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:05 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 22:09:46 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/19 09:40:42 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ void			Channel::rpl_whoreply(User *user, std::string srv)
 void			Channel::rpl_ban_list(User *user, std::string srv)
 {
 	for (user_it it = _banned.begin(); it != _banned.end(); ++it)
-		user->reply(RPL_BANLIST(srv, getName(), it->second->getNick()));
-	user->reply(RPL_ENDOFBANLIST(srv, getName()));
+		user->reply(RPL_BANLIST(srv, user->getNick(), getName(), it->second->getNick()));
+	user->reply(RPL_ENDOFBANLIST(srv, user->getNick(), getName()));
 }
 
 
@@ -473,8 +473,8 @@ void				Channel::_updateModeB(std::string srv, User *user, bool adding)
 {
 	if (user->getArgs().size() < 3) { // the list of banned users has been requested
 		for (user_it it = _banned.begin(); it != _banned.end(); ++it)
-			user->reply(RPL_BANLIST(srv, getName(), it->second->getNick()));
-		return (user->reply(RPL_ENDOFBANLIST(srv, getName())));
+			user->reply(RPL_BANLIST(srv, user->getNick(), getName(), it->second->getNick()));
+		return (user->reply(RPL_ENDOFBANLIST(srv, user->getNick(), getName())));
 	}
 	// the user wants to ban or unban someone
 	std::string		target_nick = user->getArgs()[2];
