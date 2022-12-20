@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 13:51:23 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 14:31:47 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,9 @@ void	Server::_serverConnect(void)
 			if (iterator->revents & POLLHUP) { //revents for returns && POLLHUP means the socket is no longer connected
 				_deleteUser(iterator->fd);
 				std::cout << MAG BYE << iterator->fd << END << std::endl;
+				continue ;
 			}
-			if (iterator->revents & POLLOUT) { // we ca write on the socket
+			if (iterator->revents & POLLOUT) { // we can write on the socket
 				User	*user = getUser(iterator->fd);
 				if (user != NULL)
 					serverReply(user);
@@ -116,7 +117,7 @@ void	Server::_serverConnect(void)
 					_addUser();
 					break ;
 				}
-				User		*user = getUser(iterator->fd);
+				User	*user = getUser(iterator->fd);
 				if (user && (!_parseInput(user))) // user has disconnected or an error occurred
 					_deleteUser(iterator->fd); //  we're going to remove the user iterator
 			}
@@ -218,7 +219,7 @@ bool	Server::_parseInput(User *user)
 		return (false);
 	else if (ret == 1) // we need more input
 		return (true);
-	if (user->getInput().length() > 512) {
+	if (user->getInput().length() > 512) { // message is too long
 		user->reply(ERR_MSG_TOO_LONG(getSrv()));
 		user->resetInput();
 		return (true);

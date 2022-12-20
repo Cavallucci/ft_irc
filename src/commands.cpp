@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 13:35:24 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 14:34:25 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -481,8 +481,8 @@ void	Server::_quitHandler(User *user)
 		if (it->second->getNbUsers(true) > 0)
 			it->second->broadcast(RPL_QUIT(user->getNick(), quit_msg));
 	}
-	_deleteUser(fd); // deletes empty channels as well
 	std::cout << MAG BYE << fd << END << std::endl;
+	_deleteUser(fd); // deletes empty channels as well
 }
 
 
