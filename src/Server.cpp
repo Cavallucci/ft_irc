@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/18 13:45:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 12:08:44 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,16 +98,19 @@ void	Server::_serverConnect(void)
 	{
 		ret = poll(_pfds.data(), _pfds.size(), -1);
 		if (ret == -1 && running == true)
-			throw std::runtime_error(ERR_POLL_FAILED); 
+			throw std::runtime_error(ERR_POLL_FAILED);
 		for (pfds_it iterator = _pfds.begin(); iterator != _pfds.end(); iterator++)
 		{
-			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
-			{
+			if (iterator->revents & POLLHUP) { //revents for returns && POLLHUP means the socket is no longer connected
 				_deleteUser(iterator->fd);
 				std::cout << "User deleted" << std::endl;
 			}
-			if (iterator->revents & POLLIN) //returns && data is ready
-			{
+			if (iterator->revents & POLLOUT) { // we ca write on the socket
+				User	*user = getUser(iterator->fd);
+				if (user != NULL)
+					serverReply(user);
+			}
+			if (iterator->revents & POLLIN) { //returns && data is ready
 				if (iterator->fd == _listener)
 				{
 					_addUser();
@@ -123,6 +126,28 @@ void	Server::_serverConnect(void)
 	}
 	_closeAll();
 }
+
+
+void	Server::serverReply(User *user)
+{
+	str_vec		replies = user->getReplies();
+	for (str_vec::iterator it = replies.begin(); it != replies.end(); ++it)
+	{
+		if (DEBUG) {
+			if (user->getNick().empty())
+				std::cout << "📨" WHT << "FD " << user->getFd() << " " END;
+			else
+				std::cout << "📨" WHT << user->getNick() << " " END;
+			std::cout << CYN << *it << END << std::endl;
+		}
+		int		n = 0;
+		n = send(user->getFd(), it->c_str(), it->length(), 0);
+		if (n == -1)
+			std::cout << RED << ERR_SEND_FD << END << std::endl;
+	}
+	user->clearReplies();
+}
+
 
 void	Server::_addUser(void)
 {
@@ -140,7 +165,7 @@ void	Server::_addUser(void)
 	else
 	{
 		pfd.fd = new_fd;
-		pfd.events = POLLOUT;
+		pfd.events = POLLIN | POLLOUT;
 		pfd.revents = 0;
 
 		_pfds.push_back(pfd);

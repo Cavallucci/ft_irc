@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 15:12:18 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 11:52:57 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class Server
 		Server(std::string port, std::string pwd);
 		Server(const Server & src);
 		~Server();
+		void								serverReply(User *user);
 		// Getters & accessors
 		std::string							getSrv(void) const;
 		std::string							getPwd(void) const;

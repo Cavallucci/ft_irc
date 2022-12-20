@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 14:00:07 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 11:58:25 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,18 +46,7 @@ User::~User()
 void				User::reply(std::string msg)
 {
 	msg.append("\r\n");
-	int		n = 0;
-
-	if (DEBUG) {
-		if (getNick().empty())
-			std::cout << "📨" WHT << "FD " << getFd() << " " END;
-		else
-			std::cout << "📨" WHT << getNick() << " " END;
-		std::cout << CYN << msg << END << std::endl;
-	}
-	n = send(getFd(), msg.c_str(), msg.length(), 0);
-	if (n == -1)
-		std::cout << RED << ERR_SEND_FD << END << std::endl;
+	_replies.push_back(msg);
 }
 
 
@@ -82,7 +71,7 @@ bool				User::hasBeenWelcomed(void) const { return _welcomed; }
 bool				User::isLoggedIn(void) const { return _loggedIn; }
 int					User::getFd(void) const { return _fd; }
 chan_map const		User::getChannels() const { return _channels; }
-
+str_vec				User::getReplies() const { return _replies; }
 
 str_vec				User::getCommands(std::string input) const
 {
@@ -155,6 +144,7 @@ Channel *			User::getChannel(std::string chan_name) const
 
 //----------------------------- MUTATORS / SETTERS ----------------------------
 
+void				User::clearReplies(void) { _replies.clear(); }
 void				User::setNick(std::string name) { _nickname = name; }
 void				User::setHost(std::string name) { _hostname = name; }
 void				User::setUser(std::string name) { _username = name; }

@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/16 13:59:57 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 12:00:04 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ class User
 		int									getFd(void) const;
 		chan_map const						getChannels(void) const;
 		Channel *							getChannel(std::string) const;
+		str_vec								getReplies(void) const;
 		// Setters & mutators
+		void								clearReplies(void);
 		bool								setInput(void);
 		void								setRawArgs(std::string content);
 		void								setArgs(str_vec args);
@@ -92,6 +94,7 @@ class User
 		'i' = invisible, will be hidden to other users in NAMES and WHO output
 		*/
 		std::string							_mode;
+		str_vec								_replies;
 };
 
 #endif
