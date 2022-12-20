@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 13:23:26 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:38:03 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	Server::_serverConnect(void)
 		{
 			if (iterator->revents & POLLHUP) { //revents for returns && POLLHUP means the socket is no longer connected
 				_deleteUser(iterator->fd);
-				std::cout << "User deleted" << std::endl;
+				std::cout << MAG BYE << fd << END << std::endl;
 			}
 			if (iterator->revents & POLLOUT) { // we ca write on the socket
 				User	*user = getUser(iterator->fd);
