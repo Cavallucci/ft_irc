@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 15:42:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 16:16:15 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,9 +197,10 @@ short				User::setInput(void)
 	if (bytes < 0) {
 		std::cerr << RED ERR_RECV << fd << END << std::endl;
 		return (0); // error while calling recv()
-	} else if ((bytes == 0) || (_input.length() < 2))
-		return (1);	// _input is incomplete for now
-	else if (_input.rfind(IRC_DELIMITER) != _input.length() - 2)
+	} else if (bytes == 0) {
+		std::cerr << RED RECV_ZERO << fd << END << std::endl;
+		return (0); // EOF
+	} else if ((_input.length() < 2) || (_input.rfind(IRC_DELIMITER) != _input.length() - 2))
 		return (1);	// _input is incomplete for now
 	_input.erase(_input.length() - 2); // removes the final "\r\n"
 	if (DEBUG)
