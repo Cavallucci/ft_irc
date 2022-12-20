@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 			port_str.find_first_not_of("0123456789") != std::string::npos)
 			throw std::runtime_error(ERR_PORT_NB);
 		int				port = str_to_size_t(argv[1]);
-		if (port < 0 || port > 65535)
+		if (port < 1024 || port > 65535)
 			throw std::runtime_error(ERR_PORT_RANGE);
 		// the password cannot be blank
 		if (!argv[2][0])

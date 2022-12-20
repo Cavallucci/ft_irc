@@ -66,7 +66,7 @@ typedef usr_map::const_iterator				user_it;
 # define ALLOWED_CHAR_IN_NICK					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_[]{}\\`|"
 # define ERR_NB_ARG								"❌ Invalid command, usage: ./ircserv <port> <password>"
 # define ERR_PORT_NB							"❌ Invalid port number, an integer is expected"
-# define ERR_PORT_RANGE							"❌ Invalid port, it should be in the range of 0 to 65535"
+# define ERR_PORT_RANGE							"❌ Invalid port, it should be in the range of 1024 to 65535"
 # define ERR_EMPTY_PWD							"❌ Error: an empty password has been provided"
 # define ERR_INVALID_PWD						"❌ Error: invalid characters in your password (it cannot contain spaces)"
 # define ERR_GETADDR_INFO						"❌ Error get address informations"
