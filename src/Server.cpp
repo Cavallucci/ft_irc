@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 13:38:03 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:51:23 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	Server::_serverConnect(void)
 		{
 			if (iterator->revents & POLLHUP) { //revents for returns && POLLHUP means the socket is no longer connected
 				_deleteUser(iterator->fd);
-				std::cout << MAG BYE << fd << END << std::endl;
+				std::cout << MAG BYE << iterator->fd << END << std::endl;
 			}
 			if (iterator->revents & POLLOUT) { // we ca write on the socket
 				User	*user = getUser(iterator->fd);
@@ -117,7 +117,7 @@ void	Server::_serverConnect(void)
 					break ;
 				}
 				User		*user = getUser(iterator->fd);
-				if (!_parseInput(user)) // the user has disconnected or an error occurred
+				if (user && (!_parseInput(user))) // user has disconnected or an error occurred
 					_deleteUser(iterator->fd); //  we're going to remove the user iterator
 			}
 			if (iterator == _pfds.end())
@@ -254,12 +254,16 @@ bool	Server::_parseInput(User *user)
 
 void	Server::_closeAll(void)
 {
-	for (chan_it iterator = _channels.begin(); iterator != _channels.end(); iterator++)
+	for (chan_it iterator = _channels.begin(); iterator != _channels.end(); iterator++) {
+		iterator->second->clearAll();
 		delete iterator->second;
+	}
 	for (pfds_it iterator = _pfds.begin(); iterator != _pfds.end(); iterator++)
 		close(iterator->fd);
-	for (user_it iterator = _users.begin(); iterator != _users.end(); iterator++)
+	for (user_it iterator = _users.begin(); iterator != _users.end(); iterator++) {
+		iterator->second->clearAll();
 		delete iterator->second;
+	}
 }
 
 //---------------------------- ACCESSORS / GETTERS ----------------------------

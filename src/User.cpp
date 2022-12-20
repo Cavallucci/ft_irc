@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 13:03:12 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:57:11 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,4 +245,5 @@ void				User::clearAll()
 {
 	_args.clear();
 	_channels.clear();
+	_replies.clear();
 }
