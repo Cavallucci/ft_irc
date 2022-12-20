@@ -55,12 +55,9 @@ void				User::reply(std::string msg)
 			std::cout << "📨" WHT << getNick() << " " END;
 		std::cout << CYN << msg << END << std::endl;
 	}
-	for (size_t i = 0; i < msg.length(); i += n)
-	{
-		n = send(getFd(), &(msg[i]), msg.length() - i, 0);
-		if (n == -1)
-			break ;
-	}
+	n = send(getFd(), msg.c_str(), msg.length(), 0);
+	if (n == -1)
+		std::cout << RED << ERR_SEND_FD << END << std::endl;
 }
 
 

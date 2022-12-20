@@ -74,6 +74,8 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_BIND_SOCKET						"❌ Error while binding socket: this port seems to be already taken!"
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_USER_FD							"❌ Error while accepting user fd"
+# define ERR_SEND_FD	    					"❌ Error while sending user fd"
+# define ERR_POLL_FAILED                        "❌ Error while calling poll()"
 # define RUNNING								"✅ The server is running, waiting for clients..."
 # define ERR_TOO_LONG							"📜 Message truncated to 512 bytes on socket "
 # define BYE									"👋 Someone left, socket "

@@ -81,7 +81,8 @@ void	Server::_serverSetUp(void)
 
 void	Server::_serverConnect(void)
 {
-	struct pollfd fd_server =
+	int				ret;
+	struct pollfd	fd_server =
 	{
 		//the socket descriptor :
 		_listener,
@@ -95,7 +96,9 @@ void	Server::_serverConnect(void)
 	std::cout << GRN RUNNING END << std::endl;
 	while (running)
 	{
-		poll(_pfds.data(), _pfds.size(), -1);
+		ret = poll(_pfds.data(), _pfds.size(), -1);
+		if (ret == -1 && running == true)
+			throw std::runtime_error(ERR_POLL_FAILED); 
 		for (pfds_it iterator = _pfds.begin(); iterator != _pfds.end(); iterator++)
 		{
 			if (iterator->revents & POLLHUP) //revents for returns && POLLHUP means the socket is no longer connected
@@ -137,7 +140,7 @@ void	Server::_addUser(void)
 	else
 	{
 		pfd.fd = new_fd;
-		pfd.events = POLLIN;
+		pfd.events = POLLOUT;
 		pfd.revents = 0;
 
 		_pfds.push_back(pfd);
