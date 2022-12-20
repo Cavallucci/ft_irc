@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/11 13:06:04 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 19:22:01 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:35:24 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,9 +335,9 @@ void	Server::_namesHandler(User *user)
 		bool			listed;
 		for (user_it it = _users.begin(); it != _users.end(); ++it) {
 			if (!it->second->hasMode('i')) // checks that the target is visible
-				chan_map const		its_channels = it->second->getChannels();
 			{
 				listed = false; // checks that the target hasn't already been listed
+				chan_map const		its_channels = it->second->getChannels();
 				for (chan_it it = _channels.begin(); it != _channels.end() && !listed; ++it)
 				{ // if he has been listed, he must be in at least 1 visible channel
 					if (!it->second->hasMode('p') && !it->second->hasMode('s'))
