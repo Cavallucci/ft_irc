@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 14:29:04 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 15:42:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,12 @@ str_vec				User::getReplies() const { return _replies; }
 str_vec				User::getCommands(std::string input) const
 {
 	str_vec		commands = split_str(input, IRC_DELIMITER, false);
-	if (DEBUG)
+	if (DEBUG && commands.size())
 		std::cout << YEL "(2) Commands: " END;
 	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it)
 	{
+		if ((*it).empty())
+			continue ;
 		(*it).erase(0, (*it).find_first_not_of(' ')); // removes prefixing spaces
 		if (DEBUG)
 			std::cout << YEL "[" END << *it << YEL "]" END << std::endl;
@@ -111,18 +113,27 @@ skipped = 2
 */
 std::string			User::getRawArgs(size_t skipped) const
 {
-	std::string		output = _rawArgs;
+	std::string				output = _rawArgs;
+	std::string::size_type	pos;
+	if (output.empty())
+		return (output);
 	output.erase(0, output.find_first_not_of(' ')); // removes prefixing spaces
 	while (skipped > 0)
 	{
-		std::string::size_type	pos = output.find(' ');
+		pos = output.find(' ');
 		if (pos == std::string::npos)
 		{
 			output = "";
 			break ;
 		}
 		output.erase(0, pos); // removes a word
-		output.erase(0, output.find_first_not_of(' '));
+		pos = output.find_first_not_of(' ');
+		if (pos == std::string::npos)
+		{
+			output = "";
+			break ;
+		}
+		output.erase(0, pos);
 		skipped--;
 	}
 	return output;
@@ -171,11 +182,6 @@ void				User::rmMode(char new_mode)
 
 void				User::setRawArgs(std::string content) {
 	_rawArgs = content;
-	if (DEBUG)
-	{
-		std::cout << WHT "(4) Raw arguments: [" END;
-		std::cout << content << WHT "]" END << std::endl;
-	}
 }
 
 
@@ -191,7 +197,9 @@ short				User::setInput(void)
 	if (bytes < 0) {
 		std::cerr << RED ERR_RECV << fd << END << std::endl;
 		return (0); // error while calling recv()
-	} else if ((bytes == 0) || (_input.rfind(IRC_DELIMITER) != _input.length() - 2))
+	} else if ((bytes == 0) || (_input.length() < 2))
+		return (1);	// _input is incomplete for now
+	else if (_input.rfind(IRC_DELIMITER) != _input.length() - 2)
 		return (1);	// _input is incomplete for now
 	_input.erase(_input.length() - 2); // removes the final "\r\n"
 	if (DEBUG)
@@ -210,16 +218,8 @@ void				User::resetInput(void)
 void				User::setArgs(str_vec args)
 {
 	_args = args;
-	if (DEBUG)
-		std::cout << WHT "(5) Arguments:" END;
 	for (str_vec::iterator it = _args.begin(); it != _args.end(); ++it)
-	{
 		(*it).erase(0, (*it).find_first_not_of(' ')); // removes prefixing spaces
-		if (DEBUG)
-			std::cout << WHT " [" END << *it << WHT "]" END;
-	}
-	if (DEBUG)
-		std::cout << std::endl;
 }
 
 

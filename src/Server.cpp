@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 14:31:47 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 15:31:13 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,8 @@ void	Server::_deleteUser(int fd)
 			break ;
 		index++;
 	}
-	_pfds.erase(_pfds.begin() + index);
+	if (_pfds.size() > index)
+		_pfds.erase(_pfds.begin() + index);
 	if (user != NULL)
 	{
 		chan_map	channels = user->getChannels();
@@ -229,12 +230,6 @@ bool	Server::_parseInput(User *user)
 	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it) {
 		std::string::size_type	pos = (*it).find(' '); // might be string::npos
 		std::string				cmd_str = (*it).substr(0, pos);
-		if (DEBUG) {
-			std::cout << WHT "(3) Command: [" END;
-			std::cout << cmd_str << WHT "]" END << std::endl;
-		} else {
-			std::cout << WHT "Command: [" END << cmd_str << WHT "]" END << std::endl;
-		}
 		if ((*it).length() != cmd_str.length()) { // there are arguments but maybe just spaces
 			user->setRawArgs((*it).substr(pos + 1));
 			user->setArgs(split_str(user->getRawArgs(0), " ", false));
@@ -242,9 +237,15 @@ bool	Server::_parseInput(User *user)
 		try {
 			for (size_t i = 0; i < cmd_str.size(); i++) // CMD to lower case
 				cmd_str[i] = ascii_to_lower(cmd_str[i]);
-			if (!user->isLoggedIn() && cmd_str != "pass" && cmd_str != "cap")
+			if (!user->isLoggedIn() && cmd_str != "pass" && cmd_str != "cap") {
+				user->resetInput();
 				return (true); // unknown user: the command is silently ignored
+			}
 			CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
+			if (cmd_str == "quit") {
+				user->resetInput();
+				return (true);
+			}
 		} catch (const std::out_of_range &e) {
 			user->reply(ERR_UNKNOWNCOMMAND(getSrv(), user->getNick(), cmd_str));
 		}
@@ -339,6 +340,7 @@ Channel			*Server::newChan(User *user, std::string name, size_t index)
 void			Server::delChannel(Channel *chan)
 {
 	chan->clearAll();
-	_channels.erase(chan->getName());
+	if (_channels.count(chan->getName()))
+		_channels.erase(chan->getName());
 	delete chan;
 }
