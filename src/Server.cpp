@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 15:58:48 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 16:13:16 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,9 @@ void	Server::_serverConnect(void)
 		for (pfds_it iterator = _pfds.begin(); iterator != _pfds.end(); iterator++)
 		{
 			if (iterator->revents & POLLHUP) { //revents for returns && POLLHUP means the socket is no longer connected
-				_deleteUser(iterator->fd);
 				std::cout << MAG BYE << iterator->fd << END << std::endl;
-				continue ;
+				_deleteUser(iterator->fd);
+				break ;
 			}
 			if (iterator->revents & POLLOUT) { // we can write on the socket
 				User	*user = getUser(iterator->fd);
