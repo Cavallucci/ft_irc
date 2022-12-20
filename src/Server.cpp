@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 15:31:13 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 15:58:48 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,10 +242,8 @@ bool	Server::_parseInput(User *user)
 				return (true); // unknown user: the command is silently ignored
 			}
 			CALL_MEMBER_FN(this, _commands.at(cmd_str))(user);
-			if (cmd_str == "quit") {
-				user->resetInput();
+			if (cmd_str == "quit")
 				return (true);
-			}
 		} catch (const std::out_of_range &e) {
 			user->reply(ERR_UNKNOWNCOMMAND(getSrv(), user->getNick(), cmd_str));
 		}
