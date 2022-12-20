@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/19 22:16:28 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 12:33:17 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ typedef usr_map::const_iterator				user_it;
 # define IRC_DELIMITER							"\r\n"
 
 // custom error messages
-# define BUFFER_SIZE							2048
+# define BUFFER_SIZE							512
 # define DEBUG_IS_ON							"🔍 DEBUG mode is ON: have a look at the class User.hpp to better understand how the parsing works"
 # define ALLOWED_CHAR_IN_NICK					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_[]{}\\`|"
 # define ERR_NB_ARG								"❌ Invalid command, usage: ./ircserv <port> <password>"
@@ -77,7 +77,7 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_SEND_FD	    					"❌ Error while sending user fd"
 # define ERR_POLL_FAILED                        "❌ Error while calling poll()"
 # define RUNNING								"✅ The server is running, waiting for clients..."
-# define ERR_TOO_LONG							"📜 Message truncated to 512 bytes on socket "
+# define ERR_LENGTH_OR_RN						"📜 The message is longer than 512 bytes or doesn't end with '\\r\\n' on socket "
 # define BYE									"👋 Someone left, socket "
 # define ERR_CHANNEL_NOT_FOUND					"🤔 There isn't any channel with this name: "
 # define ERR_USER_FD_NOT_FOUND					"🤔 There isn't any user with this fd: "

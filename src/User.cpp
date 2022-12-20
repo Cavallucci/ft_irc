@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:13 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 11:58:25 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:03:12 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,37 +179,24 @@ void				User::setRawArgs(std::string content) {
 }
 
 
-bool				User::setInput(void)
+short				User::setInput(void)
 {
+	// IRC messages are limited to 512 char including "\r\n"
 	int				bytes;
 	int				fd = getFd();
-	char			buf[BUFFER_SIZE];
-	resetInput();
-	while (_input.length() < 2 || _input.rfind(IRC_DELIMITER) != _input.length() - 2)
-	{
-		memset(buf, 0, BUFFER_SIZE);
-		bytes = recv(fd, buf, BUFFER_SIZE, 0);
-		if (bytes <= 0)
-		{
-			if (!bytes)
-				std::cout << RED RECV_ZERO << fd << END << std::endl;
-			else if (bytes < 0)
-				std::cerr << RED ERR_RECV << fd << END << std::endl;
-			return (false); // an error occurred, somehow
-		}
-		_input.append(buf);
-	}
-	// we'll accept very long input not ending with "\r\n" since it doesn't matter
-	if (bytes > 512) // IRC messages are limited to 512 char including "\r\n"
-	{
-		std::cerr << RED ERR_TOO_LONG << fd << END << std::endl;
-		_input.erase(510, std::string::npos);
-		_input.append(IRC_DELIMITER);
-	}
+	char			buf[BUFFER_SIZE + 1];
+	memset(buf, 0, BUFFER_SIZE + 1);
+	bytes = recv(fd, buf, BUFFER_SIZE, 0);
+	_input.append(buf);
+	if (bytes < 0) {
+		std::cerr << RED ERR_RECV << fd << END << std::endl;
+		return (0); // error while calling recv()
+	} else if ((bytes == 0) || (_input.rfind(IRC_DELIMITER) != _input.length() - 2))
+		return (1);	// _input is incomplete for now
 	_input.erase(_input.length() - 2); // removes the final "\r\n"
 	if (DEBUG)
 		std::cout << YEL "(1) Input : [" END << _input << YEL "]" << END << std::endl;
-	return (true);
+	return (2); // everything looks good
 }
 
 

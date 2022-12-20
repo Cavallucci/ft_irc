@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 12:08:44 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:01:53 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ void	Server::_serverConnect(void)
 					break ;
 				}
 				User		*user = getUser(iterator->fd);
-				if (_parseInput(user) == false)
-					_deleteUser(iterator->fd);
+				if (!_parseInput(user)) // the user has disconnected or an error occurred
+					_deleteUser(iterator->fd); //  we're going to remove the user iterator
 			}
 			if (iterator == _pfds.end())
 				break ;
@@ -213,8 +213,12 @@ void	Server::_deleteUser(int fd)
 
 bool	Server::_parseInput(User *user)
 {
-	if (!user->setInput()) // the user has disconnected or an error occurred
-		return (false); // we're going to remove the user iterator
+	short	ret = user->setInput();
+	if (ret == 0) // an error occurred
+		return (false);
+	else if (ret == 1) // we need more input
+		return (true);
+	// setInput returned 2, everything looks good, the command ends with '\r\n'
 	str_vec						commands = user->getCommands(user->getInput());
 	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it)
 	{
@@ -242,7 +246,8 @@ bool	Server::_parseInput(User *user)
 			user->reply(ERR_UNKNOWNCOMMAND(getSrv(), user->getNick(), cmd_str));
 		}
 	}
-	return (true);
+	user->resetInput();
+	return (true); // everything looks good
 }
 
 void	Server::_closeAll(void)

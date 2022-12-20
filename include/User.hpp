@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:55:01 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 12:00:04 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:00:56 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class User
 		str_vec								getReplies(void) const;
 		// Setters & mutators
 		void								clearReplies(void);
-		bool								setInput(void);
+		short								setInput(void);
 		void								setRawArgs(std::string content);
 		void								setArgs(str_vec args);
 		void								setNick(std::string name);
