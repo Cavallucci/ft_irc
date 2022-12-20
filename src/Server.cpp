@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 17:35:09 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 13:01:53 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:23:26 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,21 +218,23 @@ bool	Server::_parseInput(User *user)
 		return (false);
 	else if (ret == 1) // we need more input
 		return (true);
+	if (user->getInput().length() > 512) {
+		user->reply(ERR_MSG_TOO_LONG(getSrv()));
+		user->resetInput();
+		return (true);
+	}
 	// setInput returned 2, everything looks good, the command ends with '\r\n'
 	str_vec						commands = user->getCommands(user->getInput());
-	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it)
-	{
+	for (str_vec::iterator it = commands.begin(); it != commands.end(); ++it) {
 		std::string::size_type	pos = (*it).find(' '); // might be string::npos
 		std::string				cmd_str = (*it).substr(0, pos);
-		if (DEBUG)
-		{
+		if (DEBUG) {
 			std::cout << WHT "(3) Command: [" END;
 			std::cout << cmd_str << WHT "]" END << std::endl;
 		} else {
 			std::cout << WHT "Command: [" END << cmd_str << WHT "]" END << std::endl;
 		}
-		if ((*it).length() != cmd_str.length()) // there are arguments but maybe just spaces
-		{
+		if ((*it).length() != cmd_str.length()) { // there are arguments but maybe just spaces
 			user->setRawArgs((*it).substr(pos + 1));
 			user->setArgs(split_str(user->getRawArgs(0), " ", false));
 		}

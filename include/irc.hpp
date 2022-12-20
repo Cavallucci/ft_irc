@@ -6,7 +6,7 @@
 /*   By: llalba <llalba@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 14:29:39 by llalba            #+#    #+#             */
-/*   Updated: 2022/12/20 12:33:17 by llalba           ###   ########.fr       */
+/*   Updated: 2022/12/20 13:23:20 by llalba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ typedef usr_map::const_iterator				user_it;
 # define ERR_BIND_SOCKET						"❌ Error while binding socket: this port seems to be already taken!"
 # define ERR_LIST_SOCKET						"❌ Error while listening socket"
 # define ERR_USER_FD							"❌ Error while accepting user fd"
-# define ERR_SEND_FD	    					"❌ Error while sending user fd"
-# define ERR_POLL_FAILED                        "❌ Error while calling poll()"
+# define ERR_SEND_FD							"❌ Error while sending user fd"
+# define ERR_POLL_FAILED						"❌ Error while calling poll()"
 # define RUNNING								"✅ The server is running, waiting for clients..."
 # define ERR_LENGTH_OR_RN						"📜 The message is longer than 512 bytes or doesn't end with '\\r\\n' on socket "
 # define BYE									"👋 Someone left, socket "
@@ -142,7 +142,7 @@ typedef usr_map::const_iterator				user_it;
 # define RPL_WELCOME(s, n, u, h)				":"+s+" 001 "+n+" :Welcome to the "+s+" network, "+n+"["+u+"@"+h+"]"
 # define RPL_WHOREPLY(s, mon_nick, channel, u, h, n, op, r)		":"+s+" 352 "+mon_nick+" "+channel+" "+u+" "+h+" "+s+" "+n+" H"+op+" :0 "+r
 
-
+# define ERR_MSG_TOO_LONG(srv)					":" + srv + " 412 :Message too long (max 512 bytes)"
 # define ERR_TOOMANYMODES(srv, nick, cmd)		":" + srv + " 461 :" + nick + " " + cmd + " :Cannot update the mode with both +l and +b/+m/+o in one command"
 # define ERR_INVALID_MAX(srv, nick, cmd)		":" + srv + " 461 :" + nick + " " + cmd + " :The maximum number of guests must be positive"
 # define RPL_JOIN(nick, channel)				":" + nick + "@IRC JOIN " + channel
